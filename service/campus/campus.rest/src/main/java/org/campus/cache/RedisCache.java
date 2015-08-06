@@ -1,5 +1,6 @@
 package org.campus.cache;
 
+import org.campus.constant.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -13,6 +14,16 @@ public class RedisCache {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    private int cacheTime = Constant.CACHE_TIME;
+
+    public int getCacheTime() {
+        return cacheTime;
+    }
+
+    public void setCacheTime(int cacheTime) {
+        this.cacheTime = cacheTime;
+    }
 
     public Object getValue(String key, Object value) {
         Object cacheValue = checkCahce(key);
@@ -32,7 +43,7 @@ public class RedisCache {
                 RedisSerializer<Object> serializer = (RedisSerializer<Object>) redisTemplate.getDefaultSerializer();
                 byte[] key = redisTemplate.getStringSerializer().serialize(cacheKey);
                 connection.set(key, serializer.serialize(value));
-                connection.expire(key, 600);
+                connection.expire(key, getCacheTime());
                 return true;
             }
         });

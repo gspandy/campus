@@ -13,6 +13,7 @@ public class RedisCacheTest extends BaseTest {
     @Test
     public void testGetValue() {
         for (int i = 0; i < 10; i++) {
+            cache.setCacheTime(200);
             cache.getValue("test_redisTemplate", "Test");
         }
     }
