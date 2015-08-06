@@ -6,6 +6,7 @@ import org.campus.util.ToolUtil;
 import org.campus.vo.LoginRequestVO;
 import org.campus.vo.LoginResponseVO;
 import org.campus.vo.RegisterVO;
+import org.campus.vo.VerifyCodeReqVO;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,6 +71,25 @@ public class SecurityController {
             @ApiParam(name = "newPassword", value = "新密码") @RequestParam(value = "newPassword", required = true) String newPassword,
             @ApiParam(name = "newSecPassword", value = "新密码第二次输入") @RequestParam(value = "newSecPassword", required = true) String newSecPassword,
             HttpSession session) {
+
+    }
+
+    @ApiOperation(value = "设置、修改昵称", notes = "设置、修改昵称")
+    @RequestMapping(value = "/nickname/set", method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "设置、修改昵称成功"),
+            @ApiResponse(code = 500, message = "内部处理错误") })
+    public void setNickName(
+            @ApiParam(name = "nickName", value = "昵称") @RequestParam(value = "nickName", required = true) String nickName,
+            HttpSession session) {
+
+    }
+
+    @ApiOperation(value = "验证手机验证码", notes = "验证手机验证码")
+    @RequestMapping(value = "/verifyCode", method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "验证手机验证码成功"),
+            @ApiResponse(code = 500, message = "内部处理错误") })
+    public void verifyCode(
+            @ApiParam(name = "verifyCodeReqVO", value = "验证验证码请求信息") @RequestBody VerifyCodeReqVO verifyCodeReqVO) {
 
     }
 
