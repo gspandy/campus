@@ -79,7 +79,7 @@ public class SecurityController {
             @ApiResponse(code = 500, message = "内部处理错误") })
     public void getCheckCode(
             @ApiParam(name = "phone", value = "手机号码") @RequestParam(value = "phone", required = true) String phone,
-            @ApiParam(name = "type", value = "短信验证码类型(1.注册短信;2.找回密码)") @RequestParam(value = "type", required = true) String type) {
+            @ApiParam(name = "type", value = "短信验证码类型(1.注册短信;2.找回密码;3.修改手机号)") @RequestParam(value = "type", required = true) String type) {
 
     }
 
