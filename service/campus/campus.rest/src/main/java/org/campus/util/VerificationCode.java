@@ -47,8 +47,12 @@ public class VerificationCode {
     }
 
     public void createCode() {
-        int x = 0, fontHeight = 0, codeY = 0;
-        int red = 0, green = 0, blue = 0;
+        int x = 0;
+        int fontHeight = 0;
+        int codeY = 0;
+        int red = 0;
+        int green = 0;
+        int blue = 0;
 
         x = width / (codeCount + 2);// 每个字符的宽度
         fontHeight = height - 2;// 字体的高度
@@ -79,9 +83,7 @@ public class VerificationCode {
             g.drawLine(xs, ys, xe, ye);
         }
 
-        // randomCode记录随机产生的验证码
         StringBuffer randomCode = new StringBuffer();
-        // 随机产生codeCount个字符的验证码。
         for (int i = 0; i < codeCount; i++) {
             String strRand = String.valueOf(codeSequence[random.nextInt(codeSequence.length)]);
             // 产生随机的颜色值，让输出的每个字符的颜色值都将不同。
@@ -90,10 +92,8 @@ public class VerificationCode {
             blue = random.nextInt(255);
             g.setColor(new Color(red, green, blue));
             g.drawString(strRand, (i + 1) * x, codeY);
-            // 将产生的四个随机数组合在一起。
             randomCode.append(strRand);
         }
-        // 将四位数字的验证码保存到Session中。
         code = randomCode.toString();
     }
 
