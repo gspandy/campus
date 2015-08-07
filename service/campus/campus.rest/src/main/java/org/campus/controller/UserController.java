@@ -1,12 +1,19 @@
 package org.campus.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
 import org.campus.vo.CountVO;
+import org.campus.vo.FriendVO;
 import org.campus.vo.UserPhotosVO;
 import org.campus.vo.UserVO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,29 +58,35 @@ public class UserController {
     @ApiOperation(value = "查询登录用户相册", notes = "查询登录用户相册")
     @RequestMapping(value = "/photos", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public UserPhotosVO getUserPhotos(
+    public Page<UserPhotosVO> getUserPhotos(
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
+        List<UserPhotosVO> photosVOs = new ArrayList<UserPhotosVO>();
         UserPhotosVO photosVO = new UserPhotosVO();
         photosVO.setPhotoId("12312312");
         photosVO.setNickName("edcee3000");
         photosVO.setPubDate(new Date());
         photosVO.setNote("测试");
-        return photosVO;
+        Page<UserPhotosVO> page = new PageImpl<UserPhotosVO>(photosVOs, pageable, photosVOs.size());
+        return page;
     }
 
     @ApiOperation(value = "查询其他用户的相册", notes = "查询其他用户的相册")
     @RequestMapping(value = "/{userId}/photos", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public UserPhotosVO getUserPhotos(
+    public Page<UserPhotosVO> getUserPhotos(
             @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+        List<UserPhotosVO> photosVOs = new ArrayList<UserPhotosVO>();
         UserPhotosVO photosVO = new UserPhotosVO();
         photosVO.setPhotoId("12312312");
         photosVO.setNickName("edcee3000");
         photosVO.setPubDate(new Date());
         photosVO.setNote("测试");
-        return photosVO;
+        Page<UserPhotosVO> page = new PageImpl<UserPhotosVO>(photosVOs, pageable, photosVOs.size());
+        return page;
     }
 
     @ApiOperation(value = "查询帖子、粉丝、关注数", notes = "查询帖子、粉丝、关注数")
@@ -87,6 +100,40 @@ public class UserController {
         countVO.setFansCount(256);
         countVO.setAttentionCount(512);
         return countVO;
+    }
+
+    @ApiOperation(value = "添加关注", notes = "添加关注")
+    @RequestMapping(value = "/attention/{userId}", method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "添加关注成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void attention(
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+
+    }
+
+    @ApiOperation(value = "查询好友列表", notes = "查询好友列表")
+    @RequestMapping(value = "/friends", method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "添加关注成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public List<FriendVO> getFriends(
+            @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        List<FriendVO> friendVOs = new ArrayList<FriendVO>();
+        FriendVO friendVO1 = new FriendVO();
+        friendVO1.setUserId("123123");
+        friendVO1.setNickName("asd123");
+        friendVO1.setInitial("A");
+        friendVO1.setHeadUrl("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
+        friendVOs.add(friendVO1);
+        FriendVO friendVO2 = new FriendVO();
+        friendVO2.setUserId("123322");
+        friendVO2.setNickName("Dsd123");
+        friendVO2.setInitial("D");
+        friendVO2.setIntroduction("测试");
+        friendVO2.setHeadUrl("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
+        friendVOs.add(friendVO2);
+        return friendVOs;
     }
 
 }
