@@ -101,7 +101,7 @@ public class SecurityController {
 
     }
 
-    @ApiOperation(value = "验证码生成", notes = "验证码生成")
+    @ApiOperation(value = "图片验证码生成", notes = "图片验证码生成")
     @RequestMapping(value = "/randomCode", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "验证码生成成功"),
             @ApiResponse(code = 1100001, message = "验证码生成失败"), @ApiResponse(code = 500, message = "内部处理错误") })
