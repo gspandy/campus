@@ -6,4 +6,6 @@ public interface ErrorCode {
 
     int LOGIN_FAILED = 1000002;// 登录失败
 
+    int VERFICATION_CODE_ERROR = 1100001;// 验证码生成失败
+
 }

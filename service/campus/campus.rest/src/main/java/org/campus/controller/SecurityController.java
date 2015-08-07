@@ -1,8 +1,16 @@
 package org.campus.controller;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.campus.constant.Constant;
+import org.campus.constant.ErrorCode;
+import org.campus.core.exception.CampusException;
 import org.campus.util.ToolUtil;
+import org.campus.util.VerificationCode;
 import org.campus.vo.LoginRequestVO;
 import org.campus.vo.LoginResponseVO;
 import org.campus.vo.RegisterVO;
@@ -91,6 +99,27 @@ public class SecurityController {
     public void verifyCode(
             @ApiParam(name = "verifyCodeReqVO", value = "验证验证码请求信息") @RequestBody VerifyCodeReqVO verifyCodeReqVO) {
 
+    }
+
+    @ApiOperation(value = "验证码生成", notes = "验证码生成")
+    @RequestMapping(value = "/randomCode", method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "验证码生成成功"),
+            @ApiResponse(code = 1100001, message = "验证码生成失败"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void createCode(HttpServletRequest request, HttpServletResponse response) {
+        // 设置响应的类型格式为图片格式
+        response.setContentType("image/jpeg");
+        // 禁止图像缓存。
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expires", 0);
+        HttpSession session = request.getSession();
+        VerificationCode code = new VerificationCode(120, 40, 4, 100);
+        session.setAttribute(Constant.VERFICATION_CODE, code.getCode());
+        try {
+            code.write(response.getOutputStream());
+        } catch (IOException e) {
+            throw new CampusException(ErrorCode.VERFICATION_CODE_ERROR, "验证码生成失败");
+        }
     }
 
     @ApiOperation(value = "获取短信验证码", notes = "获取短信验证码")
