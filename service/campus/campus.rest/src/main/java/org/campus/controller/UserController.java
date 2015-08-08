@@ -111,6 +111,15 @@ public class UserController {
 
     }
 
+    @ApiOperation(value = "取消关注", notes = "取消关注")
+    @RequestMapping(value = "/remove/{userId}/attention", method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "取消关注成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void removeAttention(
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+
+    }
+
     @ApiOperation(value = "查询好友列表", notes = "查询好友列表")
     @RequestMapping(value = "/friends", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询好友成功"), @ApiResponse(code = 500, message = "内部处理错误") })
