@@ -10,7 +10,9 @@ public class UserVO {
 
     private String nickName;
 
-    private String introduction;
+    private String signature;
+
+    private String qrcode;
 
     private int postCount;
 
@@ -39,13 +41,23 @@ public class UserVO {
     }
 
     @ApiModelProperty(value = "个人介绍", required = false)
-    public String getIntroduction() {
-        return introduction;
+    public String getSignature() {
+        return signature;
     }
 
     @ApiModelProperty(value = "个人介绍", required = false)
-    public void setIntroduction(String introduction) {
-        this.introduction = introduction;
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    @ApiModelProperty(value = "二维码地址", required = false)
+    public String getQrcode() {
+        return qrcode;
+    }
+
+    @ApiModelProperty(value = "二维码地址", required = false)
+    public void setQrcode(String qrcode) {
+        this.qrcode = qrcode;
     }
 
     @ApiModelProperty(value = "发帖数", required = true)

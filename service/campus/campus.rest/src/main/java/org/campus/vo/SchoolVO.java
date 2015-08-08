@@ -6,40 +6,28 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "SchoolVO", description = "学校信息")
 public class SchoolVO {
 
-    private String userId;
+    private String schoolId;
 
-    private String nickName;
+    private String schoolName;
 
-    private String introduction;
-
-    @ApiModelProperty(value = "用户Id", required = true)
-    public String getUserId() {
-        return userId;
+    @ApiModelProperty(value = "学校ID", required = true)
+    public String getSchoolId() {
+        return schoolId;
     }
 
-    @ApiModelProperty(value = "用户Id", required = true)
-    public void setUserId(String userId) {
-        this.userId = userId;
+    @ApiModelProperty(value = "学校ID", required = true)
+    public void setSchoolId(String schoolId) {
+        this.schoolId = schoolId;
     }
 
-    @ApiModelProperty(value = "昵称", required = true)
-    public String getNickName() {
-        return nickName;
+    @ApiModelProperty(value = "学校名称", required = true)
+    public String getSchoolName() {
+        return schoolName;
     }
 
-    @ApiModelProperty(value = "昵称", required = true)
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    @ApiModelProperty(value = "个人介绍", required = false)
-    public String getIntroduction() {
-        return introduction;
-    }
-
-    @ApiModelProperty(value = "个人介绍", required = false)
-    public void setIntroduction(String introduction) {
-        this.introduction = introduction;
+    @ApiModelProperty(value = "学校名称", required = true)
+    public void setSchoolName(String schoolName) {
+        this.schoolName = schoolName;
     }
 
 }

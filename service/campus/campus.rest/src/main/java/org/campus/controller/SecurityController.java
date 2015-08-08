@@ -67,6 +67,7 @@ public class SecurityController {
             @ApiParam(name = "phone", value = "老手机号码") @RequestParam(value = "phone", required = true) String phone,
             @ApiParam(name = "newPhone", value = "新手机号码") @RequestParam(value = "newPhone", required = true) String newPhone,
             @ApiParam(name = "checkCode", value = "验证码") @RequestParam(value = "checkCode", required = false) String checkCode,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
     }
@@ -77,6 +78,7 @@ public class SecurityController {
     public void changePassword(
             @ApiParam(name = "newPassword", value = "新密码") @RequestParam(value = "newPassword", required = true) String newPassword,
             @ApiParam(name = "newSecPassword", value = "新密码第二次输入") @RequestParam(value = "newSecPassword", required = true) String newSecPassword,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
     }
@@ -87,6 +89,18 @@ public class SecurityController {
             @ApiResponse(code = 500, message = "内部处理错误") })
     public void setNickName(
             @ApiParam(name = "nickName", value = "昵称") @RequestParam(value = "nickName", required = true) String nickName,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+
+    }
+
+    @ApiOperation(value = "设置、修改个性签名", notes = "设置、修改个性签名")
+    @RequestMapping(value = "/signature/set", method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "设置、修改个性签名成功"),
+            @ApiResponse(code = 500, message = "内部处理错误") })
+    public void setSignature(
+            @ApiParam(name = "signature", value = "个性签名") @RequestParam(value = "signature", required = true) String signature,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
     }
