@@ -113,8 +113,33 @@ public class UserController {
 
     @ApiOperation(value = "查询好友列表", notes = "查询好友列表")
     @RequestMapping(value = "/friends", method = RequestMethod.GET)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "添加关注成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询好友成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<FriendVO> getFriends(
+            @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        List<FriendVO> friendVOs = new ArrayList<FriendVO>();
+        FriendVO friendVO1 = new FriendVO();
+        friendVO1.setUserId("123123");
+        friendVO1.setNickName("asd123");
+        friendVO1.setInitial("A");
+        friendVO1.setHeadUrl("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
+        friendVOs.add(friendVO1);
+        FriendVO friendVO2 = new FriendVO();
+        friendVO2.setUserId("123322");
+        friendVO2.setNickName("Dsd123");
+        friendVO2.setInitial("D");
+        friendVO2.setIntroduction("测试");
+        friendVO2.setHeadUrl("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
+        friendVOs.add(friendVO2);
+        return friendVOs;
+    }
+
+    @ApiOperation(value = "查询粉丝列表", notes = "查询粉丝列表")
+    @RequestMapping(value = "/friends", method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询粉丝成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public List<FriendVO> getFans(
             @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,

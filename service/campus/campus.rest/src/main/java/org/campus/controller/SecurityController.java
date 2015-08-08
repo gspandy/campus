@@ -55,7 +55,7 @@ public class SecurityController {
     public void forgetPassword(
             @ApiParam(name = "loginName", value = "登录号") @RequestParam(value = "loginName", required = true) String loginName,
             @ApiParam(name = "password", value = "新密码") @RequestParam(value = "password", required = true) String password,
-            @ApiParam(name = "checkCode", value = "短信验证码") @RequestParam(value = "checkCode", required = true) String checkCode) {
+            @ApiParam(name = "secPassword", value = "第二次密码") @RequestParam(value = "secPassword", required = true) String secPassword) {
 
     }
 
@@ -75,7 +75,6 @@ public class SecurityController {
     @RequestMapping(value = "/password/change", method = RequestMethod.PUT)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "修改密码成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void changePassword(
-            @ApiParam(name = "password", value = "老密码") @RequestParam(value = "password", required = true) String password,
             @ApiParam(name = "newPassword", value = "新密码") @RequestParam(value = "newPassword", required = true) String newPassword,
             @ApiParam(name = "newSecPassword", value = "新密码第二次输入") @RequestParam(value = "newSecPassword", required = true) String newSecPassword,
             HttpSession session) {
