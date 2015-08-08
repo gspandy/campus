@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.campus.vo.CommentAddVO;
 import org.campus.vo.CommentVO;
 import org.campus.vo.FriendVO;
 import org.campus.vo.UserPhotosVO;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -124,6 +126,33 @@ public class UserController {
         commentVOs.add(commentVO2);
         Page<CommentVO> page = new PageImpl<CommentVO>(commentVOs, pageable, commentVOs.size());
         return page;
+    }
+
+    @ApiOperation(value = "相册点赞", notes = "相册点赞")
+    @RequestMapping(value = "/{photoId}/support", method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void postSupport(
+            @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+
+    }
+
+    @ApiOperation(value = "相册评论点赞", notes = "相册评论点赞")
+    @RequestMapping(value = "/{commentId}/support", method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void commentSupport(
+            @ApiParam(name = "commentId", value = "帖子评论的ID") @PathVariable String commentId,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+
+    }
+
+    @ApiOperation(value = "相册评论", notes = "相册评论")
+    @RequestMapping(value = "/{photoId}/comment", method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "评论成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void addComment(
+            @ApiParam(name = "commentAddVO", value = "评论体信息") @RequestBody CommentAddVO commentAddVO,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+
     }
 
     @ApiOperation(value = "添加关注", notes = "添加关注")
