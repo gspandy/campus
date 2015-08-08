@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.campus.repository.CollegeMapper" >
+  <resultMap id="BaseResultMap" type="org.campus.model.College" >
+    <id column="UID" property="uid" jdbcType="VARCHAR" />
+    <result column="SchoolUID" property="schooluid" jdbcType="VARCHAR" />
+    <result column="CollegeName" property="collegename" jdbcType="VARCHAR" />
+    <result column="NamePinYin" property="namepinyin" jdbcType="VARCHAR" />
+    <result column="NameFirstLetter" property="namefirstletter" jdbcType="VARCHAR" />
+    <result column="OrderBy" property="orderby" jdbcType="INTEGER" />
+    <result column="VersionNumber" property="versionnumber" jdbcType="VARCHAR" />
+    <result column="IsActive" property="isactive" jdbcType="INTEGER" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreateDate" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="LastUpdateBy" property="lastupdateby" jdbcType="VARCHAR" />
+    <result column="LastUpdateDate" property="lastupdatedate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    UID, SchoolUID, CollegeName, NamePinYin, NameFirstLetter, OrderBy, VersionNumber, 
+    IsActive, CreateBy, CreateDate, LastUpdateBy, LastUpdateDate
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from ts_sys_college
+    where UID = #{uid,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCollegeBySchoolUID" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from ts_sys_college
+    where schooluid = #{schoolUid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from ts_sys_college
+    where UID = #{uid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.campus.model.College" >
+    insert into ts_sys_college (UID, SchoolUID, CollegeName, 
+      NamePinYin, NameFirstLetter, OrderBy, 
+      VersionNumber, IsActive, CreateBy, 
+      CreateDate, LastUpdateBy, LastUpdateDate
+      )
+    values (#{uid,jdbcType=VARCHAR}, #{schooluid,jdbcType=VARCHAR}, #{collegename,jdbcType=VARCHAR}, 
+      #{namepinyin,jdbcType=VARCHAR}, #{namefirstletter,jdbcType=VARCHAR}, #{orderby,jdbcType=INTEGER}, 
+      #{versionnumber,jdbcType=VARCHAR}, #{isactive,jdbcType=INTEGER}, #{createby,jdbcType=VARCHAR}, 
+      #{createdate,jdbcType=TIMESTAMP}, #{lastupdateby,jdbcType=VARCHAR}, #{lastupdatedate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.campus.model.College" >
+    insert into ts_sys_college
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        UID,
+      </if>
+      <if test="schooluid != null" >
+        SchoolUID,
+      </if>
+      <if test="collegename != null" >
+        CollegeName,
+      </if>
+      <if test="namepinyin != null" >
+        NamePinYin,
+      </if>
+      <if test="namefirstletter != null" >
+        NameFirstLetter,
+      </if>
+      <if test="orderby != null" >
+        OrderBy,
+      </if>
+      <if test="versionnumber != null" >
+        VersionNumber,
+      </if>
+      <if test="isactive != null" >
+        IsActive,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createdate != null" >
+        CreateDate,
+      </if>
+      <if test="lastupdateby != null" >
+        LastUpdateBy,
+      </if>
+      <if test="lastupdatedate != null" >
+        LastUpdateDate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=VARCHAR},
+      </if>
+      <if test="schooluid != null" >
+        #{schooluid,jdbcType=VARCHAR},
+      </if>
+      <if test="collegename != null" >
+        #{collegename,jdbcType=VARCHAR},
+      </if>
+      <if test="namepinyin != null" >
+        #{namepinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="namefirstletter != null" >
+        #{namefirstletter,jdbcType=VARCHAR},
+      </if>
+      <if test="orderby != null" >
+        #{orderby,jdbcType=INTEGER},
+      </if>
+      <if test="versionnumber != null" >
+        #{versionnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="isactive != null" >
+        #{isactive,jdbcType=INTEGER},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastupdateby != null" >
+        #{lastupdateby,jdbcType=VARCHAR},
+      </if>
+      <if test="lastupdatedate != null" >
+        #{lastupdatedate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.campus.model.College" >
+    update ts_sys_college
+    <set >
+      <if test="schooluid != null" >
+        SchoolUID = #{schooluid,jdbcType=VARCHAR},
+      </if>
+      <if test="collegename != null" >
+        CollegeName = #{collegename,jdbcType=VARCHAR},
+      </if>
+      <if test="namepinyin != null" >
+        NamePinYin = #{namepinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="namefirstletter != null" >
+        NameFirstLetter = #{namefirstletter,jdbcType=VARCHAR},
+      </if>
+      <if test="orderby != null" >
+        OrderBy = #{orderby,jdbcType=INTEGER},
+      </if>
+      <if test="versionnumber != null" >
+        VersionNumber = #{versionnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="isactive != null" >
+        IsActive = #{isactive,jdbcType=INTEGER},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        CreateDate = #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastupdateby != null" >
+        LastUpdateBy = #{lastupdateby,jdbcType=VARCHAR},
+      </if>
+      <if test="lastupdatedate != null" >
+        LastUpdateDate = #{lastupdatedate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where UID = #{uid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.campus.model.College" >
+    update ts_sys_college
+    set SchoolUID = #{schooluid,jdbcType=VARCHAR},
+      CollegeName = #{collegename,jdbcType=VARCHAR},
+      NamePinYin = #{namepinyin,jdbcType=VARCHAR},
+      NameFirstLetter = #{namefirstletter,jdbcType=VARCHAR},
+      OrderBy = #{orderby,jdbcType=INTEGER},
+      VersionNumber = #{versionnumber,jdbcType=VARCHAR},
+      IsActive = #{isactive,jdbcType=INTEGER},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreateDate = #{createdate,jdbcType=TIMESTAMP},
+      LastUpdateBy = #{lastupdateby,jdbcType=VARCHAR},
+      LastUpdateDate = #{lastupdatedate,jdbcType=TIMESTAMP}
+    where UID = #{uid,jdbcType=VARCHAR}
+  </update>
+</mapper>
