@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.campus.repository.SchoolMapper" >
+  <resultMap id="BaseResultMap" type="org.campus.model.School" >
+    <id column="UID" property="uid" jdbcType="VARCHAR" />
+    <result column="SchoolCode" property="schoolcode" jdbcType="VARCHAR" />
+    <result column="SchoolName" property="schoolname" jdbcType="VARCHAR" />
+    <result column="NamePinYin" property="namepinyin" jdbcType="VARCHAR" />
+    <result column="NameFirstLetter" property="namefirstletter" jdbcType="VARCHAR" />
+    <result column="CityCode" property="citycode" jdbcType="VARCHAR" />
+    <result column="CityName" property="cityname" jdbcType="VARCHAR" />
+    <result column="ProvinceCode" property="provincecode" jdbcType="VARCHAR" />
+    <result column="ProvinceName" property="provincename" jdbcType="VARCHAR" />
+    <result column="DirectorCode" property="directorcode" jdbcType="VARCHAR" />
+    <result column="DirectorName" property="directorname" jdbcType="VARCHAR" />
+    <result column="RegionName" property="regionname" jdbcType="VARCHAR" />
+    <result column="OrderBy" property="orderby" jdbcType="INTEGER" />
+    <result column="VersionNumber" property="versionnumber" jdbcType="VARCHAR" />
+    <result column="IsActive" property="isactive" jdbcType="INTEGER" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreateDate" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="LastUpdateBy" property="lastupdateby" jdbcType="VARCHAR" />
+    <result column="LastUpdateDate" property="lastupdatedate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    UID, SchoolCode, SchoolName, NamePinYin, NameFirstLetter, CityCode, CityName, ProvinceCode, 
+    ProvinceName, DirectorCode, DirectorName, RegionName, OrderBy, VersionNumber, IsActive, 
+    CreateBy, CreateDate, LastUpdateBy, LastUpdateDate
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from ts_sys_school
+    where UID = #{uid,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ts_sys_school order by SchoolCode
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from ts_sys_school
+    where UID = #{uid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.campus.model.School" >
+    insert into ts_sys_school (UID, SchoolCode, SchoolName, 
+      NamePinYin, NameFirstLetter, CityCode, 
+      CityName, ProvinceCode, ProvinceName, 
+      DirectorCode, DirectorName, RegionName, 
+      OrderBy, VersionNumber, IsActive, 
+      CreateBy, CreateDate, LastUpdateBy, 
+      LastUpdateDate)
+    values (#{uid,jdbcType=VARCHAR}, #{schoolcode,jdbcType=VARCHAR}, #{schoolname,jdbcType=VARCHAR}, 
+      #{namepinyin,jdbcType=VARCHAR}, #{namefirstletter,jdbcType=VARCHAR}, #{citycode,jdbcType=VARCHAR}, 
+      #{cityname,jdbcType=VARCHAR}, #{provincecode,jdbcType=VARCHAR}, #{provincename,jdbcType=VARCHAR}, 
+      #{directorcode,jdbcType=VARCHAR}, #{directorname,jdbcType=VARCHAR}, #{regionname,jdbcType=VARCHAR}, 
+      #{orderby,jdbcType=INTEGER}, #{versionnumber,jdbcType=VARCHAR}, #{isactive,jdbcType=INTEGER}, 
+      #{createby,jdbcType=VARCHAR}, #{createdate,jdbcType=TIMESTAMP}, #{lastupdateby,jdbcType=VARCHAR}, 
+      #{lastupdatedate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="org.campus.model.School" >
+    insert into ts_sys_school
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        UID,
+      </if>
+      <if test="schoolcode != null" >
+        SchoolCode,
+      </if>
+      <if test="schoolname != null" >
+        SchoolName,
+      </if>
+      <if test="namepinyin != null" >
+        NamePinYin,
+      </if>
+      <if test="namefirstletter != null" >
+        NameFirstLetter,
+      </if>
+      <if test="citycode != null" >
+        CityCode,
+      </if>
+      <if test="cityname != null" >
+        CityName,
+      </if>
+      <if test="provincecode != null" >
+        ProvinceCode,
+      </if>
+      <if test="provincename != null" >
+        ProvinceName,
+      </if>
+      <if test="directorcode != null" >
+        DirectorCode,
+      </if>
+      <if test="directorname != null" >
+        DirectorName,
+      </if>
+      <if test="regionname != null" >
+        RegionName,
+      </if>
+      <if test="orderby != null" >
+        OrderBy,
+      </if>
+      <if test="versionnumber != null" >
+        VersionNumber,
+      </if>
+      <if test="isactive != null" >
+        IsActive,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createdate != null" >
+        CreateDate,
+      </if>
+      <if test="lastupdateby != null" >
+        LastUpdateBy,
+      </if>
+      <if test="lastupdatedate != null" >
+        LastUpdateDate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolcode != null" >
+        #{schoolcode,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolname != null" >
+        #{schoolname,jdbcType=VARCHAR},
+      </if>
+      <if test="namepinyin != null" >
+        #{namepinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="namefirstletter != null" >
+        #{namefirstletter,jdbcType=VARCHAR},
+      </if>
+      <if test="citycode != null" >
+        #{citycode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityname != null" >
+        #{cityname,jdbcType=VARCHAR},
+      </if>
+      <if test="provincecode != null" >
+        #{provincecode,jdbcType=VARCHAR},
+      </if>
+      <if test="provincename != null" >
+        #{provincename,jdbcType=VARCHAR},
+      </if>
+      <if test="directorcode != null" >
+        #{directorcode,jdbcType=VARCHAR},
+      </if>
+      <if test="directorname != null" >
+        #{directorname,jdbcType=VARCHAR},
+      </if>
+      <if test="regionname != null" >
+        #{regionname,jdbcType=VARCHAR},
+      </if>
+      <if test="orderby != null" >
+        #{orderby,jdbcType=INTEGER},
+      </if>
+      <if test="versionnumber != null" >
+        #{versionnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="isactive != null" >
+        #{isactive,jdbcType=INTEGER},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastupdateby != null" >
+        #{lastupdateby,jdbcType=VARCHAR},
+      </if>
+      <if test="lastupdatedate != null" >
+        #{lastupdatedate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.campus.model.School" >
+    update ts_sys_school
+    <set >
+      <if test="schoolcode != null" >
+        SchoolCode = #{schoolcode,jdbcType=VARCHAR},
+      </if>
+      <if test="schoolname != null" >
+        SchoolName = #{schoolname,jdbcType=VARCHAR},
+      </if>
+      <if test="namepinyin != null" >
+        NamePinYin = #{namepinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="namefirstletter != null" >
+        NameFirstLetter = #{namefirstletter,jdbcType=VARCHAR},
+      </if>
+      <if test="citycode != null" >
+        CityCode = #{citycode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityname != null" >
+        CityName = #{cityname,jdbcType=VARCHAR},
+      </if>
+      <if test="provincecode != null" >
+        ProvinceCode = #{provincecode,jdbcType=VARCHAR},
+      </if>
+      <if test="provincename != null" >
+        ProvinceName = #{provincename,jdbcType=VARCHAR},
+      </if>
+      <if test="directorcode != null" >
+        DirectorCode = #{directorcode,jdbcType=VARCHAR},
+      </if>
+      <if test="directorname != null" >
+        DirectorName = #{directorname,jdbcType=VARCHAR},
+      </if>
+      <if test="regionname != null" >
+        RegionName = #{regionname,jdbcType=VARCHAR},
+      </if>
+      <if test="orderby != null" >
+        OrderBy = #{orderby,jdbcType=INTEGER},
+      </if>
+      <if test="versionnumber != null" >
+        VersionNumber = #{versionnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="isactive != null" >
+        IsActive = #{isactive,jdbcType=INTEGER},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        CreateDate = #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastupdateby != null" >
+        LastUpdateBy = #{lastupdateby,jdbcType=VARCHAR},
+      </if>
+      <if test="lastupdatedate != null" >
+        LastUpdateDate = #{lastupdatedate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where UID = #{uid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.campus.model.School" >
+    update ts_sys_school
+    set SchoolCode = #{schoolcode,jdbcType=VARCHAR},
+      SchoolName = #{schoolname,jdbcType=VARCHAR},
+      NamePinYin = #{namepinyin,jdbcType=VARCHAR},
+      NameFirstLetter = #{namefirstletter,jdbcType=VARCHAR},
+      CityCode = #{citycode,jdbcType=VARCHAR},
+      CityName = #{cityname,jdbcType=VARCHAR},
+      ProvinceCode = #{provincecode,jdbcType=VARCHAR},
+      ProvinceName = #{provincename,jdbcType=VARCHAR},
+      DirectorCode = #{directorcode,jdbcType=VARCHAR},
+      DirectorName = #{directorname,jdbcType=VARCHAR},
+      RegionName = #{regionname,jdbcType=VARCHAR},
+      OrderBy = #{orderby,jdbcType=INTEGER},
+      VersionNumber = #{versionnumber,jdbcType=VARCHAR},
+      IsActive = #{isactive,jdbcType=INTEGER},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreateDate = #{createdate,jdbcType=TIMESTAMP},
+      LastUpdateBy = #{lastupdateby,jdbcType=VARCHAR},
+      LastUpdateDate = #{lastupdatedate,jdbcType=TIMESTAMP}
+    where UID = #{uid,jdbcType=VARCHAR}
+  </update>
+</mapper>
