@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.campus.vo.BoardDetailVO;
 import org.campus.vo.BoardVO;
 import org.campus.vo.CommentAddVO;
@@ -136,6 +138,46 @@ public class BoardController {
             @ApiParam(name = "commentAddVO", value = "评论体信息") @RequestBody CommentAddVO commentAddVO,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
 
+    }
+
+    @ApiOperation(value = "添加收藏", notes = "添加收藏")
+    @RequestMapping(value = "/{postsId}/collect", method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "收藏成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void addCollect(
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+
+    }
+
+    @ApiOperation(value = "收藏列表查询", notes = "收藏列表查询")
+    @RequestMapping(value = "/collects", method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public Page<BoardVO> findCollects(
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+        List<BoardVO> boardVOs = new ArrayList<BoardVO>();
+        BoardVO boardVO1 = new BoardVO();
+        boardVO1.setPostsId("2123123");
+        boardVO1.setUserId("123231");
+        boardVO1.setNickName("ec00000");
+        List<String> picUrls1 = new ArrayList<String>();
+        picUrls1.add("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
+        boardVO1.setPicUrls(picUrls1);
+        boardVO1.setContent("测试1");
+        boardVO1.setPublishDate(new Date());
+        boardVOs.add(boardVO1);
+        BoardVO boardVO2 = new BoardVO();
+        boardVO2.setPostsId("2123124");
+        boardVO2.setUserId("123232");
+        boardVO2.setNickName("ec00001");
+        List<String> picUrls2 = new ArrayList<String>();
+        picUrls2.add("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
+        boardVO2.setPicUrls(picUrls2);
+        boardVO2.setContent("测试2");
+        boardVO2.setPublishDate(new Date());
+        boardVOs.add(boardVO2);
+        Page<BoardVO> page = new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
+        return page;
     }
 
 }
