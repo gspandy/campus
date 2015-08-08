@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.campus.vo.CountVO;
+import org.campus.vo.CommentVO;
 import org.campus.vo.FriendVO;
 import org.campus.vo.UserPhotosVO;
 import org.campus.vo.UserVO;
@@ -40,6 +40,9 @@ public class UserController {
         UserVO userVO = new UserVO();
         userVO.setUserId("gr921113");
         userVO.setNickName("edcee3000");
+        userVO.setPostCount(128);
+        userVO.setFansCount(256);
+        userVO.setAttentionCount(512);
         return userVO;
     }
 
@@ -67,7 +70,10 @@ public class UserController {
         photosVO.setPhotoId("12312312");
         photosVO.setNickName("edcee3000");
         photosVO.setPubDate(new Date());
-        photosVO.setNote("测试");
+        photosVO.setContent("测试");
+        photosVO.setTransNum(128);
+        photosVO.setCommentNum(2);
+        photosVO.setSupportNum(99);
         Page<UserPhotosVO> page = new PageImpl<UserPhotosVO>(photosVOs, pageable, photosVOs.size());
         return page;
     }
@@ -84,22 +90,40 @@ public class UserController {
         photosVO.setPhotoId("12312312");
         photosVO.setNickName("edcee3000");
         photosVO.setPubDate(new Date());
-        photosVO.setNote("测试");
+        photosVO.setContent("测试");
+        photosVO.setTransNum(128);
+        photosVO.setCommentNum(2);
+        photosVO.setSupportNum(99);
         Page<UserPhotosVO> page = new PageImpl<UserPhotosVO>(photosVOs, pageable, photosVOs.size());
         return page;
     }
 
-    @ApiOperation(value = "查询帖子、粉丝、关注数", notes = "查询帖子、粉丝、关注数")
-    @RequestMapping(value = "/{userId}/count", method = RequestMethod.GET)
+    @ApiOperation(value = "查询相册评论", notes = "查询相册评论")
+    @RequestMapping(value = "/{photoId}/comments", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public CountVO count(
-            @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
+    public Page<CommentVO> getPhotoComments(
+            @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-        CountVO countVO = new CountVO();
-        countVO.setPostCount(128);
-        countVO.setFansCount(256);
-        countVO.setAttentionCount(512);
-        return countVO;
+        List<CommentVO> commentVOs = new ArrayList<CommentVO>();
+        CommentVO commentVO1 = new CommentVO();
+        commentVO1.setCommentId("1231");
+        commentVO1.setUserId("4323");
+        commentVO1.setNickName("ad123123");
+        commentVO1.setCommentDate(new Date());
+        commentVO1.setCommentContent("测试1");
+        commentVO1.setSupportNum(99);
+        commentVOs.add(commentVO1);
+        CommentVO commentVO2 = new CommentVO();
+        commentVO2.setCommentId("1231");
+        commentVO2.setUserId("4323");
+        commentVO2.setNickName("ad123123");
+        commentVO2.setCommentDate(new Date());
+        commentVO2.setCommentContent("测试1");
+        commentVO2.setSupportNum(99);
+        commentVOs.add(commentVO2);
+        Page<CommentVO> page = new PageImpl<CommentVO>(commentVOs, pageable, commentVOs.size());
+        return page;
     }
 
     @ApiOperation(value = "添加关注", notes = "添加关注")

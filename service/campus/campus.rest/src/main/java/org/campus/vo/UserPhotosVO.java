@@ -13,12 +13,18 @@ public class UserPhotosVO {
 
     private String nickName;
 
-    @JsonFormat(pattern="yyyy/MM/dd")
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private Date pubDate;
 
     private String url;
 
-    private String note;
+    private String content;
+
+    private int transNum;
+
+    private int commentNum;
+
+    private int supportNum;
 
     @ApiModelProperty(value = "相册Id", required = true)
     public String getPhotoId() {
@@ -60,14 +66,44 @@ public class UserPhotosVO {
         this.url = url;
     }
 
-    @ApiModelProperty(value = "发布信息", required = false)
-    public String getNote() {
-        return note;
+    @ApiModelProperty(value = "发布内容", required = false)
+    public String getContent() {
+        return content;
     }
 
-    @ApiModelProperty(value = "发布信息", required = false)
-    public void setNote(String note) {
-        this.note = note;
+    @ApiModelProperty(value = "发布内容", required = false)
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    @ApiModelProperty(value = "转发数", required = true)
+    public int getTransNum() {
+        return transNum;
+    }
+
+    @ApiModelProperty(value = "转发数", required = true)
+    public void setTransNum(int transNum) {
+        this.transNum = transNum;
+    }
+
+    @ApiModelProperty(value = "评论数", required = true)
+    public int getCommentNum() {
+        return commentNum;
+    }
+
+    @ApiModelProperty(value = "评论数", required = true)
+    public void setCommentNum(int commentNum) {
+        this.commentNum = commentNum;
+    }
+
+    @ApiModelProperty(value = "点赞数", required = true)
+    public int getSupportNum() {
+        return supportNum;
+    }
+
+    @ApiModelProperty(value = "点赞数", required = true)
+    public void setSupportNum(int supportNum) {
+        this.supportNum = supportNum;
     }
 
 }
