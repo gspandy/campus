@@ -150,6 +150,7 @@ public class UserController {
     @RequestMapping(value = "/{photoId}/comment", method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "评论成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void addComment(
+            @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
             @ApiParam(name = "commentAddVO", value = "评论体信息") @RequestBody CommentAddVO commentAddVO,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
 
@@ -159,6 +160,7 @@ public class UserController {
     @RequestMapping(value = "/attention/{userId}", method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "添加关注成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void attention(
+            @ApiParam(name = "userId", value = "用户ID") @PathVariable String userId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
@@ -168,6 +170,7 @@ public class UserController {
     @RequestMapping(value = "/remove/{userId}/attention", method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "取消关注成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void removeAttention(
+            @ApiParam(name = "userId", value = "用户ID") @PathVariable String userId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
@@ -192,14 +195,14 @@ public class UserController {
         friendVO2.setUserId("123322");
         friendVO2.setNickName("Dsd123");
         friendVO2.setInitial("D");
-        friendVO2.setIntroduction("测试");
+        friendVO2.setSignature("测试");
         friendVO2.setHeadUrl("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
         friendVOs.add(friendVO2);
         return friendVOs;
     }
 
     @ApiOperation(value = "查询粉丝列表", notes = "查询粉丝列表")
-    @RequestMapping(value = "/friends", method = RequestMethod.GET)
+    @RequestMapping(value = "/fans", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询粉丝成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<FriendVO> getFans(
             @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
@@ -217,7 +220,7 @@ public class UserController {
         friendVO2.setUserId("123322");
         friendVO2.setNickName("Dsd123");
         friendVO2.setInitial("D");
-        friendVO2.setIntroduction("测试");
+        friendVO2.setSignature("测试");
         friendVO2.setHeadUrl("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
         friendVOs.add(friendVO2);
         return friendVOs;

@@ -12,7 +12,7 @@ public class FriendVO {
 
     private String headUrl;
 
-    private String introduction;
+    private String signature;
 
     private String initial;
 
@@ -46,14 +46,14 @@ public class FriendVO {
         this.headUrl = headUrl;
     }
 
-    @ApiModelProperty(value = "个人介绍", required = false)
-    public String getIntroduction() {
-        return introduction;
+    @ApiModelProperty(value = "个性签名", required = false)
+    public String getSignature() {
+        return signature;
     }
 
-    @ApiModelProperty(value = "个人介绍", required = false)
-    public void setIntroduction(String introduction) {
-        this.introduction = introduction;
+    @ApiModelProperty(value = "个性签名", required = false)
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
     @ApiModelProperty(value = "名称首字母", required = true)

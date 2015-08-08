@@ -1,0 +1,62 @@
+package org.campus.vo;
+
+import java.util.Date;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "MessageAddVO", description = "消息发送信息")
+public class MessageAddVO {
+
+    private String message;
+
+    private List<String> faceKey;
+
+    @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+    private Date sendDate;
+
+    private String picUrl;
+
+    @ApiModelProperty(value = "消息文字内容", required = false)
+    public String getMessage() {
+        return message;
+    }
+
+    @ApiModelProperty(value = "消息文字内容", required = false)
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    @ApiModelProperty(value = "表情键值列表", required = false)
+    public List<String> getFaceKey() {
+        return faceKey;
+    }
+
+    @ApiModelProperty(value = "表情键值列表", required = false)
+    public void setFaceKey(List<String> faceKey) {
+        this.faceKey = faceKey;
+    }
+
+    @ApiModelProperty(value = "发送者时间", required = true)
+    public Date getSendDate() {
+        return sendDate;
+    }
+
+    @ApiModelProperty(value = "发送者时间", required = true)
+    public void setSendDate(Date sendDate) {
+        this.sendDate = sendDate;
+    }
+
+    @ApiModelProperty(value = "发送图片地址", required = false)
+    public String getPicUrl() {
+        return picUrl;
+    }
+
+    @ApiModelProperty(value = "发送图片地址", required = false)
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
+    }
+
+}

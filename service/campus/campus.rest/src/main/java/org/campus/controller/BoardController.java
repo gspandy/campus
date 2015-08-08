@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.campus.vo.BoardDetailVO;
+import org.campus.vo.BoardPublishVO;
 import org.campus.vo.BoardVO;
 import org.campus.vo.CommentAddVO;
 import org.campus.vo.CommentVO;
@@ -135,6 +136,7 @@ public class BoardController {
     @RequestMapping(value = "/{postsId}/comment", method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "评论成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void addComment(
+            @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
             @ApiParam(name = "commentAddVO", value = "评论体信息") @RequestBody CommentAddVO commentAddVO,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
 
@@ -144,6 +146,17 @@ public class BoardController {
     @RequestMapping(value = "/{postsId}/collect", method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "收藏成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void addCollect(
+            @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+
+    }
+
+    @ApiOperation(value = "取消收藏", notes = "取消收藏")
+    @RequestMapping(value = "/collect/{postsId}/cancel", method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "取消收藏成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void cancelCollect(
+            @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
@@ -178,6 +191,26 @@ public class BoardController {
         boardVOs.add(boardVO2);
         Page<BoardVO> page = new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
         return page;
+    }
+
+    @ApiOperation(value = "审帖", notes = "审帖")
+    @RequestMapping(value = "/{postsId}/check", method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "审帖成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void check(
+            @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
+            @ApiParam(name = "result", value = "审核结果(0:举报;1:赞;2:踩)") @PathVariable String result,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+
+    }
+
+    @ApiOperation(value = "帖子发布", notes = "帖子发布")
+    @RequestMapping(value = "/publish", method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "发布成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void publish(
+            @ApiParam(name = "BoardPublishVO", value = "发布内容体") @RequestBody BoardPublishVO boardPublishVO,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
     }
 
 }

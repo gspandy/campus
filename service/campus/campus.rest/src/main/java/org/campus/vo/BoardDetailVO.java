@@ -16,7 +16,7 @@ public class BoardDetailVO {
 
     private String nickName;
 
-    @JsonFormat(pattern = "yyyy/MM/dd")
+    @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date publishDate;
 
     private List<String> picUrls;

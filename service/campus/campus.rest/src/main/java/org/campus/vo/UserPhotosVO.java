@@ -13,7 +13,7 @@ public class UserPhotosVO {
 
     private String nickName;
 
-    @JsonFormat(pattern = "yyyy/MM/dd")
+    @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date pubDate;
 
     private String url;
