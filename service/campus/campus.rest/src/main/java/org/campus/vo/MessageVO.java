@@ -10,6 +10,8 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "MessageVO", description = "消息信息")
 public class MessageVO {
 
+    private String conversationId;
+
     private String messageId;
 
     private String message;
@@ -29,6 +31,16 @@ public class MessageVO {
 
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date readDate;
+
+    @ApiModelProperty(value = "用户聊天的会话ID，每对用户之前有一个唯一的会话ID", required = true)
+    public String getConversationId() {
+        return conversationId;
+    }
+
+    @ApiModelProperty(value = "用户聊天的会话ID，每对用户之前有一个唯一的会话ID", required = true)
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
+    }
 
     @ApiModelProperty(value = "消息ID", required = true)
     public String getMessageId() {
@@ -101,12 +113,12 @@ public class MessageVO {
     }
 
     @ApiModelProperty(value = "是否已读(0:未读;1:已读)", required = true)
-    public String isRead() {
+    public String getIsRead() {
         return isRead;
     }
 
     @ApiModelProperty(value = "是否已读(0:未读;1:已读)", required = true)
-    public void setRead(String isRead) {
+    public void setIsRead(String isRead) {
         this.isRead = isRead;
     }
 

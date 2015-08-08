@@ -6,9 +6,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.campus.vo.BoardVO;
 import org.campus.vo.CommentAddVO;
 import org.campus.vo.CommentVO;
 import org.campus.vo.FriendVO;
+import org.campus.vo.MyCommentVO;
 import org.campus.vo.UserPhotosVO;
 import org.campus.vo.UserVO;
 import org.springframework.data.domain.Page;
@@ -224,6 +226,80 @@ public class UserController {
         friendVO2.setHeadUrl("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
         friendVOs.add(friendVO2);
         return friendVOs;
+    }
+
+    @ApiOperation(value = "查询我的评论", notes = "查询我的评论")
+    @RequestMapping(value = "/mycomments", method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public Page<MyCommentVO> getMycomments(
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        List<MyCommentVO> myCommentVOs = new ArrayList<MyCommentVO>();
+        MyCommentVO commentVO1 = new MyCommentVO();
+        List<CommentVO> list = new ArrayList<CommentVO>();
+        CommentVO vo = new CommentVO();
+        vo.setCommentId("1231");
+        vo.setUserId("4323");
+        vo.setNickName("ad123123");
+        vo.setCommentDate(new Date());
+        vo.setCommentContent("测试1");
+        vo.setSupportNum(99);
+        list.add(vo);
+        commentVO1.setCommentVOs(list);
+        myCommentVOs.add(commentVO1);
+        commentVO1.setPostId("123");
+        commentVO1.setContent("测试1");
+        myCommentVOs.add(commentVO1);
+        MyCommentVO commentVO2 = new MyCommentVO();
+        List<CommentVO> list1 = new ArrayList<CommentVO>();
+        CommentVO vo1 = new CommentVO();
+        vo1.setCommentId("1231");
+        vo1.setUserId("4323");
+        vo1.setNickName("ad123123");
+        vo1.setCommentDate(new Date());
+        vo1.setCommentContent("测试1");
+        vo1.setSupportNum(99);
+        list1.add(vo1);
+        commentVO2.setCommentVOs(list1);
+        myCommentVOs.add(commentVO2);
+        commentVO2.setPostId("124");
+        commentVO2.setContent("测试2");
+        myCommentVOs.add(commentVO2);
+        Page<MyCommentVO> page = new PageImpl<MyCommentVO>(myCommentVOs, pageable, myCommentVOs.size());
+        return page;
+    }
+
+    @ApiOperation(value = "查询我点过的赞", notes = "查询我点过的赞")
+    @RequestMapping(value = "/mysupports", method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public Page<BoardVO> getMysupports(
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        List<BoardVO> boardVOs = new ArrayList<BoardVO>();
+        BoardVO boardVO1 = new BoardVO();
+        boardVO1.setPostsId("2123123");
+        boardVO1.setUserId("123231");
+        boardVO1.setNickName("ec00000");
+        List<String> picUrls1 = new ArrayList<String>();
+        picUrls1.add("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
+        boardVO1.setPicUrls(picUrls1);
+        boardVO1.setContent("测试1");
+        boardVO1.setPublishDate(new Date());
+        boardVOs.add(boardVO1);
+        BoardVO boardVO2 = new BoardVO();
+        boardVO2.setPostsId("2123124");
+        boardVO2.setUserId("123232");
+        boardVO2.setNickName("ec00001");
+        List<String> picUrls2 = new ArrayList<String>();
+        picUrls2.add("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
+        boardVO2.setPicUrls(picUrls2);
+        boardVO2.setContent("测试2");
+        boardVO2.setPublishDate(new Date());
+        boardVOs.add(boardVO2);
+        Page<BoardVO> page = new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
+        return page;
     }
 
 }
