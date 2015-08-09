@@ -1,10 +1,13 @@
 package org.campus.controller;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.campus.model.College;
+import org.campus.model.Profession;
 import org.campus.model.School;
 import org.campus.service.SchoolService;
 import org.campus.vo.CollegeVO;
@@ -57,10 +60,7 @@ public class SchoolController {
     @ApiOperation(value = "学校信息", notes = "学校信息")
     @RequestMapping(value = "/schools", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public Page<SchoolVO> findSchools(
-            @ApiParam(name = "schoolName", value = "学校名称，支持模糊匹配") @RequestParam(value = "schoolName", required = false) String schoolName,
-            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+    public Page<SchoolVO> findSchools(@ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable) {
     	List<SchoolVO> schoolVOs = new ArrayList<SchoolVO>();
 
     	Page<School> pageSchools = this.schoolSvc.getAllSchool(pageable);
@@ -79,54 +79,49 @@ public class SchoolController {
     @ApiOperation(value = "院系信息", notes = "院系信息")
     @RequestMapping(value = "/{schoolId}/colleges", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public Page<CollegeVO> findColleges(
-            @ApiParam(name = "schoolId", value = "学校ID") @PathVariable String schoolId,
-            @ApiParam(name = "collegeName", value = "院系名称，支持模糊匹配") @RequestParam(value = "collegeName", required = false) String collegeName,
-            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+    public List<CollegeVO> findColleges(
+            @ApiParam(name = "schoolId", value = "学校ID") @PathVariable String schoolId) {
         List<CollegeVO> collegeVOs = new ArrayList<CollegeVO>();
-        CollegeVO collegeVO = new CollegeVO();
-        collegeVO.setCollegeId("312312");
-        collegeVO.setCollegeName("计算机学院");
-        collegeVOs.add(collegeVO);
-        Page<CollegeVO> page = new PageImpl<CollegeVO>(collegeVOs, pageable, collegeVOs.size());
-        return page;
+        
+        List<College> colleges = this.schoolSvc.getSchoolCollege(schoolId);
+        for (College college:colleges){
+        	CollegeVO collegeVO = new CollegeVO();
+        	collegeVO.setCollegeId(college.getUid());
+        	collegeVO.setCollegeName(college.getCollegename());
+        	collegeVOs.add(collegeVO);
+        }
+        
+        return collegeVOs;
     }
 
-    @ApiOperation(value = "院系信息", notes = "院系信息")
-    @RequestMapping(value = "/{collegeId}/professions", method = RequestMethod.GET)
+    @ApiOperation(value = "专业信息", notes = "专业信息")
+    @RequestMapping(value = "/{schoolId}/{collegeId}/professions", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public Page<ProfessionVO> findProfessions(
-            @ApiParam(name = "collegeId", value = "院系ID") @PathVariable String collegeId,
-            @ApiParam(name = "collegeName", value = "院系名称，支持模糊匹配") @RequestParam(value = "collegeName", required = false) String collegeName,
-            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+    public List<ProfessionVO> findProfessions(
+            @ApiParam(name = "collegeId", value = "院系ID") @PathVariable("collegeId") String collegeId,
+            @ApiParam(name = "schoolId", value = "学校ID") @PathVariable("schoolId") String schoolId) {
         List<ProfessionVO> professionVOs = new ArrayList<ProfessionVO>();
-        ProfessionVO professionVO = new ProfessionVO();
-        professionVO.setProfessionId("3123121");
-        professionVO.setProfessionName("网路工程");
-        professionVOs.add(professionVO);
-        Page<ProfessionVO> page = new PageImpl<ProfessionVO>(professionVOs, pageable, professionVOs.size());
-        return page;
+        
+        List<Profession> professions = this.schoolSvc.getCollegeProfession(collegeId, schoolId);
+        for(Profession profession:professions){
+        	ProfessionVO professionVO = new ProfessionVO();
+        	professionVO.setProfessionId(profession.getUid());
+        	professionVO.setProfessionName(profession.getProfessionname());
+        	professionVOs.add(professionVO);
+        }
+        return professionVOs;
     }
 
     @ApiOperation(value = "院系信息", notes = "院系信息")
-    @RequestMapping(value = "/{professionId}/inSchoolYear", method = RequestMethod.GET)
+    @RequestMapping(value = "/inSchoolYear", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public List<Integer> getInSchoolYear(
-            @ApiParam(name = "professionId", value = "专业ID") @PathVariable String professionId,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-        List<Integer> integers = new ArrayList<Integer>();
-        integers.add(2006);
-        integers.add(2007);
-        integers.add(2008);
-        integers.add(2009);
-        integers.add(2010);
-        integers.add(2011);
-        integers.add(2012);
-        integers.add(2013);
-        integers.add(2014);
-        integers.add(2015);
+    public List<String> getInSchoolYear() {
+        List<String> integers = new ArrayList<String>();
+        Calendar cal = Calendar.getInstance();
+        int thisYear = cal.get(Calendar.YEAR);
+        for(int i=2006;i<=thisYear;i++){
+        	integers.add(Integer.toString(i));
+        }
         return integers;
     }
 
