@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.campus.repository.ProfessionMapper" >
+  <resultMap id="BaseResultMap" type="org.campus.model.Profession" >
+    <id column="UID" property="uid" jdbcType="VARCHAR" />
+    <result column="SchoolUID" property="schooluid" jdbcType="VARCHAR" />
+    <result column="CollegeUID" property="collegeuid" jdbcType="VARCHAR" />
+    <result column="TwoCategoryUID" property="twocategoryuid" jdbcType="VARCHAR" />
+    <result column="ProfessionCode" property="professioncode" jdbcType="VARCHAR" />
+    <result column="ProfessionName" property="professionname" jdbcType="VARCHAR" />
+    <result column="NamePinYin" property="namepinyin" jdbcType="VARCHAR" />
+    <result column="NameFirstLetter" property="namefirstletter" jdbcType="VARCHAR" />
+    <result column="OpenDate" property="opendate" jdbcType="INTEGER" />
+    <result column="SchoolingLenth" property="schoolinglenth" jdbcType="INTEGER" />
+    <result column="DegreeName" property="degreename" jdbcType="VARCHAR" />
+    <result column="VersionNumber" property="versionnumber" jdbcType="VARCHAR" />
+    <result column="IsActive" property="isactive" jdbcType="INTEGER" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreateDate" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="LastUpdateBy" property="lastupdateby" jdbcType="VARCHAR" />
+    <result column="LastUpdateDate" property="lastupdatedate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    UID, SchoolUID, CollegeUID, TwoCategoryUID, ProfessionCode, ProfessionName, NamePinYin, 
+    NameFirstLetter, OpenDate, SchoolingLenth, DegreeName, VersionNumber, IsActive, CreateBy, 
+    CreateDate, LastUpdateBy, LastUpdateDate
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from ts_sys_profession
+    where UID = #{uid,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByCollege" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ts_sys_profession
+    where CollegeUID = #{collegeId,jdbcType=VARCHAR} and SchoolUID = #{schoolId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from ts_sys_profession
+    where UID = #{uid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.campus.model.Profession" >
+    insert into ts_sys_profession (UID, SchoolUID, CollegeUID, 
+      TwoCategoryUID, ProfessionCode, ProfessionName, 
+      NamePinYin, NameFirstLetter, OpenDate, 
+      SchoolingLenth, DegreeName, VersionNumber, 
+      IsActive, CreateBy, CreateDate, 
+      LastUpdateBy, LastUpdateDate)
+    values (#{uid,jdbcType=VARCHAR}, #{schooluid,jdbcType=VARCHAR}, #{collegeuid,jdbcType=VARCHAR}, 
+      #{twocategoryuid,jdbcType=VARCHAR}, #{professioncode,jdbcType=VARCHAR}, #{professionname,jdbcType=VARCHAR}, 
+      #{namepinyin,jdbcType=VARCHAR}, #{namefirstletter,jdbcType=VARCHAR}, #{opendate,jdbcType=INTEGER}, 
+      #{schoolinglenth,jdbcType=INTEGER}, #{degreename,jdbcType=VARCHAR}, #{versionnumber,jdbcType=VARCHAR}, 
+      #{isactive,jdbcType=INTEGER}, #{createby,jdbcType=VARCHAR}, #{createdate,jdbcType=TIMESTAMP}, 
+      #{lastupdateby,jdbcType=VARCHAR}, #{lastupdatedate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="org.campus.model.Profession" >
+    insert into ts_sys_profession
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        UID,
+      </if>
+      <if test="schooluid != null" >
+        SchoolUID,
+      </if>
+      <if test="collegeuid != null" >
+        CollegeUID,
+      </if>
+      <if test="twocategoryuid != null" >
+        TwoCategoryUID,
+      </if>
+      <if test="professioncode != null" >
+        ProfessionCode,
+      </if>
+      <if test="professionname != null" >
+        ProfessionName,
+      </if>
+      <if test="namepinyin != null" >
+        NamePinYin,
+      </if>
+      <if test="namefirstletter != null" >
+        NameFirstLetter,
+      </if>
+      <if test="opendate != null" >
+        OpenDate,
+      </if>
+      <if test="schoolinglenth != null" >
+        SchoolingLenth,
+      </if>
+      <if test="degreename != null" >
+        DegreeName,
+      </if>
+      <if test="versionnumber != null" >
+        VersionNumber,
+      </if>
+      <if test="isactive != null" >
+        IsActive,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createdate != null" >
+        CreateDate,
+      </if>
+      <if test="lastupdateby != null" >
+        LastUpdateBy,
+      </if>
+      <if test="lastupdatedate != null" >
+        LastUpdateDate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=VARCHAR},
+      </if>
+      <if test="schooluid != null" >
+        #{schooluid,jdbcType=VARCHAR},
+      </if>
+      <if test="collegeuid != null" >
+        #{collegeuid,jdbcType=VARCHAR},
+      </if>
+      <if test="twocategoryuid != null" >
+        #{twocategoryuid,jdbcType=VARCHAR},
+      </if>
+      <if test="professioncode != null" >
+        #{professioncode,jdbcType=VARCHAR},
+      </if>
+      <if test="professionname != null" >
+        #{professionname,jdbcType=VARCHAR},
+      </if>
+      <if test="namepinyin != null" >
+        #{namepinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="namefirstletter != null" >
+        #{namefirstletter,jdbcType=VARCHAR},
+      </if>
+      <if test="opendate != null" >
+        #{opendate,jdbcType=INTEGER},
+      </if>
+      <if test="schoolinglenth != null" >
+        #{schoolinglenth,jdbcType=INTEGER},
+      </if>
+      <if test="degreename != null" >
+        #{degreename,jdbcType=VARCHAR},
+      </if>
+      <if test="versionnumber != null" >
+        #{versionnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="isactive != null" >
+        #{isactive,jdbcType=INTEGER},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastupdateby != null" >
+        #{lastupdateby,jdbcType=VARCHAR},
+      </if>
+      <if test="lastupdatedate != null" >
+        #{lastupdatedate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.campus.model.Profession" >
+    update ts_sys_profession
+    <set >
+      <if test="schooluid != null" >
+        SchoolUID = #{schooluid,jdbcType=VARCHAR},
+      </if>
+      <if test="collegeuid != null" >
+        CollegeUID = #{collegeuid,jdbcType=VARCHAR},
+      </if>
+      <if test="twocategoryuid != null" >
+        TwoCategoryUID = #{twocategoryuid,jdbcType=VARCHAR},
+      </if>
+      <if test="professioncode != null" >
+        ProfessionCode = #{professioncode,jdbcType=VARCHAR},
+      </if>
+      <if test="professionname != null" >
+        ProfessionName = #{professionname,jdbcType=VARCHAR},
+      </if>
+      <if test="namepinyin != null" >
+        NamePinYin = #{namepinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="namefirstletter != null" >
+        NameFirstLetter = #{namefirstletter,jdbcType=VARCHAR},
+      </if>
+      <if test="opendate != null" >
+        OpenDate = #{opendate,jdbcType=INTEGER},
+      </if>
+      <if test="schoolinglenth != null" >
+        SchoolingLenth = #{schoolinglenth,jdbcType=INTEGER},
+      </if>
+      <if test="degreename != null" >
+        DegreeName = #{degreename,jdbcType=VARCHAR},
+      </if>
+      <if test="versionnumber != null" >
+        VersionNumber = #{versionnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="isactive != null" >
+        IsActive = #{isactive,jdbcType=INTEGER},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        CreateDate = #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastupdateby != null" >
+        LastUpdateBy = #{lastupdateby,jdbcType=VARCHAR},
+      </if>
+      <if test="lastupdatedate != null" >
+        LastUpdateDate = #{lastupdatedate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where UID = #{uid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.campus.model.Profession" >
+    update ts_sys_profession
+    set SchoolUID = #{schooluid,jdbcType=VARCHAR},
+      CollegeUID = #{collegeuid,jdbcType=VARCHAR},
+      TwoCategoryUID = #{twocategoryuid,jdbcType=VARCHAR},
+      ProfessionCode = #{professioncode,jdbcType=VARCHAR},
+      ProfessionName = #{professionname,jdbcType=VARCHAR},
+      NamePinYin = #{namepinyin,jdbcType=VARCHAR},
+      NameFirstLetter = #{namefirstletter,jdbcType=VARCHAR},
+      OpenDate = #{opendate,jdbcType=INTEGER},
+      SchoolingLenth = #{schoolinglenth,jdbcType=INTEGER},
+      DegreeName = #{degreename,jdbcType=VARCHAR},
+      VersionNumber = #{versionnumber,jdbcType=VARCHAR},
+      IsActive = #{isactive,jdbcType=INTEGER},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreateDate = #{createdate,jdbcType=TIMESTAMP},
+      LastUpdateBy = #{lastupdateby,jdbcType=VARCHAR},
+      LastUpdateDate = #{lastupdatedate,jdbcType=TIMESTAMP}
+    where UID = #{uid,jdbcType=VARCHAR}
+  </update>
+</mapper>

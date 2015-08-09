@@ -5,10 +5,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.campus.model.School;
+import org.campus.service.SchoolService;
 import org.campus.vo.CollegeVO;
 import org.campus.vo.ProfessionVO;
 import org.campus.vo.SchoolVO;
 import org.campus.vo.UserSchoolVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +33,10 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @RequestMapping("/school")
 @Api(value = "SchoolController", description = "院校相关操作")
 public class SchoolController {
-
+	
+	@Autowired
+	private SchoolService schoolSvc;
+	
     @ApiOperation(value = "添加用户学校信息", notes = "添加用户学校信息")
     @RequestMapping(value = "/user/school", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
@@ -55,11 +61,17 @@ public class SchoolController {
             @ApiParam(name = "schoolName", value = "学校名称，支持模糊匹配") @RequestParam(value = "schoolName", required = false) String schoolName,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-        List<SchoolVO> schoolVOs = new ArrayList<SchoolVO>();
-        SchoolVO schoolVO = new SchoolVO();
-        schoolVO.setSchoolId("12312312");
-        schoolVO.setSchoolName("北京大学");
-        schoolVOs.add(schoolVO);
+    	List<SchoolVO> schoolVOs = new ArrayList<SchoolVO>();
+
+    	Page<School> pageSchools = this.schoolSvc.getAllSchool(pageable);
+    	List<School> schools = pageSchools.getContent();
+    	for (School school:schools){
+    		SchoolVO schoolVO = new SchoolVO();
+    		schoolVO.setSchoolId(school.getUid());
+    		schoolVO.setSchoolName(school.getSchoolname());
+    		schoolVOs.add(schoolVO);
+    	}
+    	
         Page<SchoolVO> page = new PageImpl<SchoolVO>(schoolVOs, pageable, schoolVOs.size());
         return page;
     }

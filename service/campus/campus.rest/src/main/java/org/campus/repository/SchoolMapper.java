@@ -1,8 +1,8 @@
 package org.campus.repository;
 
-import java.util.List;
-
 import org.campus.model.School;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -19,5 +19,5 @@ public interface SchoolMapper {
 
     int updateByPrimaryKey(School record);
     
-    List<School> selectAll();
+    Page<School> selectAll(Pageable pageable);
 }
