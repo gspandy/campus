@@ -2,44 +2,65 @@ package org.campus.util;
 
 import java.security.MessageDigest;
 
+import org.campus.config.SystemConfig;
+import org.campus.core.exception.CampusException;
+import org.springframework.util.StringUtils;
+
 public class MD5Util {
 
-    private final static String[] hexDigits = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d",
-            "e", "f" };
+    /**
+     * 
+     * 功能描述: <br>
+     * MD5加密
+     *
+     * @param origin 待加密数据
+     * @return
+     *
+     */
+    public static String encrypt(String origin) {
+        return encrypt(origin, SystemConfig.getString("password_md5_charset"));
+    }
 
-    public static String encodeByMD5(String originString) {
-        if (originString != null) {
+    /**
+     * 
+     * 功能描述: <br>
+     * MD5加密
+     *
+     * @param origin 待加密数据
+     * @param charSet 字符集
+     * @return
+     *
+     */
+    public static String encrypt(String origin, String charSet) {
+        if (origin != null) {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append(origin).append(SystemConfig.getString("password_md5_key"));
             try {
                 MessageDigest md = MessageDigest.getInstance("MD5");
-                byte[] results = md.digest(originString.getBytes());
-                String resultString = byteArrayToHexString(results);
-                return resultString.toUpperCase();
+                byte[] results = md.digest(buffer.toString().getBytes(charSet));
+                return byteArrayToHexString(results).toUpperCase();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                throw new CampusException("MD5加密失败");
             }
         }
         return null;
     }
 
     private static String byteArrayToHexString(byte[] b) {
-        StringBuffer resultSb = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < b.length; i++) {
-            resultSb.append(byteToHexString(b[i]));
+            int v = b[i] & 0xFF;
+            String hex = Integer.toHexString(v);
+            if (hex.length() < 2) {
+                buffer.append(0);
+            }
+            buffer.append(hex);
         }
-        return resultSb.toString();
-    }
-
-    private static String byteToHexString(byte b) {
-        int n = b;
-        if (n < 0)
-            n = 256 + n;
-        int d1 = n / 16;
-        int d2 = n % 16;
-        return hexDigits[d1] + hexDigits[d2];
+        return buffer.toString();
     }
 
     public static void main(String[] args) {
-        System.out.println(encodeByMD5("admin"));
+        System.out.println(encrypt("admin"));
     }
 
 }
