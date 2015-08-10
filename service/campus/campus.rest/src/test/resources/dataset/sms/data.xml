@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<ts_app_smsrecord UID="1" PhoneNumber="18651874535"
+		SMSMsg="测试" SMSType="1" />
+</dataset>

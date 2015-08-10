@@ -8,4 +8,10 @@ public interface Constant {
 
     int CACHE_TIME = 1800;// 默认缓存时间,单位秒
 
+    String SUCCESS = "success";
+
+    String ERROR = "error";
+
+    String CREATE_BY = "CAMP";
+
 }
