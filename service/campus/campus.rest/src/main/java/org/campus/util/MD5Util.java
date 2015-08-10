@@ -4,7 +4,6 @@ import java.security.MessageDigest;
 
 import org.campus.config.SystemConfig;
 import org.campus.core.exception.CampusException;
-import org.springframework.util.StringUtils;
 
 public class MD5Util {
 
