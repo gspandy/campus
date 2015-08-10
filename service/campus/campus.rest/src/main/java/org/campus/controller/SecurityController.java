@@ -32,35 +32,38 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "SecurityController", description = "登录、注册、退出等相关操作")
 public class SecurityController {
 
-    @ApiOperation(value = "登录", notes = "登录")
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @ApiOperation(value = "登录:1.0", notes = "登录[API-Version=1.0]")
+    @RequestMapping(value = "/login", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "登录成功"), @ApiResponse(code = 500, message = "内部处理错误"),
             @ApiResponse(code = 1000002, message = "登录失败") })
     public LoginResponseVO login(@ApiParam(name = "loginVO", value = "登录信息体") @RequestBody LoginRequestVO loginVO) {
+    	//TODO:待完成
         LoginResponseVO responseVO = new LoginResponseVO();
         responseVO.setSignId(ToolUtil.getUUid());
         return responseVO;
     }
 
-    @ApiOperation(value = "注册", notes = "注册")
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @ApiOperation(value = "注册:1.0", notes = "注册[API-Version=1.0]")
+    @RequestMapping(value = "/register", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "注册成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void register(@ApiParam(name = "registerVO", value = "注册信息体") @RequestBody RegisterVO registerVO) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "忘记密码", notes = "忘记密码")
-    @RequestMapping(value = "/password/reset", method = RequestMethod.PUT)
+    @ApiOperation(value = "忘记密码:1.0", notes = "忘记密码[API-Version=1.0]")
+    @RequestMapping(value = "/password/reset", headers={"API-Version=1.0"}, method = RequestMethod.PUT)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "修改密码成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void forgetPassword(
             @ApiParam(name = "loginName", value = "登录号") @RequestParam(value = "loginName", required = true) String loginName,
             @ApiParam(name = "password", value = "新密码") @RequestParam(value = "password", required = true) String password,
             @ApiParam(name = "secPassword", value = "第二次密码") @RequestParam(value = "secPassword", required = true) String secPassword) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "修改手机号码", notes = "修改手机号码")
-    @RequestMapping(value = "/phone/change", method = RequestMethod.PUT)
+    @ApiOperation(value = "修改手机号码:1.0", notes = "修改手机号码[API-Version=1.0]")
+    @RequestMapping(value = "/phone/change", headers={"API-Version=1.0"}, method = RequestMethod.PUT)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "修改手机号码成功"),
             @ApiResponse(code = 500, message = "内部处理错误") })
     public void changePhone(
@@ -70,10 +73,11 @@ public class SecurityController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "修改密码", notes = "修改密码")
-    @RequestMapping(value = "/password/change", method = RequestMethod.PUT)
+    @ApiOperation(value = "修改密码:1.0", notes = "修改密码[API-Version=1.0]")
+    @RequestMapping(value = "/password/change", headers={"API-Version=1.0"}, method = RequestMethod.PUT)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "修改密码成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void changePassword(
             @ApiParam(name = "newPassword", value = "新密码") @RequestParam(value = "newPassword", required = true) String newPassword,
@@ -81,10 +85,11 @@ public class SecurityController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "设置、修改昵称", notes = "设置、修改昵称")
-    @RequestMapping(value = "/nickname/set", method = RequestMethod.POST)
+    @ApiOperation(value = "设置、修改昵称:1.0", notes = "设置、修改昵称[API-Version=1.0]")
+    @RequestMapping(value = "/nickname/set", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "设置、修改昵称成功"),
             @ApiResponse(code = 500, message = "内部处理错误") })
     public void setNickName(
@@ -92,10 +97,11 @@ public class SecurityController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "设置、修改个性签名", notes = "设置、修改个性签名")
-    @RequestMapping(value = "/signature/set", method = RequestMethod.POST)
+    @ApiOperation(value = "设置、修改个性签名:1.0", notes = "设置、修改个性签名[API-Version=1.0]")
+    @RequestMapping(value = "/signature/set", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "设置、修改个性签名成功"),
             @ApiResponse(code = 500, message = "内部处理错误") })
     public void setSignature(
@@ -103,19 +109,21 @@ public class SecurityController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "验证手机验证码", notes = "验证手机验证码")
-    @RequestMapping(value = "/verifyCode", method = RequestMethod.POST)
+    @ApiOperation(value = "验证手机验证码:1.0", notes = "验证手机验证码[API-Version=1.0]")
+    @RequestMapping(value = "/verifyCode", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "验证手机验证码成功"),
             @ApiResponse(code = 500, message = "内部处理错误") })
     public void verifyCode(
             @ApiParam(name = "verifyCodeReqVO", value = "验证验证码请求信息") @RequestBody VerifyCodeReqVO verifyCodeReqVO) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "图片验证码生成", notes = "图片验证码生成")
-    @RequestMapping(value = "/randomCode", method = RequestMethod.GET)
+    @ApiOperation(value = "图片验证码生成:1.0", notes = "图片验证码生成[API-Version=1.0]")
+    @RequestMapping(value = "/randomCode", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "验证码生成成功"),
             @ApiResponse(code = 1100001, message = "验证码生成失败"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void createCode(HttpServletRequest request, HttpServletResponse response) {
@@ -135,20 +143,22 @@ public class SecurityController {
         }
     }
 
-    @ApiOperation(value = "获取短信验证码", notes = "获取短信验证码")
-    @RequestMapping(value = "/checkCode", method = RequestMethod.GET)
+    @ApiOperation(value = "获取短信验证码:1.0", notes = "获取短信验证码[API-Version=1.0]")
+    @RequestMapping(value = "/checkCode", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "获取短信验证码成功"),
             @ApiResponse(code = 500, message = "内部处理错误") })
     public void getCheckCode(
             @ApiParam(name = "phone", value = "手机号码") @RequestParam(value = "phone", required = true) String phone,
             @ApiParam(name = "type", value = "短信验证码类型(1.注册短信;2.找回密码;3.修改手机号)") @RequestParam(value = "type", required = true) String type) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "登出", notes = "登出")
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @ApiOperation(value = "登出:1.0", notes = "登出[API-Version=1.0]")
+    @RequestMapping(value = "/logout", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "登出成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void logout(HttpSession session) {
+    	//TODO:待完成
     }
 
 }

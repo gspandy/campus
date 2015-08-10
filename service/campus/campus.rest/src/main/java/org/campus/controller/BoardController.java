@@ -33,13 +33,14 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "BoardController", description = "板块相关操作")
 public class BoardController {
 
-    @ApiOperation(value = "帖子列表查询", notes = "帖子列表查询")
-    @RequestMapping(value = "/posts", method = RequestMethod.GET)
+    @ApiOperation(value = "帖子列表查询:1.0", notes = "帖子列表查询[API-Version=1.0]")
+    @RequestMapping(value = "/posts", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<BoardVO> findBoard(
             @ApiParam(name = "type", value = "1:休闲;2:新鲜;3:秘密;4:言论;5:热门;6:关注") @RequestParam(value = "type", required = true) String type,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+    	//TODO:待完成
         List<BoardVO> boardVOs = new ArrayList<BoardVO>();
         BoardVO boardVO1 = new BoardVO();
         boardVO1.setPostsId("2123123");
@@ -65,12 +66,13 @@ public class BoardController {
         return page;
     }
 
-    @ApiOperation(value = "帖子详情查询", notes = "帖子详情查询")
-    @RequestMapping(value = "/{postsId}/detail", method = RequestMethod.GET)
+    @ApiOperation(value = "帖子详情查询:1.0", notes = "帖子详情查询[API-Version=1.0]")
+    @RequestMapping(value = "/{postsId}/detail", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public BoardDetailVO findBoardDetail(
             @ApiParam(name = "postsId", value = "帖子的ID") @PathVariable String postsId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+    	//TODO:待完成
         BoardDetailVO boardDetailVO = new BoardDetailVO();
         boardDetailVO.setPostsId("123123");
         boardDetailVO.setUserId("123232");
@@ -86,13 +88,14 @@ public class BoardController {
         return boardDetailVO;
     }
 
-    @ApiOperation(value = "查询帖子评论内容", notes = "查询帖子评论内容")
-    @RequestMapping(value = "/{postsId}/comments", method = RequestMethod.GET)
+    @ApiOperation(value = "查询帖子评论内容:1.0", notes = "查询帖子评论内容[API-Version=1.0]")
+    @RequestMapping(value = "/{postsId}/comments", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<CommentVO> findComments(
             @ApiParam(name = "postsId", value = "帖子的ID") @PathVariable String postsId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+    	//TODO:待完成
         List<CommentVO> commentVOs = new ArrayList<CommentVO>();
         CommentVO commentVO1 = new CommentVO();
         commentVO1.setCommentId("1231");
@@ -114,60 +117,66 @@ public class BoardController {
         return page;
     }
 
-    @ApiOperation(value = "帖子点赞", notes = "帖子点赞")
-    @RequestMapping(value = "/{postsId}/support", method = RequestMethod.POST)
+    @ApiOperation(value = "帖子点赞:1.0", notes = "帖子点赞[API-Version=1.0]")
+    @RequestMapping(value = "/{postsId}/support", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void postSupport(
             @ApiParam(name = "postsId", value = "帖子的ID") @PathVariable String postsId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "帖子评论点赞", notes = "帖子评论点赞")
-    @RequestMapping(value = "/{commentId}/support", method = RequestMethod.POST)
+    @ApiOperation(value = "帖子评论点赞:1.0", notes = "帖子评论点赞[API-Version=1.0]")
+    @RequestMapping(value = "/{commentId}/support", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void commentSupport(
             @ApiParam(name = "commentId", value = "帖子评论的ID") @PathVariable String commentId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "帖子评论", notes = "帖子评论")
-    @RequestMapping(value = "/{postsId}/comment", method = RequestMethod.POST)
+    @ApiOperation(value = "帖子评论:1.0", notes = "帖子评论[API-Version=1.0]")
+    @RequestMapping(value = "/{postsId}/comment", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "评论成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void addComment(
             @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
             @ApiParam(name = "commentAddVO", value = "评论体信息") @RequestBody CommentAddVO commentAddVO,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "添加收藏", notes = "添加收藏")
-    @RequestMapping(value = "/{postsId}/collect", method = RequestMethod.POST)
+    @ApiOperation(value = "添加收藏:1.0", notes = "添加收藏[API-Version=1.0]")
+    @RequestMapping(value = "/{postsId}/collect", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "收藏成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void addCollect(
             @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "取消收藏", notes = "取消收藏")
-    @RequestMapping(value = "/collect/{postsId}/cancel", method = RequestMethod.POST)
+    @ApiOperation(value = "取消收藏:1.0", notes = "取消收藏[API-Version=1.0]")
+    @RequestMapping(value = "/collect/{postsId}/cancel", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "取消收藏成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void cancelCollect(
             @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "收藏列表查询", notes = "收藏列表查询")
-    @RequestMapping(value = "/collects", method = RequestMethod.GET)
+    @ApiOperation(value = "收藏列表查询:1.0", notes = "收藏列表查询[API-Version=1.0]")
+    @RequestMapping(value = "/collects", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<BoardVO> findCollects(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+    	//TODO:待完成
         List<BoardVO> boardVOs = new ArrayList<BoardVO>();
         BoardVO boardVO1 = new BoardVO();
         boardVO1.setPostsId("2123123");
@@ -193,8 +202,8 @@ public class BoardController {
         return page;
     }
 
-    @ApiOperation(value = "审帖", notes = "审帖")
-    @RequestMapping(value = "/{postsId}/check", method = RequestMethod.POST)
+    @ApiOperation(value = "审帖:1.0", notes = "审帖[API-Version=1.0]")
+    @RequestMapping(value = "/{postsId}/check", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "审帖成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void check(
             @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
@@ -202,15 +211,17 @@ public class BoardController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "帖子发布", notes = "帖子发布")
-    @RequestMapping(value = "/publish", method = RequestMethod.POST)
+    @ApiOperation(value = "帖子发布:1.0", notes = "帖子发布[API-Version=1.0]")
+    @RequestMapping(value = "/publish", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "发布成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void publish(
             @ApiParam(name = "BoardPublishVO", value = "发布内容体") @RequestBody BoardPublishVO boardPublishVO,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
+    	//TODO:待完成
     }
 
 }

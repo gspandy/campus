@@ -40,12 +40,13 @@ public class SchoolController {
 	@Autowired
 	private SchoolService schoolSvc;
 	
-    @ApiOperation(value = "添加用户学校信息", notes = "添加用户学校信息")
-    @RequestMapping(value = "/user/school", method = RequestMethod.GET)
+    @ApiOperation(value = "添加用户学校信息:1.0", notes = "添加用户学校信息 [API-Version=1.0]")
+    @RequestMapping(value = "/user/school", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public UserSchoolVO getUserSchool(
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
+    	//TODO:待完成
         UserSchoolVO schoolVO = new UserSchoolVO();
         schoolVO.setSchoolId("123");
         schoolVO.setSchoolName("北京大学");
@@ -57,8 +58,8 @@ public class SchoolController {
         return schoolVO;
     }
 
-    @ApiOperation(value = "学校信息", notes = "学校信息")
-    @RequestMapping(value = "/schools", method = RequestMethod.GET)
+    @ApiOperation(value = "学校信息:1.0", notes = "学校信息 [API-Version=1.0]")
+    @RequestMapping(value = "/schools", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<SchoolVO> findSchools(@ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable) {
     	List<SchoolVO> schoolVOs = new ArrayList<SchoolVO>();
@@ -76,8 +77,8 @@ public class SchoolController {
         return page;
     }
 
-    @ApiOperation(value = "院系信息", notes = "院系信息")
-    @RequestMapping(value = "/{schoolId}/colleges", method = RequestMethod.GET)
+    @ApiOperation(value = "院系信息:1.0", notes = "院系信息 [API-Version=1.0]")
+    @RequestMapping(value = "/{schoolId}/colleges", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<CollegeVO> findColleges(
             @ApiParam(name = "schoolId", value = "学校ID") @PathVariable String schoolId) {
@@ -94,8 +95,8 @@ public class SchoolController {
         return collegeVOs;
     }
 
-    @ApiOperation(value = "专业信息", notes = "专业信息")
-    @RequestMapping(value = "/{schoolId}/{collegeId}/professions", method = RequestMethod.GET)
+    @ApiOperation(value = "专业信息:1.0", notes = "专业信息 [API-Version=1.0]")
+    @RequestMapping(value = "/{schoolId}/{collegeId}/professions", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<ProfessionVO> findProfessions(
             @ApiParam(name = "collegeId", value = "院系ID") @PathVariable("collegeId") String collegeId,
@@ -112,8 +113,8 @@ public class SchoolController {
         return professionVOs;
     }
 
-    @ApiOperation(value = "院系信息", notes = "院系信息")
-    @RequestMapping(value = "/inSchoolYear", method = RequestMethod.GET)
+    @ApiOperation(value = "入学年份:1.0", notes = "入学年份 [API-Version=1.0]")
+    @RequestMapping(value = "/inSchoolYear", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<String> getInSchoolYear() {
         List<String> integers = new ArrayList<String>();
@@ -125,22 +126,24 @@ public class SchoolController {
         return integers;
     }
 
-    @ApiOperation(value = "添加专业", notes = "添加专业")
-    @RequestMapping(value = "/profession/add", method = RequestMethod.POST)
+    @ApiOperation(value = "添加专业:1.0", notes = "添加专业[API-Version=1.0]")
+    @RequestMapping(value = "/profession/add", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public String addProfession(
             @ApiParam(name = "professionName", value = "专业名称") @RequestParam(value = "professionName", required = true) String professionName,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+    	//TODO:待完成
         return "123123";
     }
 
-    @ApiOperation(value = "修改、添加用户学校信息", notes = "修改、添加用户学校信息")
-    @RequestMapping(value = "/school/add", method = RequestMethod.POST)
+    @ApiOperation(value = "修改、添加用户学校信息:1.0", notes = "修改、添加用户学校信息[API-Version=1.0]")
+    @RequestMapping(value = "/school/add", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void addSchool(
             @ApiParam(name = "userSchoolVO", value = "用户学习信息体") @RequestBody UserSchoolVO userSchoolVO,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
+    	//TODO:待完成
     }
 
 }

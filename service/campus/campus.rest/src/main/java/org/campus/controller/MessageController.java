@@ -32,8 +32,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "MessageController", description = "消息相关操作")
 public class MessageController {
 
-    @ApiOperation(value = "查询信息提示列表", notes = "查询信息提示列表")
-    @RequestMapping(value = "/lists", method = RequestMethod.GET)
+    @ApiOperation(value = "查询信息提示列表:1.0", notes = "查询信息提示列表[API-Version=1.0]")
+    @RequestMapping(value = "/lists", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<MessageVO> getLoginUserInfo(
             @ApiParam(name = "userId", value = "接收方用户ID") @RequestParam(value = "userId", required = false) String userId,
@@ -42,6 +42,7 @@ public class MessageController {
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
+    	//TODO:待完成
         List<MessageVO> messageVOs = new ArrayList<MessageVO>();
         MessageVO messageVO = new MessageVO();
         messageVO.setConversationId("4565645");
@@ -56,35 +57,38 @@ public class MessageController {
         return page;
     }
 
-    @ApiOperation(value = "信息发送", notes = "信息发送")
-    @RequestMapping(value = "/send/{userId}", method = RequestMethod.POST)
+    @ApiOperation(value = "信息发送:1.0", notes = "信息发送[API-Version=1.0]")
+    @RequestMapping(value = "/send/{userId}", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "发送成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void send(
             @ApiParam(name = "userId", value = "接收方用户ID") @PathVariable String userId,
             @ApiParam(name = "messageAddVO", value = "消息发送体") @RequestBody MessageAddVO messageAddVO,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
+    	//TODO:待完成
 
     }
 
-    @ApiOperation(value = "信息读取", notes = "信息读取")
-    @RequestMapping(value = "/read/{messageId}", method = RequestMethod.POST)
+    @ApiOperation(value = "信息读取:1.0", notes = "信息读取[API-Version=1.0]")
+    @RequestMapping(value = "/read/{messageId}", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "读取成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void read(
             @ApiParam(name = "messageId", value = "消息ID") @PathVariable String messageId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
+    	//TODO:待完成
     }
 
-    @ApiOperation(value = "查询会话列表", notes = "查询会话列表")
-    @RequestMapping(value = "/conversation/{conversationId}", method = RequestMethod.GET)
+    @ApiOperation(value = "查询会话列表:1.0", notes = "查询会话列表[API-Version=1.0]")
+    @RequestMapping(value = "/conversation/{conversationId}", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "读取成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public ConversationVO getConversation(
             @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
+    	//TODO:待完成
         // 需建立一张聊天会话表，关联两个用户之间的聊天记录
         ConversationVO conversationVO = new ConversationVO();
         conversationVO.setConversationId("123123");
