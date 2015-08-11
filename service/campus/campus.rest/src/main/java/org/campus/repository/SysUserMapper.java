@@ -52,4 +52,6 @@ public interface SysUserMapper {
      * @mbggenerated Sun Aug 09 23:25:01 CST 2015
      */
     int updateByPrimaryKey(SysUser record);
+    
+    SysUser selectByAccount(String userAccount);
 }

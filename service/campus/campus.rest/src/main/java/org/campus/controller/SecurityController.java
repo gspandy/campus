@@ -1,6 +1,7 @@
 package org.campus.controller;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,12 +10,18 @@ import javax.servlet.http.HttpSession;
 import org.campus.constant.Constant;
 import org.campus.constant.ErrorCode;
 import org.campus.core.exception.CampusException;
+import org.campus.model.SysUser;
+import org.campus.model.User;
+import org.campus.service.SecurityService;
+import org.campus.util.MD5Util;
 import org.campus.util.ToolUtil;
 import org.campus.util.VerificationCode;
 import org.campus.vo.LoginRequestVO;
 import org.campus.vo.LoginResponseVO;
 import org.campus.vo.RegisterVO;
 import org.campus.vo.VerifyCodeReqVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,23 +39,94 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "SecurityController", description = "登录、注册、退出等相关操作")
 public class SecurityController {
 
+	@Autowired
+	private SecurityService securitySvc;
+	
     @ApiOperation(value = "登录:1.0", notes = "登录[API-Version=1.0]")
     @RequestMapping(value = "/login", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "登录成功"), @ApiResponse(code = 500, message = "内部处理错误"),
             @ApiResponse(code = 1000002, message = "登录失败") })
-    public LoginResponseVO login(@ApiParam(name = "loginVO", value = "登录信息体") @RequestBody LoginRequestVO loginVO) {
-    	//TODO:待完成
+    public LoginResponseVO login(@ApiParam(name = "loginVO", value = "登录信息体") @RequestBody LoginRequestVO loginVO,HttpSession session) {
+    	Assert.notNull(loginVO,"请求参数错误.");
+    	Assert.notNull(loginVO.getLoginName(),"用户名不允许为空.");
+    	Assert.notNull(loginVO.getPassword(),"请输入正确的用户密码.");
+    	if(session.getAttribute(Constant.VERFICATION_CODE)!=null){
+    		Assert.notNull(loginVO.getVerificationCode(),"验证码不允许为空.");
+    		if(!loginVO.getVerificationCode().equals(session.getAttribute(Constant.VERFICATION_CODE))){
+    			throw new CampusException(100002,"验证码错误.");
+    		}
+    	}
+    	SysUser sysUser = securitySvc.checkUserAndPassword(loginVO.getLoginName(), loginVO.getPassword());
         LoginResponseVO responseVO = new LoginResponseVO();
-        responseVO.setSignId(ToolUtil.getUUid());
+        responseVO.setSignId(sysUser.getSignid());
+        responseVO.setUserId(sysUser.getUid());
+        responseVO.setUserAccount(sysUser.getUseraccount());
+        
+        User user = securitySvc.getAppUserInfo(sysUser.getUid());
+        responseVO.setCollegeId(user.getCollegeuid());
+        responseVO.setCollegeName(user.getCollegename());
+        responseVO.setHeadPic(user.getHeadpic());
+        responseVO.setInSchoolYear(user.getInschoolyear());
+        responseVO.setNickName(user.getNickname());
+        responseVO.setProfessionId(user.getProfessionuid());
+        responseVO.setProfessionName(user.getProfessionname());
+        responseVO.setSchoolId(user.getSchooluid());
+        responseVO.setSchoolName(user.getSchoolname());
+        
+        session.setAttribute(Constant.CAMPUS_SECURITY_SESSION, responseVO);
+        
         return responseVO;
     }
 
     @ApiOperation(value = "注册:1.0", notes = "注册[API-Version=1.0]")
     @RequestMapping(value = "/register", headers={"API-Version=1.0"}, method = RequestMethod.POST)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "注册成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "注册成功"), @ApiResponse(code = 500, message = "内部处理错误"),
+    		@ApiResponse(code = 1000003, message = "注册失败")})
     public void register(@ApiParam(name = "registerVO", value = "注册信息体") @RequestBody RegisterVO registerVO) {
-
-    	//TODO:待完成
+    	Assert.notNull(registerVO,"参数错误");
+    	Assert.notNull(registerVO.getLoginName(),"用户名不允许为空.");
+    	Assert.notNull(registerVO.getPassword(),"请输入正确的密码.");
+    	Assert.notNull(registerVO.getSecPassword(),"请输入正确的密码.");
+    	if(!registerVO.getPassword().equals(registerVO.getSecPassword())){
+    		throw new CampusException(100003,"请输入正确的密码.");
+    	}
+    	Assert.notNull(registerVO.getSchoolId(),"请选择学校.");
+    	Assert.notNull(registerVO.getCollegeId(),"请选择院系.");
+    	Assert.notNull(registerVO.getProfessionId(),"请选择专业.");
+    	Assert.notNull(registerVO.getInSchoolYear(),"请选择入学年份.");
+    	
+    	SysUser sysUser = new SysUser();
+    	sysUser.setUseraccount(registerVO.getLoginName());
+    	sysUser.setUid(ToolUtil.getUUid());
+    	sysUser.setUserpwd(MD5Util.encrypt(registerVO.getPassword()));
+    	sysUser.setIscheck(1);
+    	sysUser.setSignid(ToolUtil.getUUid());
+    	sysUser.setCreatedate(Calendar.getInstance().getTime());
+    	sysUser.setIsactive(1);
+    	
+    	User appUser = new User();
+    	appUser.setUseruid(sysUser.getUid());
+    	appUser.setCitycode(registerVO.getCityCode());
+    	appUser.setCityname(registerVO.getCityName());
+    	appUser.setCollegeuid(registerVO.getCollegeId());
+    	appUser.setCollegename(registerVO.getCollegeName());
+    	appUser.setCreatedate(sysUser.getCreatedate());
+    	appUser.setInschoolyear(registerVO.getInSchoolYear());
+    	appUser.setIsactive(1);
+    	appUser.setSextype(registerVO.getSex());
+    	appUser.setSchooluid(registerVO.getSchoolId());
+    	appUser.setSchoolname(registerVO.getSchoolName());
+    	appUser.setProfessionuid(registerVO.getProfessionId());
+    	appUser.setProfessionname(registerVO.getProfessionName());
+    	appUser.setProvincecode(registerVO.getProvinceCode());
+    	appUser.setProvincename(registerVO.getProvinceName());
+    	appUser.setIsgraduate(0);
+    	appUser.setIslocked(0);
+    	appUser.setIsopen(1);
+    	appUser.setIsvalidated(0);
+    	
+    	this.securitySvc.registe(sysUser, appUser);
+    	
     }
 
     @ApiOperation(value = "忘记密码:1.0", notes = "忘记密码[API-Version=1.0]")

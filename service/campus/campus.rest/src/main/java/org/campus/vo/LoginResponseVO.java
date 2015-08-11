@@ -7,6 +7,28 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 public class LoginResponseVO {
     
     private String signId;
+    
+    private String userId;
+    
+    private String userAccount;
+    
+    private String schoolId;
+    
+    private String schoolName;
+
+    private String collegeId;
+    
+    private String collegeName;
+    
+    private String professionId;
+    
+    private String professionName;
+    
+    private String nickName;
+    
+    private String headPic;
+    
+    private int inSchoolYear;
 
     @ApiModelProperty(value = "调用业务接口所需唯一标识", required = true)
     public String getSignId() {
@@ -17,5 +39,115 @@ public class LoginResponseVO {
     public void setSignId(String signId) {
         this.signId = signId;
     }
+
+    @ApiModelProperty(value = "用户唯一标识")
+	public String getUserId() {
+		return userId;
+	}
+
+    @ApiModelProperty(value = "用户唯一标识")
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+    @ApiModelProperty(value = "登录号")
+	public String getUserAccount() {
+		return userAccount;
+	}
+
+    @ApiModelProperty(value = "登录号")
+	public void setUserAccount(String userAccount) {
+		this.userAccount = userAccount;
+	}
+
+    @ApiModelProperty(value = "学校唯一标识")
+	public String getSchoolId() {
+		return schoolId;
+	}
+
+    @ApiModelProperty(value = "学校唯一标识")
+	public void setSchoolId(String schoolId) {
+		this.schoolId = schoolId;
+	}
+
+    @ApiModelProperty(value = "学校名称")
+	public String getSchoolName() {
+		return schoolName;
+	}
+
+    @ApiModelProperty(value = "学校名称")
+	public void setSchoolName(String schoolName) {
+		this.schoolName = schoolName;
+	}
+
+    @ApiModelProperty(value = "院系唯一标识")
+	public String getCollegeId() {
+		return collegeId;
+	}
+
+    @ApiModelProperty(value = "院系唯一标识")
+	public void setCollegeId(String collegeId) {
+		this.collegeId = collegeId;
+	}
+
+    @ApiModelProperty(value = "院系名称")
+	public String getCollegeName() {
+		return collegeName;
+	}
+
+    @ApiModelProperty(value = "院系名称")
+	public void setCollegeName(String collegeName) {
+		this.collegeName = collegeName;
+	}
+
+    @ApiModelProperty(value = "专业唯一标识")
+	public String getProfessionId() {
+		return professionId;
+	}
+
+    @ApiModelProperty(value = "专业唯一标识")
+	public void setProfessionId(String professionId) {
+		this.professionId = professionId;
+	}
+
+    @ApiModelProperty(value = "专业名称")
+	public String getProfessionName() {
+		return professionName;
+	}
+
+    @ApiModelProperty(value = "专业名称")
+	public void setProfessionName(String professionName) {
+		this.professionName = professionName;
+	}
+
+    @ApiModelProperty(value = "用户昵称")
+	public String getNickName() {
+		return nickName;
+	}
+
+    @ApiModelProperty(value = "用户昵称")
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+    @ApiModelProperty(value = "头像")
+	public String getHeadPic() {
+		return headPic;
+	}
+    
+    @ApiModelProperty(value = "头像")
+	public void setHeadPic(String headPic) {
+		this.headPic = headPic;
+	}
+
+    @ApiModelProperty(value = "入学年份")
+	public int getInSchoolYear() {
+		return inSchoolYear;
+	}
+
+    @ApiModelProperty(value = "入学年份")
+	public void setInSchoolYear(int inSchoolYear) {
+		this.inSchoolYear = inSchoolYear;
+	}
 
 }
