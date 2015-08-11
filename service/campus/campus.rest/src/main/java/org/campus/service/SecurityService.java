@@ -64,4 +64,15 @@ public class SecurityService {
 	public User getAppUserInfo(String uid){
 		return userMapper.selectByPrimaryKey(uid);
 	}
+	
+	/**
+	 * 验证昵称是否已经被占用
+	 * @param nickName
+	 * @return
+	 */
+	public boolean nickNameExsit(String nickName){
+		User usr = userMapper.selectByNickName(nickName);
+		if(usr != null) return true;
+		return false;
+	}
 }

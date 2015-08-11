@@ -22,6 +22,7 @@ import org.campus.vo.RegisterVO;
 import org.campus.vo.VerifyCodeReqVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -78,6 +79,15 @@ public class SecurityController {
         return responseVO;
     }
 
+    
+    @ApiOperation(value = "检查昵称是否可用:1.0", notes = "检查昵称是否可用[API-Version=1.0]")
+    @RequestMapping(value = "/nickNameUseable", headers={"API-Version=1.0"}, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误")})
+    public boolean checkNickNameUseabled(@ApiParam(name = "nickname", value = "昵称") @RequestParam("nickname") String nickName){
+    	Assert.notNull(nickName,"请输入有效的昵称.");
+    	return !securitySvc.nickNameExsit(nickName);
+    }
+    
     @ApiOperation(value = "注册:1.0", notes = "注册[API-Version=1.0]")
     @RequestMapping(value = "/register", headers={"API-Version=1.0"}, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "注册成功"), @ApiResponse(code = 500, message = "内部处理错误"),
@@ -94,6 +104,11 @@ public class SecurityController {
     	Assert.notNull(registerVO.getCollegeId(),"请选择院系.");
     	Assert.notNull(registerVO.getProfessionId(),"请选择专业.");
     	Assert.notNull(registerVO.getInSchoolYear(),"请选择入学年份.");
+    	
+    	//昵称唯一验证
+    	if(StringUtils.hasText(registerVO.getNickName()) && securitySvc.nickNameExsit(registerVO.getNickName())){
+    		throw new CampusException(100003,"昵称不可用.");
+    	}
     	
     	SysUser sysUser = new SysUser();
     	sysUser.setUseraccount(registerVO.getLoginName());
@@ -124,6 +139,7 @@ public class SecurityController {
     	appUser.setIslocked(0);
     	appUser.setIsopen(1);
     	appUser.setIsvalidated(0);
+    	appUser.setNickname(registerVO.getNickName());
     	
     	this.securitySvc.registe(sysUser, appUser);
     	
