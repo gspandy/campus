@@ -28,8 +28,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "FileController", description = "文件上传相关操作")
 public class FileController {
 
-    @ApiOperation(value = "图片上传", notes = "图片上传")
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    @ApiOperation(value = "图片上传:1.0", notes = "图片上传:1.0")
+    @RequestMapping(value = "/upload", method = RequestMethod.POST, headers = { "API-Version=1.0" })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "请求成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public FileUploadVO uploadidentityCardPicture(
             @ApiParam(name = "multipartFile", value = "图片", required = true) @RequestParam("multipartFile") MultipartFile multipartFile) {
