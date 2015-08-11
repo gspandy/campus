@@ -34,6 +34,13 @@ public class SendMessageImpl implements SendMessage {
     private SmsRecordMapper smsRecordMapper;
 
     @Override
+    public void sendMessage(String phone, String message, SMSType type) {
+        List<String> phones = new ArrayList<String>();
+        phones.add(phone);
+        sendMessage(phones, message, type);
+    }
+
+    @Override
     public void sendMessage(List<String> phones, String message, SMSType type) {
         // 一次最多只能发送50个号码
         List<List<String>> ret = CollectionUtils.split(phones, 50);
@@ -98,4 +105,5 @@ public class SendMessageImpl implements SendMessage {
         }
         smsRecordMapper.batchUpdate(records);
     }
+
 }
