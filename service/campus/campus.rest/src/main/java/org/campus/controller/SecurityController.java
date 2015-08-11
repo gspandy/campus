@@ -147,13 +147,31 @@ public class SecurityController {
 
     @ApiOperation(value = "忘记密码:1.0", notes = "忘记密码[API-Version=1.0]")
     @RequestMapping(value = "/password/reset", headers={"API-Version=1.0"}, method = RequestMethod.PUT)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "修改密码成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "修改密码成功"), @ApiResponse(code = 500, message = "内部处理错误"),
+    		@ApiResponse(code = 1000004, message = "找回密码失败") })
     public void forgetPassword(
             @ApiParam(name = "loginName", value = "登录号") @RequestParam(value = "loginName", required = true) String loginName,
+            @ApiParam(name = "checkCode", value = "验证码") @RequestParam(value = "checkCode", required = true) String checkCode,
             @ApiParam(name = "password", value = "新密码") @RequestParam(value = "password", required = true) String password,
-            @ApiParam(name = "secPassword", value = "第二次密码") @RequestParam(value = "secPassword", required = true) String secPassword) {
-
-    	//TODO:待完成
+            @ApiParam(name = "secPassword", value = "第二次密码") @RequestParam(value = "secPassword", required = true) String secPassword,
+            HttpSession session) {
+    	Assert.notNull(password,"请输入正确的密码.");
+    	Assert.notNull(secPassword,"请输入正确的密码.");
+    	Assert.notNull(checkCode,"请输入短信验证码.");
+    	Assert.notNull(loginName,"请输入登录号.");
+    	
+    	if(password.equals(secPassword))
+    		throw new CampusException(100004,"请输入正确的密码.");
+    	
+    	if (!checkCode.equals((String)session.getAttribute(Constant.SMS_CHECKCODE)))
+    		throw new CampusException(100004,"短信验证码错误.");
+    	
+    	SysUser sysUser = securitySvc.getUserByAccount(loginName);
+    	SysUser udpUser = new SysUser();
+    	udpUser.setUid(sysUser.getUid());
+    	udpUser.setUserpwd(MD5Util.encrypt(password));
+    	
+    	securitySvc.updateSysUser(udpUser);
     }
 
     @ApiOperation(value = "修改手机号码:1.0", notes = "修改手机号码[API-Version=1.0]")
@@ -166,32 +184,62 @@ public class SecurityController {
             @ApiParam(name = "checkCode", value = "验证码") @RequestParam(value = "checkCode", required = false) String checkCode,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-
+    	
     	//TODO:待完成
     }
 
     @ApiOperation(value = "修改密码:1.0", notes = "修改密码[API-Version=1.0]")
     @RequestMapping(value = "/password/change", headers={"API-Version=1.0"}, method = RequestMethod.PUT)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "修改密码成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "修改密码成功"), @ApiResponse(code = 500, message = "内部处理错误"),
+    		@ApiResponse(code = 1000005, message = "修改密码失败") })
     public void changePassword(
+            @ApiParam(name = "oldPassword", value = "新密码") @RequestParam(value = "oldPassword", required = true) String oldPassword,
             @ApiParam(name = "newPassword", value = "新密码") @RequestParam(value = "newPassword", required = true) String newPassword,
             @ApiParam(name = "newSecPassword", value = "新密码第二次输入") @RequestParam(value = "newSecPassword", required = true) String newSecPassword,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
+    	Assert.notNull(newPassword,"请输入正确的密码.");
+    	Assert.notNull(newSecPassword,"请输入正确的密码.");
+    	Assert.notNull(oldPassword,"需要提供旧密码.");
+    	if(newPassword.equals(newSecPassword))
+    		throw new CampusException(100004,"请输入正确的密码.");
+    	
+    	LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+    	if(vo == null)
+    		throw new CampusException(100005,"请登录.");
 
-    	//TODO:待完成
+    	//验证旧密码的正确性
+    	SysUser sysUser = securitySvc.checkUserAndPassword(vo.getUserAccount(), oldPassword);
+    	SysUser udpUser = new SysUser();
+    	udpUser.setUid(sysUser.getUid());
+    	udpUser.setUserpwd(MD5Util.encrypt(newPassword));
+    	
+    	securitySvc.updateSysUser(udpUser);
     }
 
     @ApiOperation(value = "设置、修改昵称:1.0", notes = "设置、修改昵称[API-Version=1.0]")
     @RequestMapping(value = "/nickname/set", headers={"API-Version=1.0"}, method = RequestMethod.POST)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "设置、修改昵称成功"),
-            @ApiResponse(code = 500, message = "内部处理错误") })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "设置、修改昵称成功"),@ApiResponse(code = 500, message = "内部处理错误"),
+    		@ApiResponse(code = 1000006, message = "修改昵称失败") })
     public void setNickName(
             @ApiParam(name = "nickName", value = "昵称") @RequestParam(value = "nickName", required = true) String nickName,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-
-    	//TODO:待完成
+    	Assert.notNull(nickName,"请输入正确的密码.");
+    	LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+    	if(vo == null)
+    		throw new CampusException(100006,"请登录.");
+    	
+    	//昵称唯一验证
+    	if(securitySvc.nickNameExsit(nickName)){
+    		throw new CampusException(100006,"昵称不可用.");
+    	}
+    	
+    	User user = new User();
+    	user.setUseruid(vo.getUserId());
+    	user.setNickname(nickName);
+    	
+    	securitySvc.updateUser(user);
     }
 
     @ApiOperation(value = "设置、修改个性签名:1.0", notes = "设置、修改个性签名[API-Version=1.0]")
@@ -208,8 +256,8 @@ public class SecurityController {
 
     @ApiOperation(value = "验证手机验证码:1.0", notes = "验证手机验证码[API-Version=1.0]")
     @RequestMapping(value = "/verifyCode", headers={"API-Version=1.0"}, method = RequestMethod.POST)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "验证手机验证码成功"),
-            @ApiResponse(code = 500, message = "内部处理错误") })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "验证手机验证码成功"),@ApiResponse(code = 500, message = "内部处理错误"),
+    		@ApiResponse(code = 1000008, message = "验证手机验证码验证失败") })
     public void verifyCode(
             @ApiParam(name = "verifyCodeReqVO", value = "验证验证码请求信息") @RequestBody VerifyCodeReqVO verifyCodeReqVO) {
 
@@ -243,16 +291,17 @@ public class SecurityController {
             @ApiResponse(code = 500, message = "内部处理错误") })
     public void getCheckCode(
             @ApiParam(name = "phone", value = "手机号码") @RequestParam(value = "phone", required = true) String phone,
-            @ApiParam(name = "type", value = "短信验证码类型(1.注册短信;2.找回密码;3.修改手机号)") @RequestParam(value = "type", required = true) String type) {
-
+            @ApiParam(name = "type", value = "短信验证码类型(1.注册短信;2.找回密码;3.修改手机号)") @RequestParam(value = "type", required = true) String type,
+            HttpSession session) {
     	//TODO:待完成
+    	session.setAttribute(Constant.SMS_CHECKCODE, "0000");
     }
 
     @ApiOperation(value = "登出:1.0", notes = "登出[API-Version=1.0]")
     @RequestMapping(value = "/logout", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "登出成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void logout(HttpSession session) {
-    	//TODO:待完成
+    	session.invalidate();
     }
 
 }
