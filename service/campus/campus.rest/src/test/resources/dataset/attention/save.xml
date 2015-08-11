@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<ts_app_attentionuser UID="1" MyUserUID="123"
+		AttenionUserUID="345" />
+	<ts_app_attentionuser UID="2" MyUserUID="123"
+		AttenionUserUID="346" />
+	<ts_app_attentionuser UID="3" MyUserUID="456"
+		AttenionUserUID="123" />
+</dataset>

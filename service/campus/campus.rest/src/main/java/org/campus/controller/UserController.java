@@ -6,13 +6,18 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.campus.constant.Constant;
+import org.campus.model.User;
+import org.campus.service.UserService;
 import org.campus.vo.BoardVO;
 import org.campus.vo.CommentAddVO;
 import org.campus.vo.CommentVO;
 import org.campus.vo.FriendVO;
+import org.campus.vo.LoginResponseVO;
 import org.campus.vo.MyCommentVO;
 import org.campus.vo.UserPhotosVO;
 import org.campus.vo.UserVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -35,43 +40,36 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "UserController", description = "用户信息相关操作")
 public class UserController {
 
+    @Autowired
+    private UserService userService;
+
     @ApiOperation(value = "登录用户信息查询:1.0", notes = "登录用户信息查询[API-Version=1.0]")
-    @RequestMapping(value = "/info", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/info", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public UserVO getLoginUserInfo(
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-    	//TODO:待完成
-        UserVO userVO = new UserVO();
-        userVO.setUserId("gr921113");
-        userVO.setNickName("edcee3000");
-        userVO.setPostCount(128);
-        userVO.setFansCount(256);
-        userVO.setAttentionCount(512);
-        return userVO;
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        return findUserInfo(responseVO.getUserId());
     }
 
     @ApiOperation(value = "其他用户的信息查询:1.0", notes = "其他用户的信息查询[API-Version=1.0]")
-    @RequestMapping(value = "/{userId}/info", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/{userId}/info", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public UserVO getUserInfo(
             @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-    	//TODO:待完成
-        UserVO userVO = new UserVO();
-        userVO.setUserId("gr921113");
-        userVO.setNickName("edcee3000");
-        return userVO;
+        return findUserInfo(userId);
     }
 
     @ApiOperation(value = "查询登录用户相册:1.0", notes = "查询登录用户相册[API-Version=1.0]")
-    @RequestMapping(value = "/photos", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/photos", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<UserPhotosVO> getUserPhotos(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-    	//TODO:待完成
+        // TODO:待完成
         List<UserPhotosVO> photosVOs = new ArrayList<UserPhotosVO>();
         UserPhotosVO photosVO = new UserPhotosVO();
         photosVO.setPhotoId("12312312");
@@ -86,13 +84,13 @@ public class UserController {
     }
 
     @ApiOperation(value = "查询其他用户的相册:1.0", notes = "查询其他用户的相册[API-Version=1.0]")
-    @RequestMapping(value = "/{userId}/photos", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/{userId}/photos", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<UserPhotosVO> getUserPhotos(
             @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-    	//TODO:待完成
+        // TODO:待完成
         List<UserPhotosVO> photosVOs = new ArrayList<UserPhotosVO>();
         UserPhotosVO photosVO = new UserPhotosVO();
         photosVO.setPhotoId("12312312");
@@ -107,13 +105,13 @@ public class UserController {
     }
 
     @ApiOperation(value = "查询相册评论:1.0", notes = "查询相册评论[API-Version=1.0]")
-    @RequestMapping(value = "/{photoId}/comments", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/{photoId}/comments", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<CommentVO> getPhotoComments(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-    	//TODO:待完成
+        // TODO:待完成
         List<CommentVO> commentVOs = new ArrayList<CommentVO>();
         CommentVO commentVO1 = new CommentVO();
         commentVO1.setCommentId("1231");
@@ -136,49 +134,49 @@ public class UserController {
     }
 
     @ApiOperation(value = "相册点赞:1.0", notes = "相册点赞[API-Version=1.0]")
-    @RequestMapping(value = "/{photoId}/support", headers={"API-Version=1.0"}, method = RequestMethod.POST)
+    @RequestMapping(value = "/{photoId}/support", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void postSupport(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-    	//TODO:待完成
+        // TODO:待完成
 
     }
 
     @ApiOperation(value = "相册评论点赞:1.0", notes = "相册评论点赞[API-Version=1.0]")
-    @RequestMapping(value = "/{commentId}/support", headers={"API-Version=1.0"}, method = RequestMethod.POST)
+    @RequestMapping(value = "/{commentId}/support", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void commentSupport(
             @ApiParam(name = "commentId", value = "帖子评论的ID") @PathVariable String commentId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
 
-    	//TODO:待完成
+        // TODO:待完成
     }
 
     @ApiOperation(value = "相册评论:1.0", notes = "相册评论[API-Version=1.0]")
-    @RequestMapping(value = "/{photoId}/comment", headers={"API-Version=1.0"}, method = RequestMethod.POST)
+    @RequestMapping(value = "/{photoId}/comment", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "评论成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void addComment(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
             @ApiParam(name = "commentAddVO", value = "评论体信息") @RequestBody CommentAddVO commentAddVO,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
 
-    	//TODO:待完成
+        // TODO:待完成
     }
 
     @ApiOperation(value = "添加关注:1.0", notes = "添加关注[API-Version=1.0]")
-    @RequestMapping(value = "/attention/{userId}", headers={"API-Version=1.0"}, method = RequestMethod.POST)
+    @RequestMapping(value = "/attention/{userId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "添加关注成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void attention(
             @ApiParam(name = "userId", value = "用户ID") @PathVariable String userId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
 
-    	//TODO:待完成
+        // TODO:待完成
     }
 
     @ApiOperation(value = "取消关注:1.0", notes = "取消关注[API-Version=1.0]")
-    @RequestMapping(value = "/remove/{userId}/attention", headers={"API-Version=1.0"}, method = RequestMethod.POST)
+    @RequestMapping(value = "/remove/{userId}/attention", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "取消关注成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void removeAttention(
             @ApiParam(name = "userId", value = "用户ID") @PathVariable String userId,
@@ -188,14 +186,14 @@ public class UserController {
     }
 
     @ApiOperation(value = "查询好友列表:1.0", notes = "查询好友列表[API-Version=1.0]")
-    @RequestMapping(value = "/friends", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/friends", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询好友成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<FriendVO> getFriends(
             @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-    	//TODO:待完成
+        // TODO:待完成
         List<FriendVO> friendVOs = new ArrayList<FriendVO>();
         FriendVO friendVO1 = new FriendVO();
         friendVO1.setUserId("123123");
@@ -214,14 +212,14 @@ public class UserController {
     }
 
     @ApiOperation(value = "查询粉丝列表:1.0", notes = "查询粉丝列表[API-Version=1.0]")
-    @RequestMapping(value = "/fans", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/fans", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询粉丝成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<FriendVO> getFans(
             @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-    	//TODO:待完成
+        // TODO:待完成
         List<FriendVO> friendVOs = new ArrayList<FriendVO>();
         FriendVO friendVO1 = new FriendVO();
         friendVO1.setUserId("123123");
@@ -240,13 +238,13 @@ public class UserController {
     }
 
     @ApiOperation(value = "查询我的评论:1.0", notes = "查询我的评论[API-Version=1.0]")
-    @RequestMapping(value = "/mycomments", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/mycomments", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<MyCommentVO> getMycomments(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-    	//TODO:待完成
+        // TODO:待完成
         List<MyCommentVO> myCommentVOs = new ArrayList<MyCommentVO>();
         MyCommentVO commentVO1 = new MyCommentVO();
         List<CommentVO> list = new ArrayList<CommentVO>();
@@ -283,13 +281,13 @@ public class UserController {
     }
 
     @ApiOperation(value = "查询我点过的赞:1.0", notes = "查询我点过的赞[API-Version=1.0]")
-    @RequestMapping(value = "/mysupports", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/mysupports", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<BoardVO> getMysupports(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-    	//TODO:待完成
+        // TODO:待完成
         List<BoardVO> boardVOs = new ArrayList<BoardVO>();
         BoardVO boardVO1 = new BoardVO();
         boardVO1.setPostsId("2123123");
@@ -313,6 +311,17 @@ public class UserController {
         boardVOs.add(boardVO2);
         Page<BoardVO> page = new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
         return page;
+    }
+
+    private UserVO findUserInfo(String userId) {
+        User user = userService.findByUserId(userId);
+        UserVO userVO = new UserVO();
+        userVO.setUserId(user.getUseruid());
+        userVO.setNickName(user.getNickname());
+        userVO.setPostCount(userService.countPost(userId));
+        userVO.setFansCount(userService.countFans(userId));
+        userVO.setAttentionCount(userService.countAttention(userId));
+        return userVO;
     }
 
 }
