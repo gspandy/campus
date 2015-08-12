@@ -81,7 +81,7 @@ public class SendMessageImpl implements SendMessage {
                     updateSms(records, SMSResult.SMS_FAILED, response);
                 }
             } else {
-                throw new CampusException(ErrorCode.SMS_SEND_FAILED, "短信发送失败");
+                updateSms(records, SMSResult.SMS_FAILED, "短信发送失败，调用短信平台失败");
             }
         }
     }
