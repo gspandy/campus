@@ -1,11 +1,14 @@
 package org.campus.service.impl;
 
+import org.campus.model.FreshNews;
 import org.campus.model.User;
 import org.campus.repository.AttentionUserMapper;
 import org.campus.repository.FreshNewsMapper;
 import org.campus.repository.UserMapper;
 import org.campus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,6 +42,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public int countPost(String userId) {
         return freshNewsMapper.countPost(userId);
+    }
+
+    @Override
+    public Page<FreshNews> findUserPhotos(String userId, Pageable pageable) {
+        return freshNewsMapper.findByUserId(userId, pageable);
     }
 
 }

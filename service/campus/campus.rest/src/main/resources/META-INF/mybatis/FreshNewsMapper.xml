@@ -11,6 +11,9 @@
 		<result column="CommentNum" property="commentnum" jdbcType="INTEGER" />
 		<result column="SupportNum" property="supportnum" jdbcType="INTEGER" />
 		<result column="ComplainNum" property="complainnum" jdbcType="INTEGER" />
+		<result column="NotSupportNum" property="NotSupportNum"
+			jdbcType="INTEGER" />
+		<result column="TransNum" property="TransNum" jdbcType="INTEGER" />
 		<result column="IsShield" property="isshield" jdbcType="INTEGER" />
 		<result column="IsActive" property="isactive" jdbcType="INTEGER" />
 		<result column="CreateBy" property="createby" jdbcType="VARCHAR" />
@@ -23,7 +26,8 @@
 		UID, NewsBrief, NewsContent, Pictures, AddUserUID,
 		IsAnonymous,
 		CommentNum, SupportNum,
-		ComplainNum, IsShield, IsActive,
+		ComplainNum, NotSupportNum,
+		TransNum, IsShield, IsActive,
 		CreateBy, CreateDate, LastUpdateBy,
 		LastUpdateDate
 	</sql>
@@ -43,8 +47,10 @@
 		insert into ts_app_freshnews
 		(UID, NewsBrief, NewsContent,
 		Pictures, AddUserUID, IsAnonymous,
-		CommentNum, SupportNum, ComplainNum,
-		IsShield, IsActive, CreateBy,
+		CommentNum, SupportNum, ComplainNum, NotSupportNum,
+		TransNum,
+		IsShield,
+		IsActive, CreateBy,
 		CreateDate, LastUpdateBy, LastUpdateDate
 		)
 		values
@@ -53,10 +59,12 @@
 		#{pictures,jdbcType=VARCHAR},
 		#{adduseruid,jdbcType=VARCHAR}, #{isanonymous,jdbcType=INTEGER},
 		#{commentnum,jdbcType=INTEGER}, #{supportnum,jdbcType=INTEGER},
-		#{complainnum,jdbcType=INTEGER},
+		#{complainnum,jdbcType=INTEGER},#{notsupportnum,jdbcType=INTEGER},#{transnum,jdbcType=INTEGER},
 		#{isshield,jdbcType=INTEGER},
-		#{isactive,jdbcType=INTEGER}, #{createby,jdbcType=VARCHAR},
-		#{createdate,jdbcType=TIMESTAMP}, #{lastupdateby,jdbcType=VARCHAR},
+		#{isactive,jdbcType=INTEGER},
+		#{createby,jdbcType=VARCHAR},
+		#{createdate,jdbcType=TIMESTAMP},
+		#{lastupdateby,jdbcType=VARCHAR},
 		#{lastupdatedate,jdbcType=TIMESTAMP}
 		)
 	</insert>
@@ -89,6 +97,15 @@
 			</if>
 			<if test="complainnum != null">
 				ComplainNum,
+			</if>
+			<if test="complainnum != null">
+				ComplainNum,
+			</if>
+			<if test="notsupportnum != null">
+				NotSupportNum,
+			</if>
+			<if test="transnum != null">
+				TransNum,
 			</if>
 			<if test="isshield != null">
 				IsShield,
@@ -137,6 +154,12 @@
 			<if test="complainnum != null">
 				#{complainnum,jdbcType=INTEGER},
 			</if>
+			<if test="notsupportnum != null">
+				#{notsupportnum,jdbcType=INTEGER},
+			</if>
+			<if test="transnum != null">
+				#{transnum,jdbcType=INTEGER},
+			</if>
 			<if test="isshield != null">
 				#{isshield,jdbcType=INTEGER},
 			</if>
@@ -184,6 +207,12 @@
 			<if test="complainnum != null">
 				ComplainNum = #{complainnum,jdbcType=INTEGER},
 			</if>
+			<if test="notsupportnum != null">
+				NotSupportNum = #{notsupportnum,jdbcType=INTEGER},
+			</if>
+			<if test="transnum != null">
+				TransNum = #{transnum,jdbcType=INTEGER},
+			</if>
 			<if test="isshield != null">
 				IsShield = #{isshield,jdbcType=INTEGER},
 			</if>
@@ -222,10 +251,16 @@
 		#{supportnum,jdbcType=INTEGER},
 		ComplainNum =
 		#{complainnum,jdbcType=INTEGER},
+		NotSupportNum =
+		#{notsupportnum,jdbcType=INTEGER},
+		TransNum =
+		#{transnum,jdbcType=INTEGER},
 		IsShield =
 		#{isshield,jdbcType=INTEGER},
-		IsActive = #{isactive,jdbcType=INTEGER},
-		CreateBy = #{createby,jdbcType=VARCHAR},
+		IsActive =
+		#{isactive,jdbcType=INTEGER},
+		CreateBy =
+		#{createby,jdbcType=VARCHAR},
 		CreateDate =
 		#{createdate,jdbcType=TIMESTAMP},
 		LastUpdateBy =
@@ -242,5 +277,13 @@
 		from ts_app_freshnews
 		where AddUserUID =
 		#{userId,jdbcType=VARCHAR} AND IsShield=0 AND IsActive=1
+	</select>
+	<select id="findByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from ts_app_freshnews
+		where AddUserUID = #{userId,jdbcType=VARCHAR} AND
+		IsAnonymous=0
 	</select>
 </mapper>

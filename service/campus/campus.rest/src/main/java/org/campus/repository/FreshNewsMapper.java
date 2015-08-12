@@ -1,6 +1,9 @@
 package org.campus.repository;
 
+import org.apache.ibatis.annotations.Param;
 import org.campus.model.FreshNews;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -48,5 +51,7 @@ public interface FreshNewsMapper {
     int updateByPrimaryKey(FreshNews record);
 
     int countPost(String userId);
+
+    Page<FreshNews> findByUserId(@Param("userId") String userId, Pageable pageable);
 
 }

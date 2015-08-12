@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.campus.constant.Constant;
+import org.campus.model.FreshNews;
 import org.campus.model.User;
 import org.campus.service.UserService;
 import org.campus.vo.BoardVO;
@@ -69,17 +70,8 @@ public class UserController {
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-        // TODO:待完成
-        List<UserPhotosVO> photosVOs = new ArrayList<UserPhotosVO>();
-        UserPhotosVO photosVO = new UserPhotosVO();
-        photosVO.setPhotoId("12312312");
-        photosVO.setNickName("edcee3000");
-        photosVO.setPubDate(new Date());
-        photosVO.setContent("测试");
-        photosVO.setTransNum(128);
-        photosVO.setCommentNum(2);
-        photosVO.setSupportNum(99);
-        Page<UserPhotosVO> page = new PageImpl<UserPhotosVO>(photosVOs, pageable, photosVOs.size());
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        Page<UserPhotosVO> page = findUserPhotos(pageable, responseVO.getUserId(), responseVO.getNickName());
         return page;
     }
 
@@ -90,17 +82,8 @@ public class UserController {
             @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-        // TODO:待完成
-        List<UserPhotosVO> photosVOs = new ArrayList<UserPhotosVO>();
-        UserPhotosVO photosVO = new UserPhotosVO();
-        photosVO.setPhotoId("12312312");
-        photosVO.setNickName("edcee3000");
-        photosVO.setPubDate(new Date());
-        photosVO.setContent("测试");
-        photosVO.setTransNum(128);
-        photosVO.setCommentNum(2);
-        photosVO.setSupportNum(99);
-        Page<UserPhotosVO> page = new PageImpl<UserPhotosVO>(photosVOs, pageable, photosVOs.size());
+        User user = userService.findByUserId(userId);
+        Page<UserPhotosVO> page = findUserPhotos(pageable, userId, user.getNickname());
         return page;
     }
 
@@ -322,6 +305,27 @@ public class UserController {
         userVO.setFansCount(userService.countFans(userId));
         userVO.setAttentionCount(userService.countAttention(userId));
         return userVO;
+    }
+
+    private Page<UserPhotosVO> findUserPhotos(Pageable pageable, String userId, String nickName) {
+        Page<FreshNews> photos = userService.findUserPhotos(userId, pageable);
+        UserPhotosVO userPhotosVO = null;
+        List<UserPhotosVO> photosVOs = new ArrayList<UserPhotosVO>();
+        for (FreshNews freshNews : photos) {
+            userPhotosVO = new UserPhotosVO();
+            userPhotosVO.setPhotoId(freshNews.getUid());
+            userPhotosVO.setNickName(nickName);
+            userPhotosVO.setPubDate(freshNews.getCreatedate());
+            userPhotosVO.setContent(freshNews.getNewscontent());
+            userPhotosVO.setTransNum(freshNews.getTransnum());
+            userPhotosVO.setCommentNum(freshNews.getCommentnum());
+            userPhotosVO.setSupportNum(freshNews.getSupportnum());
+            userPhotosVO.setNotSupportNum(freshNews.getNotsupportnum());
+            userPhotosVO.setComplainNum(freshNews.getComplainnum());
+            photosVOs.add(userPhotosVO);
+        }
+        Page<UserPhotosVO> page = new PageImpl<UserPhotosVO>(photosVOs, pageable, photosVOs.size());
+        return page;
     }
 
 }

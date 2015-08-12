@@ -1,10 +1,14 @@
 package org.campus.service;
 
 import org.campus.BaseTest;
+import org.campus.model.FreshNews;
 import org.campus.model.User;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -45,6 +49,15 @@ public class UserServiceTest extends BaseTest {
     public void testCountPost() {
         int countAttention = userService.countPost("123");
         Assert.assertTrue(countAttention == 1);
+    }
+
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/fresh/save.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/fresh/save.xml")
+    public void testFindUserPhotos() {
+        Pageable pageable = new PageRequest(0, 10);
+        Page<FreshNews> photos = userService.findUserPhotos("123", pageable);
+        Assert.assertTrue(photos.getTotalElements() == 1);
     }
 
 }

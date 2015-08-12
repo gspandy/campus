@@ -1,6 +1,9 @@
 package org.campus.service;
 
+import org.campus.model.FreshNews;
 import org.campus.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
@@ -47,5 +50,16 @@ public interface UserService {
      *
      */
     int countPost(String userId);
+
+    /**
+     * 
+     * 功能描述：<br>
+     * 查询用户相册，即发表的新鲜事
+     *
+     * @param userId
+     * @return
+     *
+     */
+    Page<FreshNews> findUserPhotos(String userId, Pageable pageable);
 
 }
