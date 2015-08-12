@@ -62,6 +62,12 @@
     from ts_app_user
     where UserUID = #{useruid,jdbcType=VARCHAR}
   </select>
+  <select id="selectByNickName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from ts_app_user
+    where NickName = #{nickName,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     <!--
       WARNING - @mbggenerated

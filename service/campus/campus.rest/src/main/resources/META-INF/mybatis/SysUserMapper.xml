@@ -43,6 +43,12 @@
     from ts_sys_user
     where UID = #{uid,jdbcType=VARCHAR}
   </select>
+  <select id="selectByAccount" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from ts_sys_user
+    where UserAccount = #{userAccount,jdbcType=VARCHAR} and IsActive='1' and IsCheck='1'
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     <!--
       WARNING - @mbggenerated

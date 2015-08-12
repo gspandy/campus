@@ -8,4 +8,6 @@ public interface ErrorCode {
 
     int VERFICATION_CODE_ERROR = 1100001;// 验证码生成失败
 
+    int SMS_SEND_FAILED = 1200001;// 短信发送失败
+
 }

@@ -27,7 +27,8 @@ public abstract class ConfigurationLoader {
         ResourcePatternResolver loader = new PathMatchingResourcePatternResolver();
         Resource[] resources = null;
         try {
-            resources = loader.getResources("file:" + "/i18n/" + "*.properties");
+            resources = loader.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + "/i18n/"
+                    + "*.properties");
         } catch (IOException e) {
             throw new CampusException("获取message文件列表失败", e);
         }

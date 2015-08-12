@@ -9,6 +9,14 @@ public class SchoolVO {
     private String schoolId;
 
     private String schoolName;
+    
+    private String cityCode;
+    
+    private String cityName;
+    
+    private String provinceCode;
+    
+    private String provinceName;
 
     @ApiModelProperty(value = "学校ID", required = true)
     public String getSchoolId() {
@@ -29,5 +37,44 @@ public class SchoolVO {
     public void setSchoolName(String schoolName) {
         this.schoolName = schoolName;
     }
+    
+    @ApiModelProperty(value = "城市编码")
+	public String getCityCode() {
+		return cityCode;
+	}
 
+    @ApiModelProperty(value = "城市编码")
+	public void setCityCode(String cityCode) {
+		this.cityCode = cityCode;
+	}
+
+    @ApiModelProperty(value = "城市名称")
+	public String getCityName() {
+		return cityName;
+	}
+
+    @ApiModelProperty(value = "城市名称")
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+    @ApiModelProperty(value = "省份编码")
+	public String getProvinceCode() {
+		return provinceCode;
+	}
+
+    @ApiModelProperty(value = "省份编码")
+	public void setProvinceCode(String provinceCode) {
+		this.provinceCode = provinceCode;
+	}
+
+    @ApiModelProperty(value = "省份名称")
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+    @ApiModelProperty(value = "省份名称")
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
 }

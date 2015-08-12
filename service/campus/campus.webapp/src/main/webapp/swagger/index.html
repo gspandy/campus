@@ -23,7 +23,6 @@
 
   <script type="text/javascript">
     $(function () {
-
       $.ajax({
             url: 'config.xml',
             method:'get',
@@ -73,8 +72,6 @@
             }
       });
 
-
-
     $('#input_apiKey').change(function() {
       var key = $('#input_apiKey')[0].value;
       log("key: " + key);
@@ -83,8 +80,18 @@
         window.authorizations.add("key", new ApiKeyAuthorization("api_key", key, "query"));
       }
     });
-
+    
+    $('#input_apiVersion').change(function() {
+	    var version = $('#input_apiVersion')[0].value;
+	    log("version: " + version);
+	    if(version && version.trim() != "") {
+	      log("added version " + version);
+	      window.authorizations.add("key", new ApiKeyAuthorization("API-Version", version, "header"));
+	    }
+    });
+    
   });
+    
   </script>
 </head>
 
@@ -103,7 +110,8 @@
       <div class='input'>
           <select id="input_baseUrl" style="height: 25px;width:420px;"></select>
       </div>
-      <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
+      <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text" value="" style="width:100px"/></div>
+      <div class='input'><input placeholder="API-Version" id="input_apiVersion" name="api_version" type="text" value="1.0" style="width:100px"/></div>
       <div class='input'><a id="explore" href="#">查询</a></div>
     </form>
   </div>
@@ -115,9 +123,18 @@
 <script type="text/javascript">
     jQuery(function($) {
         $(document).ready( function() {
+        	init();
             $('#header').stickUp();
         });
     });
+    function init(){
+        var version = $('#input_apiVersion').val();
+        log("version: " + version);
+        if(version && version.trim() != "") {
+          log("added version " + version);
+          window.authorizations.add("key", new ApiKeyAuthorization("API-Version", version, "header"));
+        }
+    }
 </script>
 </body>
 </html>

@@ -26,6 +26,10 @@ public class UserPhotosVO {
 
     private int supportNum;
 
+    private int notSupportNum;
+
+    private int complainNum;
+
     @ApiModelProperty(value = "相册Id", required = true)
     public String getPhotoId() {
         return photoId;
@@ -104,6 +108,26 @@ public class UserPhotosVO {
     @ApiModelProperty(value = "点赞数", required = true)
     public void setSupportNum(int supportNum) {
         this.supportNum = supportNum;
+    }
+
+    @ApiModelProperty(value = "踩数", required = true)
+    public int getNotSupportNum() {
+        return notSupportNum;
+    }
+
+    @ApiModelProperty(value = "踩数", required = true)
+    public void setNotSupportNum(int notSupportNum) {
+        this.notSupportNum = notSupportNum;
+    }
+
+    @ApiModelProperty(value = "投诉数", required = true)
+    public int getComplainNum() {
+        return complainNum;
+    }
+
+    @ApiModelProperty(value = "投诉数", required = true)
+    public void setComplainNum(int complainNum) {
+        this.complainNum = complainNum;
     }
 
 }

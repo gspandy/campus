@@ -70,6 +70,10 @@ public class SchoolController {
     		SchoolVO schoolVO = new SchoolVO();
     		schoolVO.setSchoolId(school.getUid());
     		schoolVO.setSchoolName(school.getSchoolname());
+    		schoolVO.setCityCode(school.getCitycode());
+    		schoolVO.setCityName(school.getCityname());
+    		schoolVO.setProvinceCode(school.getProvincecode());
+    		schoolVO.setProvinceName(school.getProvincename());
     		schoolVOs.add(schoolVO);
     	}
     	

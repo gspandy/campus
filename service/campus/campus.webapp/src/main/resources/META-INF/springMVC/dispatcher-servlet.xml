@@ -40,7 +40,14 @@
 			</list>
 		</property>
 	</bean>
-	
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="5242880" />
+		<property name="resolveLazily" value="true" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
 	<bean class="org.campus.core.swagger.SelfSpringSwaggerConfig" />
 
 	<bean

@@ -52,4 +52,11 @@ public interface UserMapper {
      * @mbggenerated Sun Aug 09 23:25:01 CST 2015
      */
     int updateByPrimaryKey(User record);
+    
+    /**
+     * 根据昵称查找用户
+     * @param nickName
+     * @return
+     */
+    User selectByNickName(String nickName);
 }

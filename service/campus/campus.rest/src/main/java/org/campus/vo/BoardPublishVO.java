@@ -2,6 +2,8 @@ package org.campus.vo;
 
 import java.util.List;
 
+import org.campus.model.enums.DisplayModel;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -15,6 +17,8 @@ public class BoardPublishVO {
     private List<String> faceKeys;
 
     private String content;
+
+    private DisplayModel displayModel;
 
     @ApiModelProperty(value = "1:休闲;2:新鲜;3:秘密;4:言论", required = true)
     public String getType() {
@@ -54,6 +58,16 @@ public class BoardPublishVO {
     @ApiModelProperty(value = "发帖内容", required = false)
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @ApiModelProperty(value = "显示模式(0:月亮模式;1:太阳模式)", required = true)
+    public DisplayModel getDisplayModel() {
+        return displayModel;
+    }
+
+    @ApiModelProperty(value = "显示模式(0:月亮模式;1:太阳模式)", required = true)
+    public void setDisplayModel(DisplayModel displayModel) {
+        this.displayModel = displayModel;
     }
 
 }
