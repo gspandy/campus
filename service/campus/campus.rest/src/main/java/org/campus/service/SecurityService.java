@@ -44,7 +44,7 @@ public class SecurityService {
 	 * @return
 	 */
 	public SysUser checkUserAndPassword(String loginName,String password){
-		SysUser sysUser = sysUserMapper.selectByAccount(loginName);
+		SysUser sysUser = getUserByAccount(loginName);
 		if(sysUser == null){
 			throw new CampusException(100002,"用户未注册");
 		}
@@ -54,6 +54,15 @@ public class SecurityService {
 			throw new CampusException(100002,"用户名或者密码错误");
 		}
 		return sysUser;
+	}
+	
+	/**
+	 * 根据登录号获取有效用户信息
+	 * @param loginName
+	 * @return
+	 */
+	public SysUser getUserByAccount(String loginName){
+		return sysUserMapper.selectByAccount(loginName);
 	}
 	
 	/**
@@ -74,5 +83,21 @@ public class SecurityService {
 		User usr = userMapper.selectByNickName(nickName);
 		if(usr != null) return true;
 		return false;
+	}
+	
+	/**
+	 * 更新 sysUser 表
+	 * @param user
+	 */
+	public void updateSysUser(SysUser user){
+		sysUserMapper.updateByPrimaryKeySelective(user);
+	}
+	
+	/**
+	 * 更新appUser表
+	 * @param user
+	 */
+	public void updateUser(User user){
+		userMapper.updateByPrimaryKeySelective(user);
 	}
 }
