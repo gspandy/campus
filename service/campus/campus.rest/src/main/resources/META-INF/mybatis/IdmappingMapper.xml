@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.campus.repository.IdmappingMapper" >
+  <sql id="Base_Column_List" >
+    id, fileId, fdfsId, createTime
+  </sql>
+   <select id="selectByFdhtId" resultType="org.campus.model.Idmapping">
+    select 
+    <include refid="Base_Column_List" />
+    from idmapping
+    where fileId = #{fileId}
+  </select>
+  <delete id="deleteByFdhtId" >
+    delete from idmapping
+    where fileId = #{fileId}
+  </delete>
+  <insert id="insert" parameterType="org.campus.model.Idmapping" >
+    insert into idmapping (id, fileId, fdfsId, createTime
+      )
+    values (#{id}, #{fileId}, #{fdfsid}, #{createTime}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.campus.model.Idmapping" >
+    insert into idmapping
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="fileId != null" >
+        fileId,
+      </if>
+      <if test="fdfsid != null" >
+        fdfsId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="fileId != null" >
+        #{fileId},
+      </if>
+      <if test="fdfsid != null" >
+        #{fdfsid},
+      </if>
+      <if test="createTime != null" >
+        #{createTime},
+      </if>
+    </trim>
+  </insert>
+</mapper>

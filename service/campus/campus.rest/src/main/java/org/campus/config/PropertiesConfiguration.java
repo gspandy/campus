@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-class PropertiesConfiguration extends AbstractConfiguration {
+public class PropertiesConfiguration extends AbstractConfiguration {
 
     private Map<String, Object> store = new HashMap<String, Object>();
 
