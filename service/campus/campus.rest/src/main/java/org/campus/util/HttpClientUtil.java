@@ -96,12 +96,8 @@ public class HttpClientUtil {
         }
     };
 
-    public static String get(String url) {
-        return get(url, null, null);
-    }
-
-    public static String get(String url, Map<String, String> params) {
-        return get(url, params, null);
+    public static String get(String url, String charset) {
+        return get(url, null, charset);
     }
 
     @SuppressWarnings("deprecation")
@@ -111,7 +107,7 @@ public class HttpClientUtil {
         }
         List<NameValuePair> qparams = getParamsList(params);
         if (qparams != null && qparams.size() > 0) {
-            charset = (charset == null ? SystemConfig.getString("SMS_REQUEST_CHARSET") : charset);
+            charset = (charset == null ? SystemConfig.getString("DEFAULT_CHARSET") : charset);
             String formatParams = URLEncodedUtils.format(qparams, charset);
             url = (url.indexOf("?")) < 0 ? (url + "?" + formatParams)
                     : (url.substring(0, url.indexOf("?") + 1) + formatParams);
@@ -143,7 +139,7 @@ public class HttpClientUtil {
         }
         List<NameValuePair> qparams = getParamsList(params);
         if (qparams != null && qparams.size() > 0) {
-            requestCharset = (requestCharset == null ? SystemConfig.getString("SMS_REQUEST_CHARSET") : requestCharset);
+            requestCharset = (requestCharset == null ? SystemConfig.getString("DEFAULT_CHARSET") : requestCharset);
             String formatParams = URLEncodedUtils.format(qparams, requestCharset);
             url = (url.indexOf("?")) < 0 ? (url + "?" + formatParams)
                     : (url.substring(0, url.indexOf("?") + 1) + formatParams);
@@ -333,7 +329,7 @@ public class HttpClientUtil {
                     "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)");
             httpclients.getParams().setParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, Boolean.FALSE);
             httpclients.getParams().setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET,
-                    charset == null ? SystemConfig.getString("SMS_REQUEST_CHARSET") : charset);
+                    charset == null ? SystemConfig.getString("DEFAULT_CHARSET") : charset);
             httpclients.setHttpRequestRetryHandler(requestRetryHandler);
         } catch (Exception e) {
             e.printStackTrace();

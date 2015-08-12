@@ -70,8 +70,8 @@ public class SendMessageImpl implements SendMessage {
             map.put("pwd", SystemConfig.getString("SMS_USER_PWD"));
             map.put("dest", buffer.toString());
             map.put("content", message);
-            String url = URLBuilder.resetUrl(map, urlStr);
-            String response = HttpClientUtil.get(url);
+            String url = URLBuilder.resetUrl(map, urlStr, SystemConfig.getString("SMS_REQUEST_CHARSET"));
+            String response = HttpClientUtil.get(url, SystemConfig.getString("SMS_REQUEST_CHARSET"));
             logger.debug("短信平台返回信息：{0}", response);
             if (StringUtils.hasText(response)) {
                 String[] split = response.split(":");

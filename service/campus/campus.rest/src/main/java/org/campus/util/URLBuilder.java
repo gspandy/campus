@@ -10,7 +10,7 @@ import org.campus.core.exception.CampusException;
 
 public class URLBuilder {
 
-    public static String resetUrl(Map<String, String> smsMap, String urlAddress) {
+    public static String resetUrl(Map<String, String> smsMap, String urlAddress, String charset) {
         if (null == smsMap || smsMap.size() == 0) {
             throw new CampusException("请求参数不能为空");
         }
@@ -26,7 +26,7 @@ public class URLBuilder {
             nameValuePairs.add(pair);
         }
         NameValuePair[] pairs = (NameValuePair[]) nameValuePairs.toArray(new NameValuePair[size]);
-        String request = EncodingUtil.formUrlEncode(pairs, "UTF-8");
+        String request = EncodingUtil.formUrlEncode(pairs, charset);
         return urlAddress + "?" + request;
     }
 

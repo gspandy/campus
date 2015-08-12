@@ -21,8 +21,7 @@ public class SendMessageTest extends BaseTest {
     public void testSendMessage() {
         List<String> phoneNumbers = new ArrayList<String>();
         phoneNumbers.add("18651874535");
-        phoneNumbers.add("18652925426");
-        sendMessage.sendMessage(phoneNumbers, "尊敬的用户，您的验证码为：123571，请及时输入。", SMSType.SMS_REGISTER);
+        sendMessage.sendMessage(phoneNumbers, "尊敬的用户，您的验证码为：123571，请及时输入。【集合】", SMSType.SMS_REGISTER);
     }
 
 }
