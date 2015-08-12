@@ -10,6 +10,7 @@ import org.campus.constant.Constant;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
+import org.campus.model.enums.DisplayModel;
 import org.campus.service.UserService;
 import org.campus.vo.BoardVO;
 import org.campus.vo.CommentAddVO;
@@ -122,6 +123,7 @@ public class UserController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void postSupport(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
+            @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
         // TODO:待完成
 
@@ -132,6 +134,7 @@ public class UserController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void commentSupport(
             @ApiParam(name = "commentId", value = "帖子评论的ID") @PathVariable String commentId,
+            @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
 
         // TODO:待完成
@@ -142,6 +145,7 @@ public class UserController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "评论成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void addComment(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
+            @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
             @ApiParam(name = "commentAddVO", value = "评论体信息") @RequestBody CommentAddVO commentAddVO,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
 
