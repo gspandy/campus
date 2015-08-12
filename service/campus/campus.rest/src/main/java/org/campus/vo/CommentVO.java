@@ -15,6 +15,10 @@ public class CommentVO {
 
     private String nickName;
 
+    private String objUserId;
+
+    private String objNickName;
+
     private Date commentDate;
 
     private String commentContent;
@@ -51,6 +55,26 @@ public class CommentVO {
     @ApiModelProperty(value = "评论人昵称", required = true)
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    @ApiModelProperty(value = "回复人ID", required = false)
+    public String getObjUserId() {
+        return objUserId;
+    }
+
+    @ApiModelProperty(value = "回复人ID", required = false)
+    public void setObjUserId(String objUserId) {
+        this.objUserId = objUserId;
+    }
+
+    @ApiModelProperty(value = "回复人昵称", required = false)
+    public String getObjNickName() {
+        return objNickName;
+    }
+
+    @ApiModelProperty(value = "回复人昵称", required = false)
+    public void setObjNickName(String objNickName) {
+        this.objNickName = objNickName;
     }
 
     @ApiModelProperty(value = "评论时间", required = true)

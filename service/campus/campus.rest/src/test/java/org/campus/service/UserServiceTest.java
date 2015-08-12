@@ -1,6 +1,7 @@
 package org.campus.service;
 
 import org.campus.BaseTest;
+import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
 import org.junit.Assert;
@@ -58,6 +59,23 @@ public class UserServiceTest extends BaseTest {
         Pageable pageable = new PageRequest(0, 10);
         Page<FreshNews> photos = userService.findUserPhotos("123", pageable);
         Assert.assertTrue(photos.getTotalElements() == 1);
+    }
+
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/comment/save.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/comment/save.xml")
+    public void testFindComments() {
+        Pageable pageable = new PageRequest(0, 10);
+        Page<Comment> photos = userService.findComments("123", pageable);
+        Assert.assertTrue(photos.getTotalElements() == 3);
+    }
+
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/support/save.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/support/save.xml")
+    public void testGetUserCommentSupport() {
+        int supportNum = userService.getUserCommentSupport("123", "345");
+        Assert.assertTrue(supportNum == 3);
     }
 
 }

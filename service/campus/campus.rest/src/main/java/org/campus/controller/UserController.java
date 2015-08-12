@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.campus.constant.Constant;
+import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
 import org.campus.service.UserService;
@@ -94,30 +95,30 @@ public class UserController {
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-        // TODO:待完成
+        Page<Comment> comments = userService.findComments(photoId, pageable);
         List<CommentVO> commentVOs = new ArrayList<CommentVO>();
-        CommentVO commentVO1 = new CommentVO();
-        commentVO1.setCommentId("1231");
-        commentVO1.setUserId("4323");
-        commentVO1.setNickName("ad123123");
-        commentVO1.setCommentDate(new Date());
-        commentVO1.setCommentContent("测试1");
-        commentVO1.setSupportNum(99);
-        commentVOs.add(commentVO1);
-        CommentVO commentVO2 = new CommentVO();
-        commentVO2.setCommentId("1231");
-        commentVO2.setUserId("4323");
-        commentVO2.setNickName("ad123123");
-        commentVO2.setCommentDate(new Date());
-        commentVO2.setCommentContent("测试1");
-        commentVO2.setSupportNum(99);
-        commentVOs.add(commentVO2);
+        if (comments == null || comments.getContent().size() == 0) {
+            return new PageImpl<CommentVO>(commentVOs, pageable, commentVOs.size());
+        }
+        CommentVO commentVO = null;
+        for (Comment comment : comments.getContent()) {
+            commentVO = new CommentVO();
+            commentVO.setUserId(comment.getComuseruid());
+            commentVO.setNickName(comment.getUsernickname());
+            commentVO.setObjUserId(comment.getObjuseruid());
+            commentVO.setObjNickName(comment.getObjusernickname());
+            commentVO.setCommentDate(comment.getCreatedate());
+            commentVO.setCommentContent(comment.getCommentcontent());
+            int supportNum = userService.getUserCommentSupport(comment.getUid(), comment.getComuseruid());
+            commentVO.setSupportNum(supportNum);
+            commentVOs.add(commentVO);
+        }
         Page<CommentVO> page = new PageImpl<CommentVO>(commentVOs, pageable, commentVOs.size());
         return page;
     }
 
     @ApiOperation(value = "相册点赞:1.0", notes = "相册点赞[API-Version=1.0]")
-    @RequestMapping(value = "/{photoId}/support", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @RequestMapping(value = "/photo/{userId}/support/{photoId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void postSupport(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
@@ -127,7 +128,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "相册评论点赞:1.0", notes = "相册评论点赞[API-Version=1.0]")
-    @RequestMapping(value = "/{commentId}/support", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @RequestMapping(value = "/comment/{userId}/support/{commentId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void commentSupport(
             @ApiParam(name = "commentId", value = "帖子评论的ID") @PathVariable String commentId,
@@ -309,9 +310,12 @@ public class UserController {
 
     private Page<UserPhotosVO> findUserPhotos(Pageable pageable, String userId, String nickName) {
         Page<FreshNews> photos = userService.findUserPhotos(userId, pageable);
-        UserPhotosVO userPhotosVO = null;
         List<UserPhotosVO> photosVOs = new ArrayList<UserPhotosVO>();
-        for (FreshNews freshNews : photos) {
+        if (photos == null || photos.getContent().size() == 0) {
+            return new PageImpl<UserPhotosVO>(photosVOs, pageable, photosVOs.size());
+        }
+        UserPhotosVO userPhotosVO = null;
+        for (FreshNews freshNews : photos.getContent()) {
             userPhotosVO = new UserPhotosVO();
             userPhotosVO.setPhotoId(freshNews.getUid());
             userPhotosVO.setNickName(nickName);

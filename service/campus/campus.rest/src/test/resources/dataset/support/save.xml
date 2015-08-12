@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<ts_app_support UID="1" SourceUID="123" SupportUserUID="345" />
+	<ts_app_support UID="2" SourceUID="123" SupportUserUID="345" />
+	<ts_app_support UID="3" SourceUID="123" SupportUserUID="345" />
+</dataset>

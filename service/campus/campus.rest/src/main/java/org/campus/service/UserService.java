@@ -1,5 +1,6 @@
 package org.campus.service;
 
+import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
 import org.springframework.data.domain.Page;
@@ -61,5 +62,28 @@ public interface UserService {
      *
      */
     Page<FreshNews> findUserPhotos(String userId, Pageable pageable);
+
+    /**
+     * 
+     * 功能描述: <br>
+     * 查询相册评论
+     *
+     * @param sourceId
+     * @param pageable
+     * @return
+     *
+     */
+    Page<Comment> findComments(String sourceId, Pageable pageable);
+
+    /**
+     * 功能描述: <br>
+     * 获取用户评论的点赞数
+     *
+     * @param sourceId
+     * @param userId
+     * @return
+     *
+     */
+    int getUserCommentSupport(String sourceId, String userId);
 
 }

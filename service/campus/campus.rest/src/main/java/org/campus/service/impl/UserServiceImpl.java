@@ -1,9 +1,12 @@
 package org.campus.service.impl;
 
+import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
 import org.campus.repository.AttentionUserMapper;
+import org.campus.repository.CommentMapper;
 import org.campus.repository.FreshNewsMapper;
+import org.campus.repository.SupportMapper;
 import org.campus.repository.UserMapper;
 import org.campus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private FreshNewsMapper freshNewsMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
+
+    @Autowired
+    private SupportMapper supportMapper;
 
     @Override
     public User findByUserId(String userId) {
@@ -47,6 +56,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<FreshNews> findUserPhotos(String userId, Pageable pageable) {
         return freshNewsMapper.findByUserId(userId, pageable);
+    }
+
+    @Override
+    public Page<Comment> findComments(String sourceId, Pageable pageable) {
+        return commentMapper.findBySourceId(sourceId, pageable);
+    }
+
+    @Override
+    public int getUserCommentSupport(String sourceId, String userId) {
+        return supportMapper.getSupportNum(sourceId, userId);
     }
 
 }
