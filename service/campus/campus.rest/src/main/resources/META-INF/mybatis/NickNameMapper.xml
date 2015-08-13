@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.campus.repository.NickNameMapper">
+	<resultMap id="BaseResultMap" type="org.campus.model.NickName">
+		<id column="UID" property="uid" jdbcType="INTEGER" />
+		<result column="NickName" property="nickname" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		UID, NickName
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from ts_app_nickname
+		where UID = #{uid,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		ts_app_nickname
+		where UID = #{uid,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="org.campus.model.NickName">
+		insert into ts_app_nickname
+		(UID, NickName)
+		values (#{uid,jdbcType=INTEGER},
+		#{nickname,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="org.campus.model.NickName">
+		insert into ts_app_nickname
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uid != null">
+				UID,
+			</if>
+			<if test="nickname != null">
+				NickName,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uid != null">
+				#{uid,jdbcType=INTEGER},
+			</if>
+			<if test="nickname != null">
+				#{nickname,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="org.campus.model.NickName">
+		update ts_app_nickname
+		<set>
+			<if test="nickname != null">
+				NickName = #{nickname,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where UID = #{uid,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="org.campus.model.NickName">
+		update
+		ts_app_nickname
+		set NickName = #{nickname,jdbcType=VARCHAR}
+		where UID =
+		#{uid,jdbcType=INTEGER}
+	</update>
+	<delete id="deleteAll">
+		delete from ts_app_nickname;
+	</delete>
+	<select id="count" resultType="int">
+		select count(1) from
+		ts_app_nickname;
+	</select>
+</mapper>
