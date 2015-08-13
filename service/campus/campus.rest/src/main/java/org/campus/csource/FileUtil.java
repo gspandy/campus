@@ -15,7 +15,7 @@ public class FileUtil {
         DiskFileItem fi = (DiskFileItem)cf.getFileItem(); 
         File file = fi.getStoreLocation(); 
         String path = file.getPath();
-        path = path.substring(0, path.lastIndexOf("\\"));
+        path = path.substring(0, path.lastIndexOf(File.separator));
         StringBuilder pathBuilder = new StringBuilder(path);
         pathBuilder.append(File.separator).append(ToolUtil.getId()).append("_").append(multipartFile.getOriginalFilename());
         path = pathBuilder.toString();
