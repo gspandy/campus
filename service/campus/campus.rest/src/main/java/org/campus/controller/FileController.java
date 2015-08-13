@@ -38,7 +38,7 @@ public class FileController {
     private FastdfsClientFactory fastdfsClientFactory;
 
     @SuppressWarnings("null")
-    @ApiOperation(value = "图片上传:1.0", notes = "图片上传:1.0")
+    @ApiOperation(value = "*图片上传:1.0", notes = "图片上传:[API-Version=1.0]")
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "请求成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public FileUploadVO uploadidentityCardPicture(
@@ -58,7 +58,7 @@ public class FileController {
         return fileUploadVO;
     }
     
-    @ApiOperation(value = "图片下载:1.0", notes = "图片下载:1.0")
+    @ApiOperation(value = "*图片下载:1.0", notes = "图片下载:[API-Version=1.0]")
     @RequestMapping(value = "/downLoad", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "请求成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void downLoadidentityCardPicture(
