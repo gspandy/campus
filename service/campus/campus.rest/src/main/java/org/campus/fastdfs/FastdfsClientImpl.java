@@ -150,7 +150,7 @@ public class FastdfsClientImpl extends AbstractClient implements FastdfsClient {
                 String filename = tupple[1];
                 Result<String> result = trackerClient.getDownloadStorageAddr(groupname, filename);
                 if (result.getCode() == 0) {
-                    storageAddr = "42.159.193.145:23000";//result.getData();
+                    storageAddr = result.getData();
                     storageClient = storageClientPool.borrowObject(storageAddr);
 
                     Result<byte[]> result2 = storageClient.donwLoad(groupname, filename);
@@ -184,7 +184,7 @@ public class FastdfsClientImpl extends AbstractClient implements FastdfsClient {
             trackerClient = trackerClientPool.borrowObject(trackerAddr);
             Result<UploadStorage> result = trackerClient.getUploadStorage();
             if (result.getCode() == 0) {
-                storageAddr = "42.159.193.145:23000";// result.getData().getAddress();
+                storageAddr = result.getData().getAddress();
                 storageClient = storageClientPool.borrowObject(storageAddr);
 
                 String extname = fileName;
@@ -249,7 +249,7 @@ public class FastdfsClientImpl extends AbstractClient implements FastdfsClient {
 
                 Result<String> result = trackerClient.getUpdateStorageAddr(groupname, filename);
                 if (result.getCode() == 0) {
-                    storageAddr = "42.159.193.145:23000";//result.getData();
+                    storageAddr = result.getData();
                     storageClient = storageClientPool.borrowObject(storageAddr);
                     Result<String> result2 = storageClient.uploadSlave(file, filename, prefix, ext, null);
                     if (result2.getCode() == 0) {
@@ -336,7 +336,7 @@ public class FastdfsClientImpl extends AbstractClient implements FastdfsClient {
             trackerClient = trackerClientPool.borrowObject(trackerAddr);
             Result<String> result2 = trackerClient.getUpdateStorageAddr(fastDfsFile.group, fastDfsFile.fileName);
             if (result2.getCode() == 0) {
-                storageAddr = "42.159.193.145:23000";//result2.getData();
+                storageAddr = result2.getData();
                 storageClient = storageClientPool.borrowObject(storageAddr);
                 Result<Boolean> result3 = storageClient.setMeta(fastDfsFile.group, fastDfsFile.fileName, meta);
                 if (result3.getCode() == 0 || result3.getCode() == 0) {
@@ -372,7 +372,7 @@ public class FastdfsClientImpl extends AbstractClient implements FastdfsClient {
             trackerClient = trackerClientPool.borrowObject(trackerAddr);
             Result<String> result2 = trackerClient.getUpdateStorageAddr(fastDfsFile.group, fastDfsFile.fileName);
             if (result2.getCode() == 0) {
-                storageAddr = "42.159.193.145:23000";// result2.getData();
+                storageAddr = result2.getData();
                 storageClient = storageClientPool.borrowObject(storageAddr);
                 Result<Map<String, String>> result3 = storageClient.getMeta(fastDfsFile.group, fastDfsFile.fileName);
                 if (result3.getCode() == 0 || result3.getCode() == 0) {
@@ -438,7 +438,7 @@ public class FastdfsClientImpl extends AbstractClient implements FastdfsClient {
             trackerClient = trackerClientPool.borrowObject(trackerAddr);
             Result<String> result2 = trackerClient.getUpdateStorageAddr(fastDfsFile.group, fastDfsFile.fileName);
             if (result2.getCode() == 0) {
-                storageAddr = "42.159.193.145:23000";//result2.getData();
+                storageAddr = result2.getData();
                 storageClient = storageClientPool.borrowObject(storageAddr);
                 Result<Boolean> result3 = storageClient.delete(fastDfsFile.group, fastDfsFile.fileName);
                 if (result3.getCode() == 0 || result3.getCode() == 0) {
