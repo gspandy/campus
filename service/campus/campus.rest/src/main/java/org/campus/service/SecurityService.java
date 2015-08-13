@@ -1,8 +1,5 @@
 package org.campus.service;
 
-import org.campus.vo.LoginRequestVO;
-import org.campus.vo.LoginResponseVO;
-import org.springframework.stereotype.Service;
 import org.campus.core.exception.CampusException;
 import org.campus.model.SysUser;
 import org.campus.model.User;
@@ -10,6 +7,7 @@ import org.campus.repository.SysUserMapper;
 import org.campus.repository.UserMapper;
 import org.campus.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

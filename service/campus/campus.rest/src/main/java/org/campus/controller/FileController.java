@@ -1,13 +1,3 @@
-/*
- * Copyright (C), 2014-2014, 联创车盟汽车服务有限公司
- * FileName: FileController.java
- * Author:   ZGF
- * Date:     2014年9月17日 下午1:20:10
- * Description: //模块目的、功能描述      
- * History: //修改记录
- * <author>      <time>      <version>    <desc>
- * 修改人姓名             修改时间            版本号                  描述
- */
 package org.campus.controller;
 
 import java.awt.image.BufferedImage;
@@ -21,9 +11,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.campus.core.exception.CampusException;
-import org.campus.core.exception.FastdfsIOException;
 import org.campus.csource.FileUtil;
 import org.campus.fastdfs.FastdfsClient;
 import org.campus.fastdfs.FastdfsClientFactory;
@@ -34,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

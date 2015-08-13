@@ -567,12 +567,7 @@ public class FastDHTClient {
         ProtoCommon.PkgHeader header;
         byte[] bsPackage;
         int offset;
-        Iterator it;
-        Map.Entry entry;
-        String key;
-        String value;
         byte[] bsKey;
-        byte[] bsValue;
         int i;
 
         header = new ProtoCommon.PkgHeader();
@@ -653,12 +648,9 @@ public class FastDHTClient {
         ProtoCommon.PkgHeader header;
         byte[] bsPackage;
         int offset;
-        Iterator it;
-        Map.Entry entry;
         String key;
         String value;
         byte[] bsKey;
-        byte[] bsValue;
         int i;
         Hashtable keyValues;
         int key_count;
@@ -773,7 +765,6 @@ public class FastDHTClient {
     public Hashtable stat(int server_index) throws Exception {
         ServerInfo server;
         ProtoCommon.PkgHeader header;
-        int offset;
         Hashtable keyValues;
 
         ServerInfo[] servers = this.serverGroup.getServers();
@@ -838,7 +829,6 @@ public class FastDHTClient {
         ServerInfo server;
         ProtoCommon.PkgHeader header;
         byte[] bsPackage;
-        byte status;
 
         header = new ProtoCommon.PkgHeader();
         header.key_hash_code = objInfo.getHashCode();
