@@ -11,6 +11,7 @@ import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
 import org.campus.model.enums.DisplayModel;
+import org.campus.model.enums.InteractType;
 import org.campus.service.UserService;
 import org.campus.vo.BoardVO;
 import org.campus.vo.CommentAddVO;
@@ -46,7 +47,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @ApiOperation(value = "登录用户信息查询:1.0", notes = "登录用户信息查询[API-Version=1.0]")
+    @ApiOperation(value = "*登录用户信息查询:1.0", notes = "登录用户信息查询[API-Version=1.0]")
     @RequestMapping(value = "/info", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public UserVO getLoginUserInfo(
@@ -56,7 +57,7 @@ public class UserController {
         return findUserInfo(responseVO.getUserId());
     }
 
-    @ApiOperation(value = "其他用户的信息查询:1.0", notes = "其他用户的信息查询[API-Version=1.0]")
+    @ApiOperation(value = "*其他用户的信息查询:1.0", notes = "其他用户的信息查询[API-Version=1.0]")
     @RequestMapping(value = "/{userId}/info", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public UserVO getUserInfo(
@@ -65,7 +66,7 @@ public class UserController {
         return findUserInfo(userId);
     }
 
-    @ApiOperation(value = "查询登录用户相册:1.0", notes = "查询登录用户相册[API-Version=1.0]")
+    @ApiOperation(value = "*查询登录用户相册:1.0", notes = "查询登录用户相册[API-Version=1.0]")
     @RequestMapping(value = "/photos", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<UserPhotosVO> getUserPhotos(
@@ -77,7 +78,7 @@ public class UserController {
         return page;
     }
 
-    @ApiOperation(value = "查询其他用户的相册:1.0", notes = "查询其他用户的相册[API-Version=1.0]")
+    @ApiOperation(value = "*查询其他用户的相册:1.0", notes = "查询其他用户的相册[API-Version=1.0]")
     @RequestMapping(value = "/{userId}/photos", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<UserPhotosVO> getUserPhotos(
@@ -89,7 +90,7 @@ public class UserController {
         return page;
     }
 
-    @ApiOperation(value = "查询相册评论:1.0", notes = "查询相册评论[API-Version=1.0]")
+    @ApiOperation(value = "*查询相册评论:1.0", notes = "查询相册评论[API-Version=1.0]")
     @RequestMapping(value = "/{photoId}/comments", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<CommentVO> getPhotoComments(
@@ -118,25 +119,27 @@ public class UserController {
         return page;
     }
 
-    @ApiOperation(value = "相册点赞:1.0", notes = "相册点赞[API-Version=1.0]")
-    @RequestMapping(value = "/photo/{userId}/support/{photoId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @ApiOperation(value = "相册点赞/踩:1.0", notes = "相册点赞[API-Version=1.0]")
+    @RequestMapping(value = "/photo/{photoId}/interact", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void postSupport(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
+            @ApiParam(name = "type", value = "赞/踩(0:踩,1:赞)") @RequestParam(value = "type", required = true) InteractType type,
             @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-        // TODO:待完成
-
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        
     }
 
     @ApiOperation(value = "相册评论点赞:1.0", notes = "相册评论点赞[API-Version=1.0]")
-    @RequestMapping(value = "/comment/{userId}/support/{commentId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @RequestMapping(value = "/comment/{commentId}/interact", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void commentSupport(
             @ApiParam(name = "commentId", value = "帖子评论的ID") @PathVariable String commentId,
+            @ApiParam(name = "type", value = "赞/踩(0:踩,1:赞)") @RequestParam(value = "type", required = true) InteractType type,
             @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
         // TODO:待完成
     }
 

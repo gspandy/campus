@@ -3,6 +3,8 @@ package org.campus.service;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
+import org.campus.model.enums.DisplayModel;
+import org.campus.model.enums.InteractType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -85,5 +87,14 @@ public interface UserService {
      *
      */
     int getUserCommentSupport(String sourceId, String userId);
+
+    /**
+     * 
+     * 功能描述: <br>
+     * 相册互动
+     *
+     *
+     */
+    void photoSupport(String photoId, InteractType type, DisplayModel model);
 
 }

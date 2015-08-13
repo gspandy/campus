@@ -3,6 +3,8 @@ package org.campus.service.impl;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
+import org.campus.model.enums.DisplayModel;
+import org.campus.model.enums.InteractType;
 import org.campus.repository.AttentionUserMapper;
 import org.campus.repository.CommentMapper;
 import org.campus.repository.FreshNewsMapper;
@@ -66,6 +68,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public int getUserCommentSupport(String sourceId, String userId) {
         return supportMapper.getSupportNum(sourceId, userId);
+    }
+
+    @Override
+    public void photoSupport(String photoId, InteractType type, DisplayModel model) {
+
     }
 
 }
