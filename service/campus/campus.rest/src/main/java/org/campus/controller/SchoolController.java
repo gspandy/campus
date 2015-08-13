@@ -58,7 +58,7 @@ public class SchoolController {
         return schoolVO;
     }
 
-    @ApiOperation(value = "学校信息:1.0", notes = "学校信息 [API-Version=1.0]")
+    @ApiOperation(value = "*学校信息:1.0", notes = "学校信息 [API-Version=1.0]")
     @RequestMapping(value = "/schools", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<SchoolVO> findSchools(@ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable) {
@@ -81,7 +81,7 @@ public class SchoolController {
         return page;
     }
 
-    @ApiOperation(value = "院系信息:1.0", notes = "院系信息 [API-Version=1.0]")
+    @ApiOperation(value = "*院系信息:1.0", notes = "院系信息 [API-Version=1.0]")
     @RequestMapping(value = "/{schoolId}/colleges", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<CollegeVO> findColleges(
@@ -99,7 +99,7 @@ public class SchoolController {
         return collegeVOs;
     }
 
-    @ApiOperation(value = "专业信息:1.0", notes = "专业信息 [API-Version=1.0]")
+    @ApiOperation(value = "*专业信息:1.0", notes = "专业信息 [API-Version=1.0]")
     @RequestMapping(value = "/{schoolId}/{collegeId}/professions", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<ProfessionVO> findProfessions(
@@ -117,7 +117,7 @@ public class SchoolController {
         return professionVOs;
     }
 
-    @ApiOperation(value = "入学年份:1.0", notes = "入学年份 [API-Version=1.0]")
+    @ApiOperation(value = "*入学年份:1.0", notes = "入学年份 [API-Version=1.0]")
     @RequestMapping(value = "/inSchoolYear", headers={"API-Version=1.0"}, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<String> getInSchoolYear() {
