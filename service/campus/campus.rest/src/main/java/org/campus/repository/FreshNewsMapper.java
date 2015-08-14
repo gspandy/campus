@@ -55,7 +55,9 @@ public interface FreshNewsMapper {
     Page<FreshNews> findByUserId(@Param("userId") String userId, Pageable pageable);
 
     int updateSupport(String uid);
-    
+
     int updateNotSupport(String uid);
+
+    void deleteAll();
 
 }

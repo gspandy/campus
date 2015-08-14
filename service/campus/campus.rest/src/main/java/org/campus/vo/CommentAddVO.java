@@ -2,6 +2,8 @@ package org.campus.vo;
 
 import java.util.List;
 
+import org.campus.model.enums.TypeCode;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -16,7 +18,7 @@ public class CommentAddVO {
 
     private List<String> faceKeys;
 
-    private String commentType;
+    private TypeCode commentType;
 
     @ApiModelProperty(value = "评论内容", required = true)
     public String getContent() {
@@ -59,12 +61,12 @@ public class CommentAddVO {
     }
 
     @ApiModelProperty(value = "评论类型", required = true)
-    public String getCommentType() {
+    public TypeCode getCommentType() {
         return commentType;
     }
 
     @ApiModelProperty(value = "评论类型", required = true)
-    public void setCommentType(String commentType) {
+    public void setCommentType(TypeCode commentType) {
         this.commentType = commentType;
     }
 

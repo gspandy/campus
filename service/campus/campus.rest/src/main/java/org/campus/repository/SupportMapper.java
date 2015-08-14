@@ -50,6 +50,6 @@ public interface SupportMapper {
 
     int getSupportNum(@Param("sourceId") String sourceId, @Param("userId") String userId);
 
-    int deleteAll();
+    void deleteAll();
 
 }

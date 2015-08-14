@@ -325,4 +325,7 @@
 		set NotSupportNum = NotSupportNum + 1 where UID =
 		#{uid,jdbcType=VARCHAR}
 	</update>
+	<delete id="deleteAll">
+		delete from ts_app_freshnews;
+	</delete>
 </mapper>

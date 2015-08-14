@@ -217,4 +217,7 @@
 		where SourceUID = #{sourceId,jdbcType=VARCHAR} AND
 		isActive=1
 	</select>
+	<delete id="deleteAll">
+		delete from ts_app_comment
+	</delete>
 </mapper>

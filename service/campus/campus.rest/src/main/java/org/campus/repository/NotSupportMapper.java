@@ -47,6 +47,6 @@ public interface NotSupportMapper {
      */
     int updateByPrimaryKey(NotSupport record);
 
-    int deleteAll();
+    void deleteAll();
 
 }

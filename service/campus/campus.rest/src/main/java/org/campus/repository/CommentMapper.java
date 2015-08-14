@@ -51,5 +51,7 @@ public interface CommentMapper {
     int updateByPrimaryKey(Comment record);
 
     Page<Comment> findBySourceId(@Param("sourceId") String sourceId, Pageable pageable);
+    
+    void deleteAll();
 
 }

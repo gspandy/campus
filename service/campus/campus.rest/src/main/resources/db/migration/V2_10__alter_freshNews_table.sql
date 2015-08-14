@@ -1,0 +1,1 @@
+ALTER table ts_app_freshnews add(AddNickName varchar(1) COMMENT '昵称');

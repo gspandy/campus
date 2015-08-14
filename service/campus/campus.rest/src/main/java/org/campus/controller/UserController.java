@@ -160,16 +160,22 @@ public class UserController {
         userService.commentSupport(commentId, responseVO.getUserId(), userName, type);
     }
 
-    @ApiOperation(value = "相册评论:1.0", notes = "相册评论[API-Version=1.0]")
+    @ApiOperation(value = "*相册评论:1.0", notes = "相册评论[API-Version=1.0]")
     @RequestMapping(value = "/{photoId}/comment", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "评论成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void addComment(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
             @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
             @ApiParam(name = "commentAddVO", value = "评论体信息") @RequestBody CommentAddVO commentAddVO,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-
-        // TODO:待完成
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        String userName = responseVO.getNickName();
+        if (DisplayModel.MOON.equals(model)) {
+            NickName nickName = nickNameService.findRandomNickName();
+            userName = nickName.getNickname();
+        }
+        userService.comment(photoId, responseVO.getUserId(), userName, model, commentAddVO);
     }
 
     @ApiOperation(value = "添加关注:1.0", notes = "添加关注[API-Version=1.0]")

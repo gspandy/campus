@@ -4,8 +4,14 @@ import org.campus.BaseTest;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
+import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.InteractType;
+import org.campus.repository.CommentMapper;
+import org.campus.repository.FreshNewsMapper;
+import org.campus.repository.NotSupportMapper;
+import org.campus.repository.ShareMapper;
 import org.campus.repository.SupportMapper;
+import org.campus.vo.CommentAddVO;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +30,18 @@ public class UserServiceTest extends BaseTest {
 
     @Autowired
     private SupportMapper supportMapper;
+
+    @Autowired
+    private NotSupportMapper notSupportMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
+
+    @Autowired
+    private FreshNewsMapper freshNewsMapper;
+
+    @Autowired
+    private ShareMapper shareMapper;
 
     @Test
     @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/user/save.xml")
@@ -90,7 +108,7 @@ public class UserServiceTest extends BaseTest {
         userService.photoSupport("1", "123", "Test", InteractType.SUPPORT);
         supportMapper.deleteAll();
         userService.photoSupport("1", "123", "Test", InteractType.NOT_SUPPORT);
-        supportMapper.deleteAll();
+        notSupportMapper.deleteAll();
     }
 
     @Test
@@ -99,6 +117,18 @@ public class UserServiceTest extends BaseTest {
     public void testCommentSupport() {
         userService.commentSupport("1", "123", "Test", InteractType.SUPPORT);
         userService.commentSupport("2", "123", "Test", InteractType.NOT_SUPPORT);
+    }
+
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/fresh/save.xml")
+    public void testComment() {
+        CommentAddVO commentAddVO = new CommentAddVO();
+        commentAddVO.setContent("测试");
+        commentAddVO.setTrans(true);
+        userService.comment("1", "123", "Test", DisplayModel.MOON, commentAddVO);
+        shareMapper.deleteAll();
+        freshNewsMapper.deleteAll();
+        commentMapper.deleteAll();
     }
 
 }

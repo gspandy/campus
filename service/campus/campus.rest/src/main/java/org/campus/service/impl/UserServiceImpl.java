@@ -7,19 +7,24 @@ import org.campus.core.exception.CampusException;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.NotSupport;
+import org.campus.model.Share;
 import org.campus.model.Support;
 import org.campus.model.User;
 import org.campus.model.enums.ActiveType;
+import org.campus.model.enums.AnonymousType;
+import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.InteractType;
 import org.campus.model.enums.TypeCode;
 import org.campus.repository.AttentionUserMapper;
 import org.campus.repository.CommentMapper;
 import org.campus.repository.FreshNewsMapper;
 import org.campus.repository.NotSupportMapper;
+import org.campus.repository.ShareMapper;
 import org.campus.repository.SupportMapper;
 import org.campus.repository.UserMapper;
 import org.campus.service.UserService;
 import org.campus.util.ToolUtil;
+import org.campus.vo.CommentAddVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +50,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private NotSupportMapper notSupportMapper;
+
+    @Autowired
+    private ShareMapper shareMapper;
 
     @Override
     public User findByUserId(String userId) {
@@ -110,6 +118,51 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void comment(String sourceId, String userId, String userName, DisplayModel model, CommentAddVO commentAddVO) {
+        FreshNews freshNews = freshNewsMapper.selectByPrimaryKey(sourceId);
+        if (freshNews == null) {
+            throw new CampusException(1100002, "查询不到数据");
+        }
+        Comment comment = new Comment();
+        comment.setUid(ToolUtil.getUUid());
+        comment.setSourceuid(sourceId);
+        comment.setComuseruid(userId);
+        comment.setUsernickname(userName);
+        comment.setCommentcontent(commentAddVO.getContent());
+        comment.setIsactive(ActiveType.ACTIVE);
+        comment.setCreateby(Constant.CREATE_BY);
+        comment.setCreatedate(new Date());
+        comment.setLastupdateby(Constant.CREATE_BY);
+        comment.setLastupdatedate(new Date());
+        commentMapper.insert(comment);
+
+        if (commentAddVO.isTrans()) {
+            freshNews.setUid(ToolUtil.getUUid());
+            freshNews.setAdduseruid(userId);
+            freshNews.setAddnickname(userName);
+            if (DisplayModel.MOON.equals(model)) {
+                freshNews.setIsanonymous(AnonymousType.ANONYMOUS);
+            } else {
+                freshNews.setIsanonymous(AnonymousType.NOT_ANONYMOUS);
+            }
+            freshNewsMapper.insert(freshNews);
+
+            Share share = new Share();
+            share.setUid(ToolUtil.getUUid());
+            share.setActivityuid(sourceId);
+            share.setShareuseruid(userId);
+            share.setSharetime(new Date());
+            share.setFreshnewsuid(freshNews.getUid());
+            share.setIsactive(ActiveType.ACTIVE);
+            share.setCreateby(Constant.CREATE_BY);
+            share.setCreatedate(new Date());
+            share.setLastupdateby(Constant.CREATE_BY);
+            share.setLastupdatedate(new Date());
+            shareMapper.insert(share);
+        }
+    }
+
     private void notSupport(String sourceId, String userId, String userName) {
         NotSupport notSupport = new NotSupport();
         notSupport.setUid(ToolUtil.getUUid());
@@ -139,4 +192,5 @@ public class UserServiceImpl implements UserService {
         support.setLastupdatedate(new Date());
         supportMapper.insert(support);
     }
+
 }
