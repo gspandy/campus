@@ -18,6 +18,8 @@ public class UserPhotosVO {
 
     private String url;
 
+    private String brief;
+
     private String content;
 
     private int transNum;
@@ -68,6 +70,16 @@ public class UserPhotosVO {
     @ApiModelProperty(value = "相片URL", required = true)
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @ApiModelProperty(value = "简介", required = false)
+    public String getBrief() {
+        return brief;
+    }
+
+    @ApiModelProperty(value = "简介", required = false)
+    public void setBrief(String brief) {
+        this.brief = brief;
     }
 
     @ApiModelProperty(value = "发布内容", required = false)

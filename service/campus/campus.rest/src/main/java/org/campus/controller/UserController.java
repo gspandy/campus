@@ -235,7 +235,8 @@ public class UserController {
         for (FreshNews freshNews : freshPage.getContent()) {
             commentVO = new MyCommentVO();
             commentVO.setPostId(freshNews.getUid());
-            commentVO.setContent(freshNews.getNewsbrief());
+            commentVO.setBrief(freshNews.getNewsbrief());
+            commentVO.setContent(freshNews.getNewscontent());
             commentVO.setPostPics(dealPics(freshNews));
             findMyComments(responseVO, commentVO, freshNews);
             myCommentVOs.add(commentVO);
@@ -264,7 +265,8 @@ public class UserController {
             boardVO.setUserId(freshNews.getAdduseruid());
             boardVO.setNickName(freshNews.getAddnickname());
             boardVO.setPicUrls(dealPics(freshNews));
-            boardVO.setContent(freshNews.getNewsbrief());
+            boardVO.setBrief(freshNews.getNewsbrief());
+            boardVO.setContent(freshNews.getNewscontent());
             boardVO.setPublishDate(freshNews.getCreatedate());
             boardVOs.add(boardVO);
         }
@@ -294,6 +296,7 @@ public class UserController {
             userPhotosVO.setPhotoId(freshNews.getUid());
             userPhotosVO.setNickName(nickName);
             userPhotosVO.setPubDate(freshNews.getCreatedate());
+            userPhotosVO.setBrief(freshNews.getNewsbrief());
             userPhotosVO.setContent(freshNews.getNewscontent());
             userPhotosVO.setTransNum(freshNews.getTransnum());
             userPhotosVO.setCommentNum(freshNews.getCommentnum());

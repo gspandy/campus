@@ -12,6 +12,8 @@ public class MyCommentVO {
 
     private String postId;
 
+    private String brief;
+
     private String content;
 
     private List<String> postPics;
@@ -34,6 +36,16 @@ public class MyCommentVO {
     @ApiModelProperty(value = "被评论的帖子ID", required = true)
     public void setPostId(String postId) {
         this.postId = postId;
+    }
+
+    @ApiModelProperty(value = "被评论的帖子简介", required = false)
+    public String getBrief() {
+        return brief;
+    }
+
+    @ApiModelProperty(value = "被评论的帖子简介", required = false)
+    public void setBrief(String brief) {
+        this.brief = brief;
     }
 
     @ApiModelProperty(value = "被评论的帖子内容", required = false)

@@ -21,6 +21,8 @@ public class BoardVO {
 
     private List<String> picUrls;
 
+    private String brief;
+
     private String content;
 
     @ApiModelProperty(value = "发帖ID", required = true)
@@ -71,6 +73,16 @@ public class BoardVO {
     @ApiModelProperty(value = "发帖图片URL", required = false)
     public void setPicUrls(List<String> picUrls) {
         this.picUrls = picUrls;
+    }
+
+    @ApiModelProperty(value = "发帖简介", required = false)
+    public String getBrief() {
+        return brief;
+    }
+
+    @ApiModelProperty(value = "发帖简介", required = false)
+    public void setBrief(String brief) {
+        this.brief = brief;
     }
 
     @ApiModelProperty(value = "发帖内容", required = false)
