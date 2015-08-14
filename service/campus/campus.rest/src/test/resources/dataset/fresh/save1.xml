@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<ts_app_freshnews UID="1" AddUserUID="234" IsShield="0"
+		IsActive="1" />
+	<ts_app_freshnews UID="2" AddUserUID="432" IsShield="0"
+		IsActive="1" />
+	<ts_app_freshnews UID="3" AddUserUID="437" IsShield="0"
+		IsActive="1" />
+	<ts_app_comment UID="1" SourceUID="1" ComUserUID="123" />
+	<ts_app_comment UID="2" SourceUID="1" ComUserUID="123" />
+	<ts_app_comment UID="3" SourceUID="2" ComUserUID="123" />
+</dataset>

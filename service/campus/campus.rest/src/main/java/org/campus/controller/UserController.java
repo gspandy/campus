@@ -1,7 +1,6 @@
 package org.campus.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -237,44 +236,39 @@ public class UserController {
             commentVO = new MyCommentVO();
             commentVO.setPostId(freshNews.getUid());
             commentVO.setContent(freshNews.getNewsbrief());
-            dealPics(commentVO, freshNews);
+            commentVO.setPostPics(dealPics(freshNews));
             findMyComments(responseVO, commentVO, freshNews);
             myCommentVOs.add(commentVO);
         }
         return new PageImpl<MyCommentVO>(myCommentVOs, pageable, myCommentVOs.size());
     }
 
-    @ApiOperation(value = "查询我点过的赞:1.0", notes = "查询我点过的赞[API-Version=1.0]")
+    @ApiOperation(value = "*查询我点过的赞:1.0", notes = "查询我点过的赞[API-Version=1.0]")
     @RequestMapping(value = "/mysupports", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<BoardVO> getMysupports(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-        // TODO:待完成
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        Page<FreshNews> freshPage = userService.findMySupportPosts(responseVO.getUserId(), pageable);
         List<BoardVO> boardVOs = new ArrayList<BoardVO>();
-        BoardVO boardVO1 = new BoardVO();
-        boardVO1.setPostsId("2123123");
-        boardVO1.setUserId("123231");
-        boardVO1.setNickName("ec00000");
-        List<String> picUrls1 = new ArrayList<String>();
-        picUrls1.add("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
-        boardVO1.setPicUrls(picUrls1);
-        boardVO1.setContent("测试1");
-        boardVO1.setPublishDate(new Date());
-        boardVOs.add(boardVO1);
-        BoardVO boardVO2 = new BoardVO();
-        boardVO2.setPostsId("2123124");
-        boardVO2.setUserId("123232");
-        boardVO2.setNickName("ec00001");
-        List<String> picUrls2 = new ArrayList<String>();
-        picUrls2.add("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
-        boardVO2.setPicUrls(picUrls2);
-        boardVO2.setContent("测试2");
-        boardVO2.setPublishDate(new Date());
-        boardVOs.add(boardVO2);
-        Page<BoardVO> page = new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
-        return page;
+        if (freshPage == null || CollectionUtils.isEmpty(freshPage.getContent())) {
+            return new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
+        }
+
+        BoardVO boardVO = null;
+        for (FreshNews freshNews : freshPage.getContent()) {
+            boardVO = new BoardVO();
+            boardVO.setPostsId(freshNews.getUid());
+            boardVO.setUserId(freshNews.getAdduseruid());
+            boardVO.setNickName(freshNews.getAddnickname());
+            boardVO.setPicUrls(dealPics(freshNews));
+            boardVO.setContent(freshNews.getNewsbrief());
+            boardVO.setPublishDate(freshNews.getCreatedate());
+            boardVOs.add(boardVO);
+        }
+        return new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
     }
 
     private UserVO findUserInfo(String userId) {
@@ -339,16 +333,17 @@ public class UserController {
         return friendVOs;
     }
 
-    private void dealPics(MyCommentVO commentVO, FreshNews freshNews) {
+    private List<String> dealPics(FreshNews freshNews) {
         String pictures = freshNews.getPictures();
+        List<String> picList = null;
         if (StringUtils.isNotBlank(pictures)) {
+            picList = new ArrayList<String>();
             String[] picArr = pictures.split(",");
-            List<String> picList = new ArrayList<String>();
             for (int i = 0; i < picArr.length; i++) {
                 picList.add(picArr[i]);
             }
-            commentVO.setPostPics(picList);
         }
+        return picList;
     }
 
     private void findMyComments(LoginResponseVO responseVO, MyCommentVO commentVO, FreshNews freshNews) {

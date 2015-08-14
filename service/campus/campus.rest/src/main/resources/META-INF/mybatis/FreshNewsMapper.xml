@@ -334,4 +334,10 @@
 		f.UID=c.SourceUID WHERE c.ComUserUID=#{userId,jdbcType=VARCHAR} GROUP
 		BY f.UID
 	</select>
+	<select id="findMySupportPosts" resultMap="BaseResultMap">
+		SELECT f.* from
+		ts_app_freshnews as f LEFT JOIN ts_app_support as s on
+		f.UID=s.SourceUID WHERE s.SupportUserUID=#{userId,jdbcType=VARCHAR}
+		GROUP BY f.UID
+	</select>
 </mapper>

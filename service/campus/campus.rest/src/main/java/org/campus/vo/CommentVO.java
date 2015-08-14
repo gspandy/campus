@@ -2,6 +2,7 @@ package org.campus.vo;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -18,6 +19,7 @@ public class CommentVO {
 
     private String objNickName;
 
+    @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date commentDate;
 
     private String commentContent;

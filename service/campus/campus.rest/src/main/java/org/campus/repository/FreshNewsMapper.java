@@ -62,4 +62,6 @@ public interface FreshNewsMapper {
 
     Page<FreshNews> findMyCommentPosts(@Param("userId") String userId, Pageable pageable);
 
+    Page<FreshNews> findMySupportPosts(@Param("userId") String userId, Pageable pageable);
+
 }

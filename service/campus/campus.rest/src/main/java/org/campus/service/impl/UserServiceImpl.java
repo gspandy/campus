@@ -221,6 +221,11 @@ public class UserServiceImpl implements UserService {
         return supportMapper.countMyCommentSupport(sourceId);
     }
 
+    @Override
+    public Page<FreshNews> findMySupportPosts(String userId, Pageable pageable) {
+        return freshNewsMapper.findMySupportPosts(userId, pageable);
+    }
+
     private void notSupport(String sourceId, String userId, String userName) {
         NotSupport notSupport = new NotSupport();
         notSupport.setUid(ToolUtil.getUUid());

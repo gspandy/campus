@@ -224,4 +224,16 @@ public interface UserService {
      */
     int countMyCommentSupport(String sourceId);
 
+    /**
+     * 
+     * 功能描述: <br>
+     * 查询我赞过的帖子
+     *
+     * @param userId
+     * @param pageable
+     * @return
+     *
+     */
+    Page<FreshNews> findMySupportPosts(String userId, Pageable pageable);
+
 }

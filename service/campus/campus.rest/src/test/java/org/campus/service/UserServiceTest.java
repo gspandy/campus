@@ -54,7 +54,7 @@ public class UserServiceTest extends BaseTest {
     @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/user/save.xml")
     public void testFindByUserId() {
         User user = userService.findByUserId("123");
-        Assert.assertEquals(user.getNickname(), "测试");
+        Assert.assertEquals("测试", user.getNickname());
     }
 
     @Test
@@ -157,13 +157,13 @@ public class UserServiceTest extends BaseTest {
     @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/user/save1.xml")
     public void testFindMyFriends() {
         List<User> user1 = userService.findMyFriends("123", null);
-        Assert.assertEquals(user1.size(), 3);
+        Assert.assertEquals(3, user1.size());
         List<User> user2 = userService.findMyFriends("123", "123");
-        Assert.assertEquals(user2.size(), 0);
+        Assert.assertEquals(0, user2.size());
         List<User> user3 = userService.findMyFriends("123", "124");
-        Assert.assertEquals(user3.size(), 1);
+        Assert.assertEquals(1, user3.size());
         List<User> user4 = userService.findMyFriends("123", "12");
-        Assert.assertEquals(user4.size(), 3);
+        Assert.assertEquals(3, user4.size());
     }
 
     @Test
@@ -171,8 +171,43 @@ public class UserServiceTest extends BaseTest {
     @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/user/save1.xml")
     public void testFindMyFans() {
         List<User> user1 = userService.findMyFans("124", null);
-        Assert.assertEquals(user1.size(), 1);
+        Assert.assertEquals(1, user1.size());
         List<User> user2 = userService.findMyFans("124", "128");
-        Assert.assertEquals(user2.size(), 0);
+        Assert.assertEquals(0, user2.size());
     }
+
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/fresh/save1.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/fresh/save1.xml")
+    public void testFindMyCommentPosts() {
+        Pageable pageable = new PageRequest(0, 10);
+        Page<FreshNews> posts = userService.findMyCommentPosts("123", pageable);
+        Assert.assertEquals(2, posts.getContent().size());
+    }
+
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/comment/save.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/comment/save.xml")
+    public void testFindMyComments() {
+        List<Comment> comments = userService.findMyComments("123", "123");
+        Assert.assertEquals(1, comments.size());
+    }
+
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/support/save.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/support/save.xml")
+    public void testCountMyCommentSupport() {
+        int count = userService.countMyCommentSupport("123");
+        Assert.assertTrue(count == 3);
+    }
+
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/fresh/save2.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/fresh/save2.xml")
+    public void testFindMySupportPosts() {
+        Pageable pageable = new PageRequest(0, 10);
+        Page<FreshNews> page = userService.findMySupportPosts("123", pageable);
+        Assert.assertEquals(2, page.getContent().size());
+    }
+
 }
