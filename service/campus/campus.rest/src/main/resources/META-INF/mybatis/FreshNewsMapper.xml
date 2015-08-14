@@ -21,6 +21,8 @@
 		<result column="LastUpdateBy" property="lastupdateby" jdbcType="VARCHAR" />
 		<result column="LastUpdateDate" property="lastupdatedate"
 			jdbcType="TIMESTAMP" />
+		<result column="newstype" property="newstype" jdbcType="CHAR" />
+		<result column="ishot" property="ishot" jdbcType="CHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UID, NewsBrief, NewsContent, Pictures, AddUserUID,
@@ -29,7 +31,7 @@
 		ComplainNum, NotSupportNum,
 		TransNum, IsShield, IsActive,
 		CreateBy, CreateDate, LastUpdateBy,
-		LastUpdateDate
+		LastUpdateDate,newstype,ishot
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -51,7 +53,8 @@
 		TransNum,
 		IsShield,
 		IsActive, CreateBy,
-		CreateDate, LastUpdateBy, LastUpdateDate
+		CreateDate, LastUpdateBy, LastUpdateDate, newstype,
+		ishot
 		)
 		values
 		(#{uid,jdbcType=VARCHAR}, #{newsbrief,jdbcType=VARCHAR},
@@ -65,7 +68,9 @@
 		#{createby,jdbcType=VARCHAR},
 		#{createdate,jdbcType=TIMESTAMP},
 		#{lastupdateby,jdbcType=VARCHAR},
-		#{lastupdatedate,jdbcType=TIMESTAMP}
+		#{lastupdatedate,jdbcType=TIMESTAMP},
+		#{newstype,jdbcType=CHAR},
+		#{ishot,jdbcType=CHAR}
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.FreshNews">
@@ -125,6 +130,12 @@
 			<if test="lastupdatedate != null">
 				LastUpdateDate,
 			</if>
+			<if test="newstype != null">
+				newstype,
+			</if>
+			<if test="ishot != null">
+				ishot,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uid != null">
@@ -177,6 +188,12 @@
 			</if>
 			<if test="lastupdatedate != null">
 				#{lastupdatedate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="newstype != null">
+				#{newstype,jdbcType=CHAR},
+			</if>
+			<if test="ishot != null">
+				#{ishot,jdbcType=CHAR},
 			</if>
 		</trim>
 	</insert>
@@ -231,6 +248,12 @@
 			<if test="lastupdatedate != null">
 				LastUpdateDate = #{lastupdatedate,jdbcType=TIMESTAMP},
 			</if>
+			<if test="newstype != null">
+				newstype = #{newstype,jdbcType=CHAR},
+			</if>
+			<if test="ishot != null">
+				ishot = #{ishot,jdbcType=CHAR},
+			</if>
 		</set>
 		where UID = #{uid,jdbcType=VARCHAR}
 	</update>
@@ -266,7 +289,11 @@
 		LastUpdateBy =
 		#{lastupdateby,jdbcType=VARCHAR},
 		LastUpdateDate =
-		#{lastupdatedate,jdbcType=TIMESTAMP}
+		#{lastupdatedate,jdbcType=TIMESTAMP},
+		newstype =
+		#{newstype,jdbcType=CHAR},
+		ishot =
+		#{ishot,jdbcType=CHAR}
 		where UID =
 		#{uid,jdbcType=VARCHAR}
 	</update>
@@ -286,4 +313,16 @@
 		where AddUserUID = #{userId,jdbcType=VARCHAR} AND
 		IsAnonymous=0
 	</select>
+	<update id="updateSupport" parameterType="java.lang.String">
+		update
+		ts_app_freshnews
+		set SupportNum = SupportNum + 1 where UID =
+		#{uid,jdbcType=VARCHAR}
+	</update>
+	<update id="updateNotSupport" parameterType="java.lang.String">
+		update
+		ts_app_freshnews
+		set NotSupportNum = NotSupportNum + 1 where UID =
+		#{uid,jdbcType=VARCHAR}
+	</update>
 </mapper>

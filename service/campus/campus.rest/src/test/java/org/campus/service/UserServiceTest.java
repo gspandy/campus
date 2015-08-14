@@ -4,6 +4,8 @@ import org.campus.BaseTest;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
+import org.campus.model.enums.InteractType;
+import org.campus.repository.SupportMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class UserServiceTest extends BaseTest {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SupportMapper supportMapper;
 
     @Test
     @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/user/save.xml")
@@ -78,4 +83,13 @@ public class UserServiceTest extends BaseTest {
         Assert.assertTrue(supportNum == 3);
     }
 
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/fresh/save.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/fresh/save.xml")
+    public void testPhotoSupport() {
+        userService.photoSupport("1", "123", "Test", InteractType.SUPPORT);
+        supportMapper.deleteAll();
+        userService.photoSupport("1", "123", "Test", InteractType.NOT_SUPPORT);
+        supportMapper.deleteAll();
+    }
 }

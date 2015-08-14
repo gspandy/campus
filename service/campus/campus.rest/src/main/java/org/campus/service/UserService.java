@@ -3,7 +3,6 @@ package org.campus.service;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
-import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.InteractType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -95,6 +94,6 @@ public interface UserService {
      *
      *
      */
-    void photoSupport(String photoId, InteractType type, DisplayModel model);
+    void photoSupport(String sourceId, String userId, String userName, InteractType type);
 
 }

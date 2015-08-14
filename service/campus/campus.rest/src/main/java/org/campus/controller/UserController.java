@@ -9,9 +9,11 @@ import javax.servlet.http.HttpSession;
 import org.campus.constant.Constant;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
+import org.campus.model.NickName;
 import org.campus.model.User;
 import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.InteractType;
+import org.campus.service.NickNameService;
 import org.campus.service.UserService;
 import org.campus.vo.BoardVO;
 import org.campus.vo.CommentAddVO;
@@ -46,6 +48,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private NickNameService nickNameService;
 
     @ApiOperation(value = "*登录用户信息查询:1.0", notes = "登录用户信息查询[API-Version=1.0]")
     @RequestMapping(value = "/info", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
@@ -119,7 +124,7 @@ public class UserController {
         return page;
     }
 
-    @ApiOperation(value = "相册点赞/踩:1.0", notes = "相册点赞[API-Version=1.0]")
+    @ApiOperation(value = "*相册点赞/踩:1.0", notes = "相册点赞[API-Version=1.0]")
     @RequestMapping(value = "/photo/{photoId}/interact", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void postSupport(
@@ -128,7 +133,13 @@ public class UserController {
             @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-        
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        String userName = responseVO.getNickName();
+        if (DisplayModel.MOON.equals(model)) {
+            NickName nickName = nickNameService.findRandomNickName();
+            userName = nickName.getNickname();
+        }
+        userService.photoSupport(photoId, responseVO.getUserId(), userName, type);
     }
 
     @ApiOperation(value = "相册评论点赞:1.0", notes = "相册评论点赞[API-Version=1.0]")

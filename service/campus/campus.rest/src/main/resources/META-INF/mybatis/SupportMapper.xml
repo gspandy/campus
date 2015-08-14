@@ -177,4 +177,8 @@
 		SupportUserUID =
 		#{userId,jdbcType=VARCHAR}
 	</select>
+	<delete id="deleteAll">
+		delete from
+		ts_app_support
+	</delete>
 </mapper>
