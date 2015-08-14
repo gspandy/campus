@@ -1,6 +1,7 @@
 package org.campus.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
@@ -184,6 +185,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public void removeAttention(String comUserId, String objUserId) {
         attentionUserMapper.removeAttention(comUserId, objUserId);
+    }
+
+    @Override
+    public boolean isAttention(String comUserId, String objUserId) {
+        AttentionUser attention = attentionUserMapper.findAttention(comUserId, objUserId);
+        if (attention != null) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public List<User> findMyFriends(String myUserId, String friendNickName) {
+        return userMapper.findMyFriends(myUserId, friendNickName);
     }
 
     private void notSupport(String sourceId, String userId, String userName) {

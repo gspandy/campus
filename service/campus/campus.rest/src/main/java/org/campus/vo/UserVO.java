@@ -20,6 +20,8 @@ public class UserVO {
 
     private int attentionCount;
 
+    private boolean isAttention = false;
+
     @ApiModelProperty(value = "用户Id", required = true)
     public String getUserId() {
         return userId;
@@ -88,6 +90,16 @@ public class UserVO {
     @ApiModelProperty(value = "关注数", required = true)
     public void setAttentionCount(int attentionCount) {
         this.attentionCount = attentionCount;
+    }
+
+    @ApiModelProperty(value = "是否关注", required = true)
+    public boolean isAttention() {
+        return isAttention;
+    }
+
+    @ApiModelProperty(value = "是否关注", required = true)
+    public void setAttention(boolean isAttention) {
+        this.isAttention = isAttention;
     }
 
 }

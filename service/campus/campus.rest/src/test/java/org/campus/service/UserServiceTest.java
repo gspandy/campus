@@ -1,5 +1,7 @@
 package org.campus.service;
 
+import java.util.List;
+
 import org.campus.BaseTest;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
@@ -148,6 +150,20 @@ public class UserServiceTest extends BaseTest {
     @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/attention/save.xml")
     public void testRemoveAttention() {
         userService.removeAttention("123", "345");
+    }
+
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/user/save1.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/user/save1.xml")
+    public void testFindMyFriends() {
+        List<User> user1 = userService.findMyFriends("123", null);
+        Assert.assertEquals(user1.size(), 3);
+        List<User> user2 = userService.findMyFriends("123", "123");
+        Assert.assertEquals(user2.size(), 0);
+        List<User> user3 = userService.findMyFriends("123", "124");
+        Assert.assertEquals(user3.size(), 1);
+        List<User> user4 = userService.findMyFriends("123", "12");
+        Assert.assertEquals(user4.size(), 3);
     }
 
 }

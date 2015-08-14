@@ -1,6 +1,8 @@
 package org.campus.controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.InteractType;
 import org.campus.service.NickNameService;
 import org.campus.service.UserService;
+import org.campus.util.CollectionUtils;
 import org.campus.vo.BoardVO;
 import org.campus.vo.CommentAddVO;
 import org.campus.vo.CommentVO;
@@ -67,8 +70,12 @@ public class UserController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public UserVO getUserInfo(
             @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-        return findUserInfo(userId);
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        UserVO user = findUserInfo(userId);
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        user.setAttention(userService.isAttention(responseVO.getUserId(), userId));
+        return user;
     }
 
     @ApiOperation(value = "*查询登录用户相册:1.0", notes = "查询登录用户相册[API-Version=1.0]")
@@ -188,29 +195,29 @@ public class UserController {
         userService.removeAttention(responseVO.getUserId(), userId);
     }
 
-    @ApiOperation(value = "查询好友列表:1.0", notes = "查询好友列表[API-Version=1.0]")
+    @ApiOperation(value = "*查询好友列表:1.0", notes = "查询好友列表[API-Version=1.0]")
     @RequestMapping(value = "/friends", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询好友成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<FriendVO> getFriends(
             @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
-            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-        // TODO:待完成
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        List<User> users = userService.findMyFriends(responseVO.getUserId(), nickName);
         List<FriendVO> friendVOs = new ArrayList<FriendVO>();
-        FriendVO friendVO1 = new FriendVO();
-        friendVO1.setUserId("123123");
-        friendVO1.setNickName("asd123");
-        friendVO1.setInitial("A");
-        friendVO1.setHeadUrl("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
-        friendVOs.add(friendVO1);
-        FriendVO friendVO2 = new FriendVO();
-        friendVO2.setUserId("123322");
-        friendVO2.setNickName("Dsd123");
-        friendVO2.setInitial("D");
-        friendVO2.setSignature("测试");
-        friendVO2.setHeadUrl("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
-        friendVOs.add(friendVO2);
+        if (CollectionUtils.isEmpty(users)) {
+            return friendVOs;
+        }
+
+        FriendVO friendVO = null;
+        for (User user : users) {
+            friendVO = new FriendVO();
+            friendVO.setUserId(user.getUseruid());
+            friendVO.setNickName(user.getNickname());
+            friendVO.setInitial(user.getNamefirstletter());
+            friendVO.setHeadUrl(user.getHeadpic());
+            friendVOs.add(friendVO);
+        }
         return friendVOs;
     }
 

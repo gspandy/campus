@@ -140,6 +140,16 @@
 		AttenionUserUID=#{objUserId,jdbcType=VARCHAR}
 	</delete>
 	<delete id="deleteByMyUserId">
-		delete from ts_app_attentionuser where MyUserUID=#{userId,jdbcType=VARCHAR}
+		delete from ts_app_attentionuser where
+		MyUserUID=#{userId,jdbcType=VARCHAR}
 	</delete>
+	<select id="findAttention">
+		select
+		*
+		from ts_app_attentionuser
+		where
+		MyUserUID=#{comUserId,jdbcType=VARCHAR} AND
+		AttenionUserUID =
+		#{userId,jdbcType=VARCHAR}
+	</select>
 </mapper>

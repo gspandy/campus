@@ -62,4 +62,6 @@ public interface AttentionUserMapper {
 
     void deleteByMyUserId(String userId);
 
+    AttentionUser findAttention(@Param("comUserId") String comUserId, @Param("objUserId") String objUserId);
+
 }

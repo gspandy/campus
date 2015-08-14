@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<ts_app_user UserUID="123" StudentID="123213" NickName="test123" />
+	<ts_app_user UserUID="124" StudentID="123213" NickName="test124" />
+	<ts_app_user UserUID="125" StudentID="123213" NickName="test125" />
+	<ts_app_user UserUID="126" StudentID="123213" NickName="test126" />
+	<ts_app_attentionuser UID="1" MyUserUID="123"
+		AttenionUserUID="124" />
+	<ts_app_attentionuser UID="2" MyUserUID="123"
+		AttenionUserUID="125" />
+	<ts_app_attentionuser UID="3" MyUserUID="123"
+		AttenionUserUID="126" />
+</dataset>

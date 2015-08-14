@@ -1,5 +1,7 @@
 package org.campus.service;
 
+import java.util.List;
+
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
@@ -149,5 +151,30 @@ public interface UserService {
      *
      */
     void removeAttention(String comUserId, String objUserId);
+
+    /**
+     * 
+     * 功能描述: <br>
+     * 是否关注
+     *
+     * @param comUserId
+     * @param objUserId
+     * @return
+     *
+     */
+    boolean isAttention(String comUserId, String objUserId);
+
+    /**
+     * 
+     * 功能描述: <br>
+     * 查询好友
+     *
+     * @param myUserId
+     * @param friendNickName
+     * @param pageable
+     * @return
+     *
+     */
+    List<User> findMyFriends(String myUserId, String friendNickName);
 
 }
