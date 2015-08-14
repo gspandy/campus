@@ -166,4 +166,13 @@ public class UserServiceTest extends BaseTest {
         Assert.assertEquals(user4.size(), 3);
     }
 
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/user/save1.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/user/save1.xml")
+    public void testFindMyFans() {
+        List<User> user1 = userService.findMyFans("124", null);
+        Assert.assertEquals(user1.size(), 1);
+        List<User> user2 = userService.findMyFans("124", "128");
+        Assert.assertEquals(user2.size(), 0);
+    }
 }

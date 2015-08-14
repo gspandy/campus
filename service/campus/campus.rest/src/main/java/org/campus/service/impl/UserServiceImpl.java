@@ -201,6 +201,11 @@ public class UserServiceImpl implements UserService {
         return userMapper.findMyFriends(myUserId, friendNickName);
     }
 
+    @Override
+    public List<User> findMyFans(String myUserId, String friendNickName) {
+        return userMapper.findMyFans(myUserId, friendNickName);
+    }
+
     private void notSupport(String sourceId, String userId, String userName) {
         NotSupport notSupport = new NotSupport();
         notSupport.setUid(ToolUtil.getUUid());

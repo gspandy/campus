@@ -60,4 +60,6 @@ public interface UserMapper {
 
     List<User> findMyFriends(@Param("myUserId") String myUserId, @Param("friendNickName") String friendNickName);
 
+    List<User> findMyFans(@Param("myUserId") String myUserId, @Param("friendNickName") String friendNickName);
+
 }

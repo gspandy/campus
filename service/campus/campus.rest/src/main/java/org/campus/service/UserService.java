@@ -177,4 +177,16 @@ public interface UserService {
      */
     List<User> findMyFriends(String myUserId, String friendNickName);
 
+    /**
+     * 
+     * 功能描述: <br>
+     * 查询粉丝类表
+     *
+     * @param myUserId
+     * @param friendNickName
+     * @return
+     *
+     */
+    List<User> findMyFans(String myUserId, String friendNickName);
+
 }

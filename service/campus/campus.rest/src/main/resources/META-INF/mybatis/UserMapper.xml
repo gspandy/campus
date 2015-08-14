@@ -469,4 +469,13 @@
 			CONCAT('%','${friendNickName}','%' )
 		</if>
 	</select>
+	<select id="findMyFans" resultMap="BaseResultMap">
+		SELECT u.* from ts_app_user as u LEFT JOIN ts_app_attentionuser as a
+		on u.UserUID=a.MyUserUID WHERE
+		a.AttenionUserUID=#{myUserId,jdbcType=VARCHAR}
+		<if test="friendNickName != null and friendNickName != ''">
+			AND u.NickName like
+			CONCAT('%','${friendNickName}','%' )
+		</if>
+	</select>
 </mapper>

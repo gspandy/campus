@@ -204,47 +204,19 @@ public class UserController {
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         List<User> users = userService.findMyFriends(responseVO.getUserId(), nickName);
-        List<FriendVO> friendVOs = new ArrayList<FriendVO>();
-        if (CollectionUtils.isEmpty(users)) {
-            return friendVOs;
-        }
-
-        FriendVO friendVO = null;
-        for (User user : users) {
-            friendVO = new FriendVO();
-            friendVO.setUserId(user.getUseruid());
-            friendVO.setNickName(user.getNickname());
-            friendVO.setInitial(user.getNamefirstletter());
-            friendVO.setHeadUrl(user.getHeadpic());
-            friendVOs.add(friendVO);
-        }
-        return friendVOs;
+        return getFriendsVOs(users);
     }
 
-    @ApiOperation(value = "查询粉丝列表:1.0", notes = "查询粉丝列表[API-Version=1.0]")
+    @ApiOperation(value = "*查询粉丝列表:1.0", notes = "查询粉丝列表[API-Version=1.0]")
     @RequestMapping(value = "/fans", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询粉丝成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<FriendVO> getFans(
             @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
-            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-        // TODO:待完成
-        List<FriendVO> friendVOs = new ArrayList<FriendVO>();
-        FriendVO friendVO1 = new FriendVO();
-        friendVO1.setUserId("123123");
-        friendVO1.setNickName("asd123");
-        friendVO1.setInitial("A");
-        friendVO1.setHeadUrl("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
-        friendVOs.add(friendVO1);
-        FriendVO friendVO2 = new FriendVO();
-        friendVO2.setUserId("123322");
-        friendVO2.setNickName("Dsd123");
-        friendVO2.setInitial("D");
-        friendVO2.setSignature("测试");
-        friendVO2.setHeadUrl("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
-        friendVOs.add(friendVO2);
-        return friendVOs;
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        List<User> users = userService.findMyFans(responseVO.getUserId(), nickName);
+        return getFriendsVOs(users);
     }
 
     @ApiOperation(value = "查询我的评论:1.0", notes = "查询我的评论[API-Version=1.0]")
@@ -365,6 +337,24 @@ public class UserController {
             userName = nickName.getNickname();
         }
         return userName;
+    }
+
+    private List<FriendVO> getFriendsVOs(List<User> users) {
+        List<FriendVO> friendVOs = new ArrayList<FriendVO>();
+        if (CollectionUtils.isEmpty(users)) {
+            return friendVOs;
+        }
+
+        FriendVO friendVO = null;
+        for (User user : users) {
+            friendVO = new FriendVO();
+            friendVO.setUserId(user.getUseruid());
+            friendVO.setNickName(user.getNickname());
+            friendVO.setInitial(user.getNamefirstletter());
+            friendVO.setHeadUrl(user.getHeadpic());
+            friendVOs.add(friendVO);
+        }
+        return friendVOs;
     }
 
 }
