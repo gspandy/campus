@@ -60,4 +60,6 @@ public interface FreshNewsMapper {
 
     void deleteAll();
 
+    Page<FreshNews> findMyCommentPosts(@Param("userId") String userId, Pageable pageable);
+
 }

@@ -1,13 +1,12 @@
 package org.campus.controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.campus.constant.Constant;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
@@ -219,47 +218,30 @@ public class UserController {
         return getFriendsVOs(users);
     }
 
-    @ApiOperation(value = "查询我的评论:1.0", notes = "查询我的评论[API-Version=1.0]")
+    @ApiOperation(value = "*查询我评论过的帖子:1.0", notes = "查询我评论过的帖子[API-Version=1.0]")
     @RequestMapping(value = "/mycomments", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<MyCommentVO> getMycomments(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-        // TODO:待完成
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        Page<FreshNews> freshPage = userService.findMyCommentPosts(responseVO.getUserId(), pageable);
         List<MyCommentVO> myCommentVOs = new ArrayList<MyCommentVO>();
-        MyCommentVO commentVO1 = new MyCommentVO();
-        List<CommentVO> list = new ArrayList<CommentVO>();
-        CommentVO vo = new CommentVO();
-        vo.setCommentId("1231");
-        vo.setUserId("4323");
-        vo.setNickName("ad123123");
-        vo.setCommentDate(new Date());
-        vo.setCommentContent("测试1");
-        vo.setSupportNum(99);
-        list.add(vo);
-        commentVO1.setCommentVOs(list);
-        myCommentVOs.add(commentVO1);
-        commentVO1.setPostId("123");
-        commentVO1.setContent("测试1");
-        myCommentVOs.add(commentVO1);
-        MyCommentVO commentVO2 = new MyCommentVO();
-        List<CommentVO> list1 = new ArrayList<CommentVO>();
-        CommentVO vo1 = new CommentVO();
-        vo1.setCommentId("1231");
-        vo1.setUserId("4323");
-        vo1.setNickName("ad123123");
-        vo1.setCommentDate(new Date());
-        vo1.setCommentContent("测试1");
-        vo1.setSupportNum(99);
-        list1.add(vo1);
-        commentVO2.setCommentVOs(list1);
-        myCommentVOs.add(commentVO2);
-        commentVO2.setPostId("124");
-        commentVO2.setContent("测试2");
-        myCommentVOs.add(commentVO2);
-        Page<MyCommentVO> page = new PageImpl<MyCommentVO>(myCommentVOs, pageable, myCommentVOs.size());
-        return page;
+        if (freshPage == null || CollectionUtils.isEmpty(freshPage.getContent())) {
+            return new PageImpl<MyCommentVO>(myCommentVOs, pageable, myCommentVOs.size());
+        }
+
+        MyCommentVO commentVO = null;
+        for (FreshNews freshNews : freshPage.getContent()) {
+            commentVO = new MyCommentVO();
+            commentVO.setPostId(freshNews.getUid());
+            commentVO.setContent(freshNews.getNewsbrief());
+            dealPics(commentVO, freshNews);
+            findMyComments(responseVO, commentVO, freshNews);
+            myCommentVOs.add(commentVO);
+        }
+        return new PageImpl<MyCommentVO>(myCommentVOs, pageable, myCommentVOs.size());
     }
 
     @ApiOperation(value = "查询我点过的赞:1.0", notes = "查询我点过的赞[API-Version=1.0]")
@@ -355,6 +337,36 @@ public class UserController {
             friendVOs.add(friendVO);
         }
         return friendVOs;
+    }
+
+    private void dealPics(MyCommentVO commentVO, FreshNews freshNews) {
+        String pictures = freshNews.getPictures();
+        if (StringUtils.isNotBlank(pictures)) {
+            String[] picArr = pictures.split(",");
+            List<String> picList = new ArrayList<String>();
+            for (int i = 0; i < picArr.length; i++) {
+                picList.add(picArr[i]);
+            }
+            commentVO.setPostPics(picList);
+        }
+    }
+
+    private void findMyComments(LoginResponseVO responseVO, MyCommentVO commentVO, FreshNews freshNews) {
+        List<Comment> comments = userService.findMyComments(freshNews.getUid(), responseVO.getUserId());
+        List<CommentVO> commentVOs = new ArrayList<CommentVO>();
+        CommentVO vo = null;
+        for (Comment comment : comments) {
+            vo = new CommentVO();
+            vo.setCommentId(comment.getUid());
+            vo.setUserId(comment.getComuseruid());
+            vo.setNickName(comment.getUsernickname());
+            vo.setObjUserId(comment.getObjuseruid());
+            vo.setObjNickName(comment.getObjusernickname());
+            vo.setCommentContent(comment.getCommentcontent());
+            vo.setCommentDate(comment.getCreatedate());
+            vo.setSupportNum(userService.countMyCommentSupport(comment.getUid()));
+        }
+        commentVO.setCommentVOs(commentVOs);
     }
 
 }

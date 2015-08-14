@@ -206,6 +206,21 @@ public class UserServiceImpl implements UserService {
         return userMapper.findMyFans(myUserId, friendNickName);
     }
 
+    @Override
+    public Page<FreshNews> findMyCommentPosts(String userId, Pageable pageable) {
+        return freshNewsMapper.findMyCommentPosts(userId, pageable);
+    }
+
+    @Override
+    public List<Comment> findMyComments(String sourceId, String userId) {
+        return commentMapper.findMyComments(sourceId, userId);
+    }
+
+    @Override
+    public int countMyCommentSupport(String sourceId) {
+        return supportMapper.countMyCommentSupport(sourceId);
+    }
+
     private void notSupport(String sourceId, String userId, String userName) {
         NotSupport notSupport = new NotSupport();
         notSupport.setUid(ToolUtil.getUUid());

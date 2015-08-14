@@ -1,5 +1,7 @@
 package org.campus.repository;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.campus.model.Comment;
 import org.springframework.data.domain.Page;
@@ -51,7 +53,9 @@ public interface CommentMapper {
     int updateByPrimaryKey(Comment record);
 
     Page<Comment> findBySourceId(@Param("sourceId") String sourceId, Pageable pageable);
-    
+
     void deleteAll();
+
+    List<Comment> findMyComments(@Param("sourceId") String sourceId, @Param("userId") String userId);
 
 }

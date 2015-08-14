@@ -220,4 +220,12 @@
 	<delete id="deleteAll">
 		delete from ts_app_comment
 	</delete>
+	<select id="findMyComments" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from ts_app_comment
+		where SourceUID = #{sourceId,jdbcType=VARCHAR} AND
+		ComUserUID=#{userId,jdbcType=VARCHAR} AND
+		isActive=1
+	</select>
 </mapper>

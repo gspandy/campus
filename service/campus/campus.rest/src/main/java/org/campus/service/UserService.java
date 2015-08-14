@@ -189,4 +189,39 @@ public interface UserService {
      */
     List<User> findMyFans(String myUserId, String friendNickName);
 
+    /**
+     * 
+     * 功能描述: <br>
+     * 查询我评论过的帖子
+     *
+     * @param userId
+     * @param pageable
+     * @return
+     *
+     */
+    Page<FreshNews> findMyCommentPosts(String userId, Pageable pageable);
+
+    /**
+     * 
+     * 功能描述: <br>
+     * 查询我的评论
+     *
+     * @param sourceId
+     * @param userId
+     * @return
+     *
+     */
+    List<Comment> findMyComments(String sourceId, String userId);
+
+    /**
+     * 
+     * 功能描述: <br>
+     * 统计我的评论获得的赞
+     *
+     * @param sourceId
+     * @return
+     *
+     */
+    int countMyCommentSupport(String sourceId);
+
 }

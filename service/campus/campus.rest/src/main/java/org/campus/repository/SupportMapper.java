@@ -52,4 +52,6 @@ public interface SupportMapper {
 
     void deleteAll();
 
+    int countMyCommentSupport(String sourceId);
+
 }

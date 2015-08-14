@@ -1,7 +1,6 @@
 package org.campus.vo;
 
 import java.util.Date;
-import java.util.List;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -22,8 +21,6 @@ public class CommentVO {
     private Date commentDate;
 
     private String commentContent;
-
-    private List<String> commentUrls;
 
     private int supportNum;
 
@@ -95,16 +92,6 @@ public class CommentVO {
     @ApiModelProperty(value = "评论内容", required = false)
     public void setCommentContent(String commentContent) {
         this.commentContent = commentContent;
-    }
-
-    @ApiModelProperty(value = "评论图片url列表", required = false)
-    public List<String> getCommentUrls() {
-        return commentUrls;
-    }
-
-    @ApiModelProperty(value = "评论图片url列表", required = false)
-    public void setCommentUrls(List<String> commentUrls) {
-        this.commentUrls = commentUrls;
     }
 
     @ApiModelProperty(value = "点赞数", required = true)

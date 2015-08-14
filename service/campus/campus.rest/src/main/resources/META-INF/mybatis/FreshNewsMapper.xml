@@ -328,4 +328,10 @@
 	<delete id="deleteAll">
 		delete from ts_app_freshnews;
 	</delete>
+	<select id="findMyCommentPosts" resultMap="BaseResultMap">
+		SELECT f.* from
+		ts_app_freshnews as f LEFT JOIN ts_app_comment as c on
+		f.UID=c.SourceUID WHERE c.ComUserUID=#{userId,jdbcType=VARCHAR} GROUP
+		BY f.UID
+	</select>
 </mapper>
