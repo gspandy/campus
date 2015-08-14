@@ -26,7 +26,10 @@ public class NickNameServiceImpl implements NickNameService {
     public NickName findRandomNickName() {
         int count = nickNameMapper.count();
         int uid = (int) (Math.random() * count);
-        return nickNameMapper.selectByPrimaryKey(uid);
+        NickName nickName = nickNameMapper.selectByPrimaryKey(uid);
+        if (nickName == null) {
+            nickName = new NickName();
+        }
+        return nickName;
     }
-
 }

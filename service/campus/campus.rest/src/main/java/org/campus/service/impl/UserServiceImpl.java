@@ -90,32 +90,53 @@ public class UserServiceImpl implements UserService {
         }
         if (InteractType.SUPPORT.equals(type)) {
             freshNewsMapper.updateSupport(sourceId);
-            Support support = new Support();
-            support.setUid(ToolUtil.getUUid());
-            support.setSourceuid(sourceId);
-            support.setSupportuseruid(userId);
-            support.setUsernickname(userName);
-            support.setTypecode(TypeCode.PHOTOS);
-            support.setIsactive(ActiveType.ACTIVE);
-            support.setCreateby(Constant.CREATE_BY);
-            support.setCreatedate(new Date());
-            support.setLastupdateby(Constant.CREATE_BY);
-            support.setLastupdatedate(new Date());
-            supportMapper.insert(support);
+            support(sourceId, userId, userName);
         } else {
             freshNewsMapper.updateNotSupport(sourceId);
-            NotSupport notSupport = new NotSupport();
-            notSupport.setUid(ToolUtil.getUUid());
-            notSupport.setSourceuid(sourceId);
-            notSupport.setUseruid(userId);
-            notSupport.setUsernickname(userName);
-            notSupport.setTypecode(TypeCode.PHOTOS);
-            notSupport.setIsactive(ActiveType.ACTIVE);
-            notSupport.setCreateby(Constant.CREATE_BY);
-            notSupport.setCreatedate(new Date());
-            notSupport.setLastupdateby(Constant.CREATE_BY);
-            notSupport.setLastupdatedate(new Date());
-            notSupportMapper.insert(notSupport);
+            notSupport(sourceId, userId, userName);
         }
+    }
+
+    @Override
+    public void commentSupport(String sourceId, String userId, String userName, InteractType type) {
+        Comment comment = commentMapper.selectByPrimaryKey(sourceId);
+        if (comment == null) {
+            throw new CampusException(1100002, "查询不到数据");
+        }
+        if (InteractType.SUPPORT.equals(type)) {
+            support(sourceId, userId, userName);
+        } else {
+            notSupport(sourceId, userId, userName);
+        }
+    }
+
+    private void notSupport(String sourceId, String userId, String userName) {
+        NotSupport notSupport = new NotSupport();
+        notSupport.setUid(ToolUtil.getUUid());
+        notSupport.setSourceuid(sourceId);
+        notSupport.setUseruid(userId);
+        notSupport.setUsernickname(userName);
+        notSupport.setTypecode(TypeCode.PHOTOS);
+        notSupport.setIsactive(ActiveType.ACTIVE);
+        notSupport.setCreateby(Constant.CREATE_BY);
+        notSupport.setCreatedate(new Date());
+        notSupport.setLastupdateby(Constant.CREATE_BY);
+        notSupport.setLastupdatedate(new Date());
+        notSupportMapper.insert(notSupport);
+    }
+
+    private void support(String sourceId, String userId, String userName) {
+        Support support = new Support();
+        support.setUid(ToolUtil.getUUid());
+        support.setSourceuid(sourceId);
+        support.setSupportuseruid(userId);
+        support.setUsernickname(userName);
+        support.setTypecode(TypeCode.PHOTOS);
+        support.setIsactive(ActiveType.ACTIVE);
+        support.setCreateby(Constant.CREATE_BY);
+        support.setCreatedate(new Date());
+        support.setLastupdateby(Constant.CREATE_BY);
+        support.setLastupdatedate(new Date());
+        supportMapper.insert(support);
     }
 }

@@ -92,4 +92,13 @@ public class UserServiceTest extends BaseTest {
         userService.photoSupport("1", "123", "Test", InteractType.NOT_SUPPORT);
         supportMapper.deleteAll();
     }
+
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/comment/save.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/comment/save.xml")
+    public void testCommentSupport() {
+        userService.commentSupport("1", "123", "Test", InteractType.SUPPORT);
+        userService.commentSupport("2", "123", "Test", InteractType.NOT_SUPPORT);
+    }
+
 }

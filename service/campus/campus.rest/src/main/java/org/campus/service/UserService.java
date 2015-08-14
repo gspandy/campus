@@ -92,8 +92,25 @@ public interface UserService {
      * 功能描述: <br>
      * 相册互动
      *
+     * @param sourceId
+     * @param userId
+     * @param userName
+     * @param type
      *
      */
     void photoSupport(String sourceId, String userId, String userName, InteractType type);
+
+    /**
+     * 
+     * 功能描述: <br>
+     * 评论互动
+     *
+     * @param sourceId
+     * @param userId
+     * @param userName
+     * @param type
+     *
+     */
+    void commentSupport(String sourceId, String userId, String userName, InteractType type);
 
 }
