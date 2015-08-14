@@ -128,4 +128,26 @@ public interface UserService {
      */
     void comment(String sourceId, String userId, String userName, DisplayModel model, CommentAddVO commentAddVO);
 
+    /**
+     * 
+     * 功能描述: <br>
+     * 关注
+     *
+     * @param comUserId
+     * @param objUserId
+     *
+     */
+    void attention(String comUserId, String objUserId);
+
+    /**
+     * 
+     * 功能描述: <br>
+     * 移除关注
+     *
+     * @param comUserId
+     * @param objUserId
+     *
+     */
+    void removeAttention(String comUserId, String objUserId);
+
 }

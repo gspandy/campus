@@ -1,5 +1,6 @@
 package org.campus.repository;
 
+import org.apache.ibatis.annotations.Param;
 import org.campus.model.AttentionUser;
 import org.springframework.stereotype.Repository;
 
@@ -56,5 +57,9 @@ public interface AttentionUserMapper {
     int countAttention(String userId);
 
     int countFans(String userId);
+
+    int removeAttention(@Param("comUserId") String comUserId, @Param("objUserId") String objUserId);
+
+    void deleteByMyUserId(String userId);
 
 }

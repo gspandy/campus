@@ -130,7 +130,16 @@
 		select
 		count(1)
 		from ts_app_attentionuser
-		where AttenionUserUID =
+		where
+		AttenionUserUID =
 		#{userId,jdbcType=VARCHAR}
 	</select>
+	<delete id="removeAttention">
+		delete from ts_app_attentionuser where
+		MyUserUID=#{comUserId,jdbcType=VARCHAR} AND
+		AttenionUserUID=#{objUserId,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteByMyUserId">
+		delete from ts_app_attentionuser where MyUserUID=#{userId,jdbcType=VARCHAR}
+	</delete>
 </mapper>

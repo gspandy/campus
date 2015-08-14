@@ -6,6 +6,7 @@ import org.campus.model.FreshNews;
 import org.campus.model.User;
 import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.InteractType;
+import org.campus.repository.AttentionUserMapper;
 import org.campus.repository.CommentMapper;
 import org.campus.repository.FreshNewsMapper;
 import org.campus.repository.NotSupportMapper;
@@ -42,6 +43,9 @@ public class UserServiceTest extends BaseTest {
 
     @Autowired
     private ShareMapper shareMapper;
+
+    @Autowired
+    private AttentionUserMapper attentionUserMapper;
 
     @Test
     @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/user/save.xml")
@@ -129,6 +133,21 @@ public class UserServiceTest extends BaseTest {
         shareMapper.deleteAll();
         freshNewsMapper.deleteAll();
         commentMapper.deleteAll();
+    }
+
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/attention/save1.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/attention/save1.xml")
+    public void testAttention() {
+        userService.attention("311", "123");
+        attentionUserMapper.deleteByMyUserId("311");
+    }
+
+    @Test
+    @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/attention/save.xml")
+    @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/attention/save.xml")
+    public void testRemoveAttention() {
+        userService.removeAttention("123", "345");
     }
 
 }

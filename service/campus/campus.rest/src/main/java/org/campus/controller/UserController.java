@@ -134,11 +134,7 @@ public class UserController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        String userName = responseVO.getNickName();
-        if (DisplayModel.MOON.equals(model)) {
-            NickName nickName = nickNameService.findRandomNickName();
-            userName = nickName.getNickname();
-        }
+        String userName = getNickName(model, responseVO);
         userService.photoSupport(photoId, responseVO.getUserId(), userName, type);
     }
 
@@ -152,11 +148,7 @@ public class UserController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        String userName = responseVO.getNickName();
-        if (DisplayModel.MOON.equals(model)) {
-            NickName nickName = nickNameService.findRandomNickName();
-            userName = nickName.getNickname();
-        }
+        String userName = getNickName(model, responseVO);
         userService.commentSupport(commentId, responseVO.getUserId(), userName, type);
     }
 
@@ -170,33 +162,30 @@ public class UserController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        String userName = responseVO.getNickName();
-        if (DisplayModel.MOON.equals(model)) {
-            NickName nickName = nickNameService.findRandomNickName();
-            userName = nickName.getNickname();
-        }
+        String userName = getNickName(model, responseVO);
         userService.comment(photoId, responseVO.getUserId(), userName, model, commentAddVO);
     }
 
-    @ApiOperation(value = "添加关注:1.0", notes = "添加关注[API-Version=1.0]")
+    @ApiOperation(value = "*添加关注:1.0", notes = "添加关注[API-Version=1.0]")
     @RequestMapping(value = "/attention/{userId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "添加关注成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void attention(
             @ApiParam(name = "userId", value = "用户ID") @PathVariable String userId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-
-        // TODO:待完成
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        userService.attention(responseVO.getUserId(), userId);
     }
 
-    @ApiOperation(value = "取消关注:1.0", notes = "取消关注[API-Version=1.0]")
+    @ApiOperation(value = "*取消关注:1.0", notes = "取消关注[API-Version=1.0]")
     @RequestMapping(value = "/remove/{userId}/attention", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "取消关注成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void removeAttention(
             @ApiParam(name = "userId", value = "用户ID") @PathVariable String userId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        userService.removeAttention(responseVO.getUserId(), userId);
     }
 
     @ApiOperation(value = "查询好友列表:1.0", notes = "查询好友列表[API-Version=1.0]")
@@ -360,6 +349,15 @@ public class UserController {
         }
         Page<UserPhotosVO> page = new PageImpl<UserPhotosVO>(photosVOs, pageable, photosVOs.size());
         return page;
+    }
+
+    private String getNickName(DisplayModel model, LoginResponseVO responseVO) {
+        String userName = responseVO.getNickName();
+        if (DisplayModel.MOON.equals(model)) {
+            NickName nickName = nickNameService.findRandomNickName();
+            userName = nickName.getNickname();
+        }
+        return userName;
     }
 
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
+import org.campus.model.AttentionUser;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.NotSupport;
@@ -161,6 +162,28 @@ public class UserServiceImpl implements UserService {
             share.setLastupdatedate(new Date());
             shareMapper.insert(share);
         }
+    }
+
+    @Override
+    public void attention(String comUserId, String objUserId) {
+        User user = userMapper.selectByPrimaryKey(objUserId);
+        if (user == null) {
+            throw new CampusException(1100002, "查询不到数据");
+        }
+
+        AttentionUser attentionUser = new AttentionUser();
+        attentionUser.setUid(ToolUtil.getUUid());
+        attentionUser.setMyuseruid(comUserId);
+        attentionUser.setAttenionuseruid(objUserId);
+        attentionUser.setAttentiontime(new Date());
+        attentionUser.setCreateby(Constant.CREATE_BY);
+        attentionUser.setCreatedate(new Date());
+        attentionUserMapper.insert(attentionUser);
+    }
+
+    @Override
+    public void removeAttention(String comUserId, String objUserId) {
+        attentionUserMapper.removeAttention(comUserId, objUserId);
     }
 
     private void notSupport(String sourceId, String userId, String userName) {
