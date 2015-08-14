@@ -142,7 +142,7 @@ public class UserController {
         userService.photoSupport(photoId, responseVO.getUserId(), userName, type);
     }
 
-    @ApiOperation(value = "相册评论点赞:1.0", notes = "相册评论点赞[API-Version=1.0]")
+    @ApiOperation(value = "*相册评论点赞:1.0", notes = "相册评论点赞[API-Version=1.0]")
     @RequestMapping(value = "/comment/{commentId}/interact", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void commentSupport(
@@ -151,7 +151,13 @@ public class UserController {
             @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-        // TODO:待完成
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        String userName = responseVO.getNickName();
+        if (DisplayModel.MOON.equals(model)) {
+            NickName nickName = nickNameService.findRandomNickName();
+            userName = nickName.getNickname();
+        }
+        userService.commentSupport(commentId, responseVO.getUserId(), userName, type);
     }
 
     @ApiOperation(value = "相册评论:1.0", notes = "相册评论[API-Version=1.0]")
