@@ -66,11 +66,11 @@ public class BoardController {
     		//没有关注帖子
     		if(topicType == TopicType.ATTENTION)
     			throw new CampusException(100301,"未登录用户没有关注内容.");
-    		freshNews = topicSvc.getTopicForAnonymous(topicType, pageable); 
+    		freshNews = topicSvc.getPostsForAnonymous(topicType, pageable); 
     	}
     	else{
     		//登录用户查询
-    		freshNews = topicSvc.getTopicForRegister(user.getUserId(),topicType, pageable);
+    		freshNews = topicSvc.getPostsForRegister(user.getUserId(),topicType, pageable);
     	}
 
     	List<FreshNews> listTopic = freshNews.getContent();
@@ -80,6 +80,7 @@ public class BoardController {
         	vo.setPostsId(topic.getUid());
         	vo.setUserId(topic.getCreateby());
         	vo.setNickName(topic.getAddnickname());
+        	vo.setBrief(topic.getNewsbrief());
         	vo.setContent(topic.getNewscontent());
         	vo.setPublishDate(topic.getCreatedate());
         	String[] picUrls = topic.getPictures().split(",");
@@ -91,26 +92,30 @@ public class BoardController {
         return page;
     }
 
-    @ApiOperation(value = "帖子详情查询:1.0", notes = "帖子详情查询[API-Version=1.0]")
-    @RequestMapping(value = "/{postsId}/detail", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiOperation(value = "帖子详情查询:1.0", notes = "*帖子详情查询[API-Version=1.0]")
+    @RequestMapping(value = "/posts/detail", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public BoardDetailVO findBoardDetail(
-            @ApiParam(name = "postsId", value = "帖子的ID") @PathVariable String postsId,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-        // TODO:待完成
-        BoardDetailVO boardDetailVO = new BoardDetailVO();
-        boardDetailVO.setPostsId("123123");
-        boardDetailVO.setUserId("123232");
-        boardDetailVO.setNickName("ec0000");
-        List<String> picUrls1 = new ArrayList<String>();
-        picUrls1.add("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
-        boardDetailVO.setPicUrls(picUrls1);
-        boardDetailVO.setContent("测试1");
-        boardDetailVO.setPublishDate(new Date());
-        boardDetailVO.setTransNum(128);
-        boardDetailVO.setCommentNum(2);
-        boardDetailVO.setSupportNum(99);
-        return boardDetailVO;
+    public BoardDetailVO findBoardDetail(@ApiParam(name = "postsId", value = "帖子的ID") @RequestParam(value = "postsId", required = true) String postsId) {
+    	BoardDetailVO boardVo = null;
+    	
+    	FreshNews topic = this.topicSvc.getPostsDetail(postsId);
+        if (topic!=null){
+        	boardVo = new BoardDetailVO();
+        	boardVo.setCommentNum(topic.getCommentnum());
+        	boardVo.setContent(topic.getNewscontent());
+        	boardVo.setNickName(topic.getAddnickname());
+        	
+        	String[] picUrls = topic.getPictures().split(",");
+        	boardVo.setPicUrls(Arrays.asList(picUrls));
+        	
+        	boardVo.setPostsId(postsId);
+        	boardVo.setPublishDate(topic.getCreatedate());
+        	boardVo.setSupportNum(topic.getSupportnum());
+        	boardVo.setTransNum(topic.getTransnum());
+        	boardVo.setUserId(topic.getCreateby());
+        }
+    	
+        return boardVo;
     }
 
     @ApiOperation(value = "查询帖子评论内容:1.0", notes = "查询帖子评论内容[API-Version=1.0]")
