@@ -340,4 +340,10 @@
 		f.UID=s.SourceUID WHERE s.SupportUserUID=#{userId,jdbcType=VARCHAR}
 		GROUP BY f.UID
 	</select>
+	<select id="selectByNewTypeAndShield" resultMap="BaseResultMap">
+	    select
+	    <include refid="Base_Column_List" />
+	    from ts_app_freshnews
+	    where newsType = #{newsType,jdbcType=VARCHAR} and isShield=#{isShield,jdbcType=INTEGER} AND IsActive=1
+	</select>
 </mapper>

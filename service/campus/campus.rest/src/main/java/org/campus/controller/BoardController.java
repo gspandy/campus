@@ -6,7 +6,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.campus.constant.Constant;
+import org.campus.core.exception.CampusException;
 import org.campus.model.enums.DisplayModel;
+import org.campus.model.enums.TopicType;
 import org.campus.vo.BoardDetailVO;
 import org.campus.vo.BoardPublishVO;
 import org.campus.vo.BoardVO;
@@ -16,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,8 +44,19 @@ public class BoardController {
     public Page<BoardVO> findBoard(
             @ApiParam(name = "type", value = "1:休闲;2:新鲜;3:秘密;4:言论;5:热门;6:关注") @RequestParam(value = "type", required = true) String type,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-        // TODO:待完成
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        Assert.notNull(type,"帖子类型不能为空.");
+    	TopicType topicType = TopicType.getTypeCodeByCode(type);
+    	if(topicType == null){
+    		throw new CampusException(100201,"帖子类型不存在:"+type);
+    	}
+    	
+    	if(session.getAttribute(Constant.CAMPUS_SECURITY_SESSION) == null){
+    		//未登录用户查询
+    	}
+    	
+    	// TODO:待完成
         List<BoardVO> boardVOs = new ArrayList<BoardVO>();
         BoardVO boardVO1 = new BoardVO();
         boardVO1.setPostsId("2123123");
