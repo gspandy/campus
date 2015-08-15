@@ -11,7 +11,8 @@
 		<result column="CommentNum" property="commentnum" jdbcType="INTEGER" />
 		<result column="SupportNum" property="supportnum" jdbcType="INTEGER" />
 		<result column="ComplainNum" property="complainnum" jdbcType="INTEGER" />
-		<result column="NotSupportNum" property="notsupportnum"	jdbcType="INTEGER" />
+		<result column="NotSupportNum" property="notsupportnum"
+			jdbcType="INTEGER" />
 		<result column="TransNum" property="transnum" jdbcType="INTEGER" />
 		<result column="IsShield" property="isshield" jdbcType="INTEGER" />
 		<result column="IsActive" property="isactive" jdbcType="INTEGER" />
@@ -22,6 +23,7 @@
 			jdbcType="TIMESTAMP" />
 		<result column="newstype" property="newstype" jdbcType="CHAR" />
 		<result column="ishot" property="ishot" jdbcType="CHAR" />
+		<result column="AddNickName" property="addnickname" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UID, NewsBrief, NewsContent, Pictures, AddUserUID,
@@ -30,7 +32,7 @@
 		ComplainNum, NotSupportNum,
 		TransNum, IsShield, IsActive,
 		CreateBy, CreateDate, LastUpdateBy,
-		LastUpdateDate,newstype,ishot
+		LastUpdateDate,newstype,ishot,AddNickName
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -53,15 +55,19 @@
 		IsShield,
 		IsActive, CreateBy,
 		CreateDate, LastUpdateBy, LastUpdateDate, newstype,
-		ishot
+		ishot,AddNickName
 		)
 		values
-		(#{uid,jdbcType=VARCHAR}, #{newsbrief,jdbcType=VARCHAR},
+		(#{uid,jdbcType=VARCHAR},
+		#{newsbrief,jdbcType=VARCHAR},
 		#{newscontent,jdbcType=VARCHAR},
 		#{pictures,jdbcType=VARCHAR},
-		#{adduseruid,jdbcType=VARCHAR}, #{isanonymous,jdbcType=INTEGER},
-		#{commentnum,jdbcType=INTEGER}, #{supportnum,jdbcType=INTEGER},
-		#{complainnum,jdbcType=INTEGER},#{notsupportnum,jdbcType=INTEGER},#{transnum,jdbcType=INTEGER},
+		#{adduseruid,jdbcType=VARCHAR},
+		#{isanonymous,jdbcType=INTEGER},
+		#{commentnum,jdbcType=INTEGER},
+		#{supportnum,jdbcType=INTEGER},
+		#{complainnum,jdbcType=INTEGER},
+		#{notsupportnum,jdbcType=INTEGER}, #{transnum,jdbcType=INTEGER},
 		#{isshield,jdbcType=INTEGER},
 		#{isactive,jdbcType=INTEGER},
 		#{createby,jdbcType=VARCHAR},
@@ -69,7 +75,7 @@
 		#{lastupdateby,jdbcType=VARCHAR},
 		#{lastupdatedate,jdbcType=TIMESTAMP},
 		#{newstype,jdbcType=CHAR},
-		#{ishot,jdbcType=CHAR}
+		#{ishot,jdbcType=CHAR}, #{addnickname,jdbcType=VARCHAR}
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.FreshNews">
@@ -135,6 +141,9 @@
 			<if test="ishot != null">
 				ishot,
 			</if>
+			<if test="addnickname != null">
+				AddNickName,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uid != null">
@@ -193,6 +202,9 @@
 			</if>
 			<if test="ishot != null">
 				#{ishot,jdbcType=CHAR},
+			</if>
+			<if test="addnickname != null">
+				#{addnickname,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -253,6 +265,9 @@
 			<if test="ishot != null">
 				ishot = #{ishot,jdbcType=CHAR},
 			</if>
+			<if test="addnickname != null">
+				AddNickName = #{addnickname,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where UID = #{uid,jdbcType=VARCHAR}
 	</update>
@@ -292,7 +307,8 @@
 		newstype =
 		#{newstype,jdbcType=CHAR},
 		ishot =
-		#{ishot,jdbcType=CHAR}
+		#{ishot,jdbcType=CHAR}, AddNickName =
+		#{addnickname,jdbcType=VARCHAR}
 		where UID =
 		#{uid,jdbcType=VARCHAR}
 	</update>
@@ -340,26 +356,30 @@
 		GROUP BY f.UID
 	</select>
 	<select id="selectByNewTypeAndShield" resultMap="BaseResultMap">
-	    select
-	    <include refid="Base_Column_List" />
-	    from ts_app_freshnews
-	    where newsType = #{newsType,jdbcType=VARCHAR} and isShield=#{isShield,jdbcType=INTEGER} AND IsActive=1
-	    order by CreateDate desc
+		select
+		<include refid="Base_Column_List" />
+		from ts_app_freshnews
+		where newsType = #{newsType,jdbcType=VARCHAR} and
+		isShield=#{isShield,jdbcType=INTEGER} AND IsActive=1
+		order by
+		CreateDate desc
 	</select>
 	<select id="selectHotPosts" resultMap="BaseResultMap">
-	    select
-	    <include refid="Base_Column_List" />
-	    from ts_app_freshnews
-	    where ishot='1' and isShield=0 AND IsActive=1
-	    order by CreateDate desc
+		select
+		<include refid="Base_Column_List" />
+		from ts_app_freshnews
+		where ishot='1' and isShield=0 AND IsActive=1
+		order by CreateDate desc
 	</select>
 	<select id="selectAttentionPosts" resultMap="BaseResultMap">
-	    select
-	    <include refid="Base_Column_List" />
-	    from ts_app_freshnews
-	    where isShield=0 AND IsActive=1 
-	    and CreateBy in (SELECT AttenionUserUID from TS_APP_AttentionUser where MyUserUID=#{userId,jdbcType=VARCHAR})
-	    order by CreateDate desc
+		select
+		<include refid="Base_Column_List" />
+		from ts_app_freshnews
+		where isShield=0 AND IsActive=1
+		and CreateBy in
+		(SELECT AttenionUserUID from TS_APP_AttentionUser where
+		MyUserUID=#{userId,jdbcType=VARCHAR})
+		order by CreateDate desc
 	</select>
-	
+
 </mapper>
