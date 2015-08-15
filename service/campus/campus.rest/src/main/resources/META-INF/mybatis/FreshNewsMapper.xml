@@ -11,9 +11,8 @@
 		<result column="CommentNum" property="commentnum" jdbcType="INTEGER" />
 		<result column="SupportNum" property="supportnum" jdbcType="INTEGER" />
 		<result column="ComplainNum" property="complainnum" jdbcType="INTEGER" />
-		<result column="NotSupportNum" property="NotSupportNum"
-			jdbcType="INTEGER" />
-		<result column="TransNum" property="TransNum" jdbcType="INTEGER" />
+		<result column="NotSupportNum" property="notsupportnum"	jdbcType="INTEGER" />
+		<result column="TransNum" property="transnum" jdbcType="INTEGER" />
 		<result column="IsShield" property="isshield" jdbcType="INTEGER" />
 		<result column="IsActive" property="isactive" jdbcType="INTEGER" />
 		<result column="CreateBy" property="createby" jdbcType="VARCHAR" />
@@ -345,5 +344,22 @@
 	    <include refid="Base_Column_List" />
 	    from ts_app_freshnews
 	    where newsType = #{newsType,jdbcType=VARCHAR} and isShield=#{isShield,jdbcType=INTEGER} AND IsActive=1
+	    order by CreateDate desc
 	</select>
+	<select id="selectHotPosts" resultMap="BaseResultMap">
+	    select
+	    <include refid="Base_Column_List" />
+	    from ts_app_freshnews
+	    where ishot='1' and isShield=0 AND IsActive=1
+	    order by CreateDate desc
+	</select>
+	<select id="selectAttentionPosts" resultMap="BaseResultMap">
+	    select
+	    <include refid="Base_Column_List" />
+	    from ts_app_freshnews
+	    where isShield=0 AND IsActive=1 
+	    and CreateBy in (SELECT AttenionUserUID from TS_APP_AttentionUser where MyUserUID=#{userId,jdbcType=VARCHAR})
+	    order by CreateDate desc
+	</select>
+	
 </mapper>

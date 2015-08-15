@@ -66,4 +66,18 @@ public interface FreshNewsMapper {
     
     Page<FreshNews> selectByNewTypeAndShield(@Param("newsType")String newsType,@Param("isShield")int isShield,Pageable pageable);
 
+    /**
+     * 热门帖子
+     * @param pageable
+     * @return
+     */
+    Page<FreshNews> selectHotPosts(Pageable pageable);
+    
+    /**
+     * 查询用户的关注帖子清单
+     * @param userid 登录用户ID
+     * @param pageable
+     * @return
+     */
+    Page<FreshNews> selectAttentionPosts(@Param("userId") String userId,Pageable pageable);
 }

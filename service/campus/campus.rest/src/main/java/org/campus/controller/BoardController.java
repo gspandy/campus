@@ -1,6 +1,7 @@
 package org.campus.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -8,13 +9,17 @@ import javax.servlet.http.HttpSession;
 
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
+import org.campus.model.FreshNews;
 import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.TopicType;
+import org.campus.service.TopicService;
 import org.campus.vo.BoardDetailVO;
 import org.campus.vo.BoardPublishVO;
 import org.campus.vo.BoardVO;
 import org.campus.vo.CommentAddVO;
 import org.campus.vo.CommentVO;
+import org.campus.vo.LoginResponseVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -38,46 +43,50 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "BoardController", description = "板块相关操作")
 public class BoardController {
 
-    @ApiOperation(value = "帖子列表查询:1.0", notes = "帖子列表查询[API-Version=1.0]")
+	@Autowired
+	TopicService topicSvc;
+	
+    @ApiOperation(value = "帖子列表查询:1.0", notes = "*帖子列表查询[API-Version=1.0]")
     @RequestMapping(value = "/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<BoardVO> findBoard(
             @ApiParam(name = "type", value = "1:休闲;2:新鲜;3:秘密;4:言论;5:热门;6:关注") @RequestParam(value = "type", required = true) String type,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-        Assert.notNull(type,"帖子类型不能为空.");
+        Assert.hasLength(type,"帖子类型不能为空.");
     	TopicType topicType = TopicType.getTypeCodeByCode(type);
     	if(topicType == null){
     		throw new CampusException(100201,"帖子类型不存在:"+type);
     	}
     	
-    	if(session.getAttribute(Constant.CAMPUS_SECURITY_SESSION) == null){
+    	Page<FreshNews> freshNews;
+    	LoginResponseVO user = (LoginResponseVO)session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+    	if(user == null){
     		//未登录用户查询
+    		//没有关注帖子
+    		if(topicType == TopicType.ATTENTION)
+    			throw new CampusException(100301,"未登录用户没有关注内容.");
+    		freshNews = topicSvc.getTopicForAnonymous(topicType, pageable); 
     	}
-    	
-    	// TODO:待完成
+    	else{
+    		//登录用户查询
+    		freshNews = topicSvc.getTopicForRegister(user.getUserId(),topicType, pageable);
+    	}
+
+    	List<FreshNews> listTopic = freshNews.getContent();
         List<BoardVO> boardVOs = new ArrayList<BoardVO>();
-        BoardVO boardVO1 = new BoardVO();
-        boardVO1.setPostsId("2123123");
-        boardVO1.setUserId("123231");
-        boardVO1.setNickName("ec00000");
-        List<String> picUrls1 = new ArrayList<String>();
-        picUrls1.add("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
-        boardVO1.setPicUrls(picUrls1);
-        boardVO1.setContent("测试1");
-        boardVO1.setPublishDate(new Date());
-        boardVOs.add(boardVO1);
-        BoardVO boardVO2 = new BoardVO();
-        boardVO2.setPostsId("2123124");
-        boardVO2.setUserId("123232");
-        boardVO2.setNickName("ec00001");
-        List<String> picUrls2 = new ArrayList<String>();
-        picUrls2.add("http://cdn.duitang.com/uploads/item/201502/25/20150225172743_x2hfW.jpeg");
-        boardVO2.setPicUrls(picUrls2);
-        boardVO2.setContent("测试2");
-        boardVO2.setPublishDate(new Date());
-        boardVOs.add(boardVO2);
+        for(FreshNews topic:listTopic){
+        	BoardVO vo = new BoardVO();
+        	vo.setPostsId(topic.getUid());
+        	vo.setUserId(topic.getCreateby());
+        	vo.setNickName(topic.getAddnickname());
+        	vo.setContent(topic.getNewscontent());
+        	vo.setPublishDate(topic.getCreatedate());
+        	String[] picUrls = topic.getPictures().split(",");
+        	vo.setPicUrls(Arrays.asList(picUrls));
+        	boardVOs.add(vo);
+    	}
+
         Page<BoardVO> page = new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
         return page;
     }
