@@ -18,6 +18,9 @@ public class MessageAddVO {
     private Date sendDate;
 
     private String picUrl;
+    
+    // 语言文件路径
+    private String soundUrl;
 
     @ApiModelProperty(value = "消息文字内容", required = false)
     public String getMessage() {
@@ -57,6 +60,16 @@ public class MessageAddVO {
     @ApiModelProperty(value = "发送图片地址", required = false)
     public void setPicUrl(String picUrl) {
         this.picUrl = picUrl;
+    }
+
+    @ApiModelProperty(value = "语言文件路径", required = false)
+    public String getSoundUrl() {
+        return soundUrl;
+    }
+    
+    @ApiModelProperty(value = "语言文件路径", required = false)
+    public void setSoundUrl(String soundUrl) {
+        this.soundUrl = soundUrl;
     }
 
 }
