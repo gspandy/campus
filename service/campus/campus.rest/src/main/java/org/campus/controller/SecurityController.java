@@ -105,58 +105,58 @@ public class SecurityController {
     		@ApiResponse(code = 1000003, message = "注册失败")})
     public void register(@ApiParam(name = "registerVO", value = "注册信息体") @RequestBody RegisterVO registerVO,HttpSession session) {
     	Assert.notNull(registerVO,"参数错误");
-    	Assert.notNull(registerVO.getLoginName(),"用户名不允许为空.");
-    	Assert.notNull(registerVO.getPassword(),"请输入正确的密码.");
-    	Assert.notNull(registerVO.getSecPassword(),"请输入正确的密码.");
+    	Assert.hasLength(registerVO.getLoginName(),"用户名不允许为空.");
+    	Assert.hasLength(registerVO.getPassword(),"请输入正确的密码.");
+    	Assert.hasLength(registerVO.getSecPassword(),"请输入正确的密码.");
     	if(!registerVO.getPassword().equals(registerVO.getSecPassword())){
     		throw new CampusException(100003,"请输入正确的密码.");
     	}
-    	Assert.notNull(registerVO.getSchoolId(),"请选择学校.");
-    	Assert.notNull(registerVO.getCollegeId(),"请选择院系.");
-    	Assert.notNull(registerVO.getProfessionId(),"请选择专业.");
-    	Assert.notNull(registerVO.getInSchoolYear(),"请选择入学年份.");
-    	Assert.notNull(registerVO.getMobileCheckCode(),"请输入短信验证码");
+//    	Assert.notNull(registerVO.getSchoolId(),"请选择学校.");
+//    	Assert.notNull(registerVO.getCollegeId(),"请选择院系.");
+//    	Assert.notNull(registerVO.getProfessionId(),"请选择专业.");
+//    	Assert.notNull(registerVO.getInSchoolYear(),"请选择入学年份.");
+    	Assert.hasLength(registerVO.getMobileCheckCode(),"请输入短信验证码");
     	
     	//SMS验证码检查
     	if(!registerVO.getMobileCheckCode().equals((String)session.getAttribute(Constant.SMS_CHECKCODE))){
     		throw new CampusException(100003,"短信验证码错误.");
     	}
     	
-    	//昵称唯一验证
-    	if(StringUtils.hasText(registerVO.getNickName()) && securitySvc.nickNameExsit(registerVO.getNickName())){
-    		throw new CampusException(100003,"昵称不可用.");
-    	}
+//    	//昵称唯一验证
+//    	if(StringUtils.hasText(registerVO.getNickName()) && securitySvc.nickNameExsit(registerVO.getNickName())){
+//    		throw new CampusException(100003,"昵称不可用.");
+//    	}
     	
     	SysUser sysUser = new SysUser();
     	sysUser.setUseraccount(registerVO.getLoginName());
     	sysUser.setUid(ToolUtil.getUUid());
     	sysUser.setUserpwd(MD5Util.encrypt(registerVO.getPassword()));
     	sysUser.setIscheck(1);
-    	sysUser.setSignid(ToolUtil.getUUid());
+//    	sysUser.setSignid(ToolUtil.getUUid());
     	sysUser.setCreatedate(Calendar.getInstance().getTime());
     	sysUser.setIsactive(1);
     	
     	User appUser = new User();
     	appUser.setUseruid(sysUser.getUid());
-    	appUser.setCitycode(registerVO.getCityCode());
-    	appUser.setCityname(registerVO.getCityName());
-    	appUser.setCollegeuid(registerVO.getCollegeId());
-    	appUser.setCollegename(registerVO.getCollegeName());
+//    	appUser.setCitycode(registerVO.getCityCode());
+//    	appUser.setCityname(registerVO.getCityName());
+//    	appUser.setCollegeuid(registerVO.getCollegeId());
+//    	appUser.setCollegename(registerVO.getCollegeName());
     	appUser.setCreatedate(sysUser.getCreatedate());
-    	appUser.setInschoolyear(registerVO.getInSchoolYear());
+//    	appUser.setInschoolyear(registerVO.getInSchoolYear());
     	appUser.setIsactive(1);
-    	appUser.setSextype(registerVO.getSex());
-    	appUser.setSchooluid(registerVO.getSchoolId());
-    	appUser.setSchoolname(registerVO.getSchoolName());
-    	appUser.setProfessionuid(registerVO.getProfessionId());
-    	appUser.setProfessionname(registerVO.getProfessionName());
-    	appUser.setProvincecode(registerVO.getProvinceCode());
-    	appUser.setProvincename(registerVO.getProvinceName());
+//    	appUser.setSextype(registerVO.getSex());
+//    	appUser.setSchooluid(registerVO.getSchoolId());
+//    	appUser.setSchoolname(registerVO.getSchoolName());
+//    	appUser.setProfessionuid(registerVO.getProfessionId());
+//    	appUser.setProfessionname(registerVO.getProfessionName());
+//    	appUser.setProvincecode(registerVO.getProvinceCode());
+//    	appUser.setProvincename(registerVO.getProvinceName());
     	appUser.setIsgraduate(0);
     	appUser.setIslocked(0);
     	appUser.setIsopen(1);
     	appUser.setIsvalidated(0);
-    	appUser.setNickname(registerVO.getNickName());
+//    	appUser.setNickname(registerVO.getNickName());
     	
     	this.securitySvc.registe(sysUser, appUser);
     	
