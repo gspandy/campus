@@ -1,6 +1,7 @@
 package org.campus.service;
 
 import org.campus.model.NickName;
+import org.campus.model.enums.DisplayModel;
 
 public interface NickNameService {
 
@@ -8,6 +9,6 @@ public interface NickNameService {
 
     void deleteAll();
 
-    NickName findRandomNickName();
+    String findRandomNickName(DisplayModel model,String sessionId);
 
 }

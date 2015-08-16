@@ -13,6 +13,7 @@ import org.campus.constant.ErrorCode;
 import org.campus.core.exception.CampusException;
 import org.campus.model.SysUser;
 import org.campus.model.User;
+import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.SMSType;
 import org.campus.service.SecurityService;
 import org.campus.service.SendMessage;
@@ -24,7 +25,6 @@ import org.campus.vo.LoginResponseVO;
 import org.campus.vo.RegisterVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -63,28 +63,34 @@ public class SecurityController {
     		}
     	}
     	SysUser sysUser = securitySvc.checkUserAndPassword(loginVO.getLoginName(), loginVO.getPassword());
+    	//创建SignId
+    	sysUser.setSignid(ToolUtil.getUUid());
         LoginResponseVO responseVO = new LoginResponseVO();
         responseVO.setSignId(sysUser.getSignid());
         responseVO.setUserId(sysUser.getUid());
         responseVO.setUserAccount(sysUser.getUseraccount());
         
         User user = securitySvc.getAppUserInfo(sysUser.getUid());
-        responseVO.setCollegeId(user.getCollegeuid());
-        responseVO.setCollegeName(user.getCollegename());
+//        responseVO.setCollegeId(user.getCollegeuid());
+//        responseVO.setCollegeName(user.getCollegename());
         responseVO.setHeadPic(user.getHeadpic());
-        responseVO.setInSchoolYear(user.getInschoolyear());
+//        responseVO.setInSchoolYear(user.getInschoolyear());
         responseVO.setNickName(user.getNickname());
-        responseVO.setProfessionId(user.getProfessionuid());
-        responseVO.setProfessionName(user.getProfessionname());
-        responseVO.setSchoolId(user.getSchooluid());
-        responseVO.setSchoolName(user.getSchoolname());
+//        responseVO.setProfessionId(user.getProfessionuid());
+//        responseVO.setProfessionName(user.getProfessionname());
+//        responseVO.setSchoolId(user.getSchooluid());
+//        responseVO.setSchoolName(user.getSchoolname());
         
         session.setAttribute(Constant.CAMPUS_SECURITY_SESSION, responseVO);
-       
+        
+        //默认设置为白天模式:
+        session.setAttribute(Constant.CAMPUS_DISPLAYMODEL, DisplayModel.SUN);
+        
         //修改最后登录时间
         SysUser udpUser = new SysUser();
         udpUser.setUid(sysUser.getUid());
         udpUser.setLastlogintime(Calendar.getInstance().getTime());
+        udpUser.setSignid(sysUser.getSignid());
         securitySvc.updateSysUser(udpUser);
         
         return responseVO;

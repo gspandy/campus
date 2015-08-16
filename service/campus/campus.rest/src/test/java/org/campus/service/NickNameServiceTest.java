@@ -7,8 +7,11 @@ import java.io.InputStreamReader;
 
 import org.campus.BaseTest;
 import org.campus.model.NickName;
+import org.campus.model.enums.DisplayModel;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
 
 public class NickNameServiceTest extends BaseTest {
 
@@ -22,8 +25,14 @@ public class NickNameServiceTest extends BaseTest {
 
     @Test
     public void testFindRandomNickName() {
-        NickName name = nickNameService.findRandomNickName();
-        System.out.println(name.getNickname());
+        String name = nickNameService.findRandomNickName(DisplayModel.SUN,"1234567890");
+        Assert.assertNull(name);
+        name = nickNameService.findRandomNickName(DisplayModel.MOON,"1234567890");
+        Assert.assertNotNull(name);
+        String name2 = nickNameService.findRandomNickName(DisplayModel.MOON,"1234567890");
+        Assert.assertEquals(name, name2);
+        String name3 = nickNameService.findRandomNickName(DisplayModel.MOON,"1234567891");
+        Assert.assertNotEquals(name, name3);
     }
 
     private void readTxtFile(String filePath) {

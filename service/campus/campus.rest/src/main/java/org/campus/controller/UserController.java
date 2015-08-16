@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.campus.constant.Constant;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
-import org.campus.model.NickName;
 import org.campus.model.User;
 import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.InteractType;
@@ -139,7 +138,8 @@ public class UserController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        String userName = getNickName(model, responseVO);
+        String userName = nickNameService.findRandomNickName(model, session.getId());
+        userName = userName==null?responseVO.getNickName():userName;
         userService.photoSupport(photoId, responseVO.getUserId(), userName, type);
     }
 
@@ -153,7 +153,8 @@ public class UserController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        String userName = getNickName(model, responseVO);
+        String userName = nickNameService.findRandomNickName(model, session.getId());
+        userName = userName==null?responseVO.getNickName():userName;
         userService.commentSupport(commentId, responseVO.getUserId(), userName, type);
     }
 
@@ -167,7 +168,8 @@ public class UserController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        String userName = getNickName(model, responseVO);
+        String userName = nickNameService.findRandomNickName(model, session.getId());
+        userName = userName==null?responseVO.getNickName():userName;
         userService.comment(photoId, responseVO.getUserId(), userName, model, commentAddVO);
     }
 
@@ -309,14 +311,14 @@ public class UserController {
         return page;
     }
 
-    private String getNickName(DisplayModel model, LoginResponseVO responseVO) {
-        String userName = responseVO.getNickName();
-        if (DisplayModel.MOON.equals(model)) {
-            NickName nickName = nickNameService.findRandomNickName();
-            userName = nickName.getNickname();
-        }
-        return userName;
-    }
+//    private String getNickName(DisplayModel model, LoginResponseVO responseVO) {
+//        String userName = responseVO.getNickName();
+//        if (DisplayModel.MOON.equals(model)) {
+//            NickName nickName = nickNameService.findRandomNickName();
+//            userName = nickName.getNickname();
+//        }
+//        return userName;
+//    }
 
     private List<FriendVO> getFriendsVOs(List<User> users) {
         List<FriendVO> friendVOs = new ArrayList<FriendVO>();

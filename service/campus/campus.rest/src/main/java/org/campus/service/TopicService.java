@@ -70,4 +70,12 @@ public class TopicService {
 	public FreshNews getPostsDetail(String postsId){
 		return this.freshMapper.selectByPrimaryKey(postsId);
 	}
+	
+	/**
+	 * 发表帖子
+	 * @param freshNews
+	 */
+	public void publishPosts(FreshNews freshNews){
+		this.freshMapper.insert(freshNews);
+	}
 }

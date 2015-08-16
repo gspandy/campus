@@ -2,6 +2,7 @@ package org.campus.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -10,9 +11,12 @@ import javax.servlet.http.HttpSession;
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.model.FreshNews;
+import org.campus.model.enums.AnonymousType;
 import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.TopicType;
+import org.campus.service.NickNameService;
 import org.campus.service.TopicService;
+import org.campus.util.ToolUtil;
 import org.campus.vo.BoardDetailVO;
 import org.campus.vo.BoardPublishVO;
 import org.campus.vo.BoardVO;
@@ -46,7 +50,10 @@ public class BoardController {
 	@Autowired
 	TopicService topicSvc;
 	
-    @ApiOperation(value = "帖子列表查询:1.0", notes = "*帖子列表查询[API-Version=1.0]")
+	@Autowired
+	NickNameService nickNameSvc;
+	
+    @ApiOperation(value = "*帖子列表查询:1.0", notes = "*帖子列表查询[API-Version=1.0]")
     @RequestMapping(value = "/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<BoardVO> findBoard(
@@ -247,14 +254,71 @@ public class BoardController {
         // TODO:待完成
     }
 
-    @ApiOperation(value = "帖子发布:1.0", notes = "帖子发布[API-Version=1.0]")
+    @ApiOperation(value = "*帖子发布:1.0", notes = "帖子发布[API-Version=1.0]")
     @RequestMapping(value = "/publish", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "发布成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public void publish(
-            @ApiParam(name = "BoardPublishVO", value = "发布内容体") @RequestBody BoardPublishVO boardPublishVO,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+    public void publish(@ApiParam(name = "BoardPublishVO", value = "发布内容体") @RequestBody BoardPublishVO boardPublishVO,
             HttpSession session) {
-        // TODO:待完成
+        //验证用户有无登录
+    	LoginResponseVO vo = (LoginResponseVO)session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+    	if(vo==null)
+    		throw new CampusException(100204,"请登录.");
+    	DisplayModel model = (DisplayModel)session.getAttribute(Constant.CAMPUS_DISPLAYMODEL);
+    	
+    	String nickName = nickNameSvc.findRandomNickName(model, session.getId());
+    	nickName = nickName==null?vo.getNickName():nickName;
+    	
+    	FreshNews posts = new FreshNews();
+    	posts.setAddnickname(nickName);
+    	posts.setAdduseruid(vo.getUserId());
+    	posts.setCommentnum(0);
+    	posts.setComplainnum(0);
+    	posts.setCreateby(vo.getUserId());
+    	posts.setCreatedate(Calendar.getInstance().getTime());
+    	posts.setIsactive(1);
+    	posts.setIsanonymous(model==DisplayModel.MOON?AnonymousType.ANONYMOUS:AnonymousType.NOT_ANONYMOUS);
+    	posts.setIshot("0");
+    	posts.setIsshield(FreshNews.VIEW_REGISTER);//新帖必须屏蔽
+    	posts.setNewsbrief(boardPublishVO.getTitle());
+    	posts.setNewscontent(boardPublishVO.getContent());
+    	
+    	//newsType in (1,2,3,4)
+    	List<String> lst =Arrays.asList("1","2","3","4");
+    	if(!lst.contains(boardPublishVO.getType()))
+    		throw new CampusException(100205,"帖子类型错误.");
+    	posts.setNewstype(boardPublishVO.getType());
+    	
+    	posts.setNotsupportnum(0);
+    	
+    	List<String> pics = boardPublishVO.getPicUrls();
+    	if(pics==null || pics.size()==0)
+    		posts.setPictures("");
+    	else{
+    		StringBuilder sb = new StringBuilder();
+    		for(String s : pics){
+    			sb.append(s).append(",");
+    		}
+    		String urls = sb.toString().substring(0, sb.length()-1);
+    		posts.setPictures(urls);
+    	}
+    	posts.setSupportnum(0);
+    	posts.setTransnum(0);
+    	posts.setUid(ToolUtil.getUUid());
+    	
+    	topicSvc.publishPosts(posts);
     }
 
+    @ApiOperation(value = "*切换显示模式:1.0", notes = "切换显示模式[API-Version=1.0]")
+    @RequestMapping(value = "/changeDisplayModel", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "发布成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void changeDisplayModel(@ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true)String environment,
+    		HttpSession session){
+    	if(session.getAttribute(Constant.CAMPUS_SECURITY_SESSION)==null)
+    		throw new CampusException(100204,"请登录.");
+    	DisplayModel model = DisplayModel.getDisplayModelByCode(environment);
+    	if (model == null){
+    		throw new CampusException(100203,"显示模式错误.");
+    	}
+    	session.setAttribute(Constant.CAMPUS_DISPLAYMODEL, model);
+    }
 }

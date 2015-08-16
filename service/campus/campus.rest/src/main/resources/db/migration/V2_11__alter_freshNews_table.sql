@@ -1,0 +1,1 @@
+ALTER table ts_app_freshnews modify column AddNickName varchar(50) COMMENT '昵称';
