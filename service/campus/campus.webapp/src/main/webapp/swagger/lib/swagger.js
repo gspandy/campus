@@ -869,9 +869,8 @@ SwaggerOperation.prototype["do"] = function(args, opts, callback, error) {
     else if(param.paramType === 'form' || param.paramType.toLowerCase() === 'file')
       possibleParams.push(param);
   }
-
   if (args.body != null) {
-    params.body = args.body;
+	params.body = args.body;
     delete args.body;
   }
 
@@ -945,8 +944,16 @@ SwaggerOperation.prototype.urlify = function(args) {
       }
     }
   }
-  if ((queryParams != null) && queryParams.length > 0)
-    url += '?' + queryParams;
+  if ((queryParams != null) && queryParams.length > 0){
+	  url += '?' + queryParams;
+	  if (args['page'] && args['page'] != ''){
+		  url += '&page='+args['page']+'&size='+args['size'];
+	  }
+  }else{
+	  if (args['page'] && args['page'] != ''){
+		  url += '&page='+args['page']+'&size='+args['size'];
+	  }
+  }
   return url;
 };
 

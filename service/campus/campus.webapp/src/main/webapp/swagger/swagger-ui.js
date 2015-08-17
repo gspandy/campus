@@ -47,11 +47,34 @@ $(function() {
 			}
 
 		});
-
+ 		
 		return error_free;
 	});
+	
 
 });
+
+function addHeader(){
+	var obj=document.getElementById("headerTable");
+	var row=obj.rows.length;
+	$("#headerTable tbody").append("<tr id='table_tr_"+row+"'><td><input name='custom_header_"+row+"' type='text' id='header_"+row+"' style='width:80px'/></td><td><input name='custom_value_"+row+"' type='text' id='custom_value_"+row+"' style='width:300px;margin-left:-3px'/></td><td></td><td>header</td><td><input id='btnDelRow' class='btn' type='button' value='删除' onclick='DelTableRow(this)'/</td></tr>>");
+}
+
+function clone3(obj){
+	function Clone(){}
+	Clone.prototype = obj;
+	var o = new Clone();
+	for(var a in o){
+		if(typeof o[a] == "object") {
+			o[a] = clone3(o[a]);
+		}
+	}
+	return o;
+}
+
+function DelTableRow(nowTr){
+	$(nowTr).parent().parent().remove(); 
+}
 
 function clippyCopiedCallback(a) {
   $('#api_key_copied').fadeIn().delay(1000).fadeOut();
@@ -431,6 +454,7 @@ function program20(depth0,data) {
   stack1 = helpers['if'].call(depth0, depth0.type, {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        <form accept-charset='UTF-8' class='sandbox'>\n          <div style='margin:0;padding:0;display:inline'></div>\n          ";
+  buffer += "\n        <h4>请求头</h4>\n          <table class='fullwidth' id='headerTable'>\n          <thead>\n            <tr>\n            <th style=\"width: 100px; max-width: 100px\">参数</th>\n            <th style=\"width: 310px; max-width: 310px\">值</th>\n            <th style=\"width: 200px; max-width: 200px\"></th>\n            <th style=\"width: 100px; max-width: 100px\">参数类型</th>\n            <th style=\"width: 220px; max-width: 230px\"><input type='button' value='添加' onclick='addHeader()'/></th>\n            </tr>\n          </thead>\n          <tbody class=\"operation-headers\">          </tbody>\n          </table>\n          ";
   stack1 = helpers['if'].call(depth0, depth0.parameters, {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n          ";
@@ -1603,7 +1627,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       });
       return $('.operation-params', $(this.el)).append(paramView.render().el);
     };
-
+    
     OperationView.prototype.addStatusCode = function(statusCode) {
       var statusCodeView;
       statusCodeView = new StatusCodeView({
@@ -1635,6 +1659,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       });
       if (error_free) {
         map = {};
+        head = {};
         opts = {
           parent: this
         };
@@ -1643,17 +1668,49 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           o = _ref[_i];
           if ((o.value != null) && jQuery.trim(o.value).length > 0) {
-            map[o.name] = o.value;
+        	 map[o.name] = o.value;
           }
           if (o.type === "file") {
             isFileUpload = true;
           }
         }
+        
+        var count = 1;
+        resultMap = {};
+        for(key in window.authorizations.authz){
+        	if ("key" != key){
+        		window.authorizations.remove(key);
+        	}
+        }
+        for (var key in map){
+        	if (key.indexOf('custom_') > -1){
+        		if (key.indexOf('custom_header') > -1){
+        			var index = key.charAt(key.length - 1)
+        			window.authorizations.add("head_key_"+count, new ApiKeyAuthorization(map[key], map['custom_value_'+index], "header"));
+            		count++;
+        		}
+        	}else{
+        		resultMap[key] = map[key];
+        	}
+        }
+        
         _ref1 = form.find("textarea");
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           o = _ref1[_j];
           if ((o.value != null) && jQuery.trim(o.value).length > 0) {
-            map["body"] = o.value;
+        	  if (o.value.indexOf('?page=') > -1 && o.value.indexOf('&') > -1){
+        		  var objValue = o.value.substr(1, o.value.length);
+        		  var objValues = objValue.split('&');
+        		  for(var _h = 0; _h < objValues.length; _h++){
+        			  var _obj = objValues[_h];
+        			  if (_obj.indexOf('=') > -1){
+        				  var _objs = _obj.split('=');
+        				  resultMap[_objs[0]] = _objs[1];
+        			  }
+        		  }
+        	  }else{
+        		  resultMap["body"] = o.value;
+        	  }
           }
         }
         _ref2 = form.find("select");
@@ -1661,16 +1718,20 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           o = _ref2[_k];
           val = this.getSelectedValue(o);
           if ((val != null) && jQuery.trim(val).length > 0) {
-            map[o.name] = val;
+      		if (val.indexOf('(') > -1 && val.indexOf(',') > -1 && val.indexOf(')') > -1){
+      			resultMap[o.name] = val.substr(1, val.lastIndexOf(',') - 1);
+      		}else{
+        	  resultMap[o.name] = val;
+      		}
           }
         }
         opts.responseContentType = $("div select[name=responseContentType]", $(this.el)).val();
         opts.requestContentType = $("div select[name=parameterContentType]", $(this.el)).val();
         $(".response_throbber", $(this.el)).show();
         if (isFileUpload) {
-          return this.handleFileUpload(map, form);
+          return this.handleFileUpload(resultMap, form);
         } else {
-          return this.model["do"](map, opts, this.showCompleteStatus, this.showErrorStatus, this);
+          return this.model["do"](resultMap, opts, this.showCompleteStatus, this.showErrorStatus, this);
         }
       }
     };
