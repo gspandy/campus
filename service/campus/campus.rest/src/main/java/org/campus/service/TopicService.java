@@ -1,8 +1,11 @@
 package org.campus.service;
 
+import org.campus.model.FavoriteFreshNews;
 import org.campus.model.FreshNews;
+import org.campus.model.UserFavorite;
 import org.campus.model.enums.TopicType;
 import org.campus.repository.FreshNewsMapper;
+import org.campus.repository.UserFavoriteMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +15,10 @@ import org.springframework.stereotype.Service;
 public class TopicService {
 	
 	@Autowired
-	FreshNewsMapper freshMapper;
+	private FreshNewsMapper freshMapper;
+	
+	@Autowired
+	private UserFavoriteMapper favoriteMapper;
 	
 	/**
 	 * 查询帖子列表
@@ -77,5 +83,31 @@ public class TopicService {
 	 */
 	public void publishPosts(FreshNews freshNews){
 		this.freshMapper.insert(freshNews);
+	}
+	
+	/**
+	 * 收藏帖子
+	 * @param favorite
+	 */
+	public void createFavorite(UserFavorite favorite){
+		this.favoriteMapper.insert(favorite);
+	}
+	
+	/**
+	 * 删除收藏的帖子
+	 * @param favoriteId 收藏编号
+	 */
+	public void deleteFavorite(String favoriteId){
+		this.favoriteMapper.deleteByPrimaryKey(favoriteId);
+	}
+	
+	/**
+	 * 查询收藏帖子内容
+	 * @param userId
+	 * @param pageable
+	 * @return
+	 */
+	public Page<FavoriteFreshNews> getUserFavorite(String userId,Pageable pageable){
+		return this.favoriteMapper.selectByUserId(userId, pageable);
 	}
 }
