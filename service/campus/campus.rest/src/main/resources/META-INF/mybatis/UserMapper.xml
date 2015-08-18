@@ -38,6 +38,8 @@
 		<result column="LastUpdateDate" property="lastupdatedate"
 			jdbcType="TIMESTAMP" />
 		<result column="IsActive" property="isactive" jdbcType="INTEGER" />
+		<result column="Integral" property="integral" jdbcType="LONG" />
+		<result column="LoginCount" property="logincount" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UserUID, StudentID, RealName, NamePinYin, NameFirstLetter,
@@ -52,7 +54,7 @@
 		IsLocked, IsOpen, IsGraduate, CreateBy, CreateDate,
 		LastUpdateBy,
 		LastUpdateDate,
-		IsActive
+		IsActive,Integral,LoginCount
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -86,7 +88,7 @@
 		ProvinceName, IsValidated, IsLocked,
 		IsOpen, IsGraduate, CreateBy,
 		CreateDate, LastUpdateBy, LastUpdateDate,
-		IsActive)
+		IsActive,Integral,LoginCount)
 		values (#{useruid,jdbcType=VARCHAR},
 		#{studentid,jdbcType=VARCHAR},
 		#{realname,jdbcType=VARCHAR},
@@ -112,7 +114,7 @@
 		#{createby,jdbcType=VARCHAR},
 		#{createdate,jdbcType=TIMESTAMP}, #{lastupdateby,jdbcType=VARCHAR},
 		#{lastupdatedate,jdbcType=TIMESTAMP},
-		#{isactive,jdbcType=INTEGER})
+		#{isactive,jdbcType=INTEGER},#{integral,jdbcType=LONG},#{logincount,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.User">
 		insert into ts_app_user
@@ -210,6 +212,12 @@
 			<if test="isactive != null">
 				IsActive,
 			</if>
+			<if test="integral != null">
+                Integral,
+            </if>
+            <if test="logincount != null">
+                LoginCount,
+            </if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="useruid != null">
@@ -305,6 +313,12 @@
 			<if test="isactive != null">
 				#{isactive,jdbcType=INTEGER},
 			</if>
+			<if test="integral != null">
+                #{integral,jdbcType=LONG},
+            </if>
+            <if test="logincount != null">
+                #{logincount,jdbcType=INTEGER},
+            </if>
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="org.campus.model.User">
@@ -400,6 +414,12 @@
 			<if test="isactive != null">
 				IsActive = #{isactive,jdbcType=INTEGER},
 			</if>
+			<if test="integral != null">
+                Integral = #{integral,jdbcType=LONG},
+            </if>
+            <if test="logincount != null">
+                LoginCount = #{logincount,jdbcType=INTEGER},
+            </if>
 		</set>
 		where UserUID = #{useruid,jdbcType=VARCHAR}
 	</update>
@@ -455,7 +475,11 @@
 		LastUpdateDate =
 		#{lastupdatedate,jdbcType=TIMESTAMP},
 		IsActive =
-		#{isactive,jdbcType=INTEGER}
+		#{isactive,jdbcType=INTEGER},
+		Integral =
+        #{integral,jdbcType=LONG},
+        LoginCount =
+        #{logincount,jdbcType=INTEGER}
 		where UserUID =
 		#{useruid,jdbcType=VARCHAR}
 	</update>
