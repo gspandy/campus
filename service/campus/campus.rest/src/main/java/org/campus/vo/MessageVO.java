@@ -31,6 +31,8 @@ public class MessageVO {
 
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date readDate;
+    
+    private String groupName;
 
     @ApiModelProperty(value = "用户聊天的会话ID，每对用户之前有一个唯一的会话ID", required = true)
     public String getConversationId() {
@@ -130,6 +132,16 @@ public class MessageVO {
     @ApiModelProperty(value = "读取时间", required = false)
     public void setReadDate(Date readDate) {
         this.readDate = readDate;
+    }
+
+    @ApiModelProperty(value = "如果是群消息，显示群名称", required = false)
+    public String getGroupName() {
+        return groupName;
+    }
+
+    @ApiModelProperty(value = "如果是群消息，显示群名称", required = false)
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
 }

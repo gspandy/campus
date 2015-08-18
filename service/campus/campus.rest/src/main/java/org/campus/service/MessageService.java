@@ -4,33 +4,51 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
+import org.campus.model.ConversationDetail;
+import org.campus.model.GroupUsers;
 import org.campus.model.ReceiveMessage;
 import org.campus.model.SendMessage;
 import org.campus.model.Session;
 import org.campus.model.enums.IsReadType;
-import org.campus.model.enums.MessageType;
 import org.campus.model.enums.SessionType;
+import org.campus.repository.GroupUsersMapper;
+import org.campus.repository.MessageGroupMapper;
 import org.campus.repository.ReceiveMessageMapper;
 import org.campus.repository.SendMessageMapper;
 import org.campus.repository.SessionMapper;
+import org.campus.repository.UserMapper;
 import org.campus.service.MessageService;
 import org.campus.util.ToolUtil;
+import org.campus.vo.ConversationDetailVO;
 import org.campus.vo.MessageAddVO;
 import org.campus.vo.MessageRequestVo;
 import org.campus.vo.MessageVO;
-import org.springframework.data.domain.Page;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 public class MessageService {
 
+    @Autowired
     private SendMessageMapper sendMessageMapper;
 
+    @Autowired
     private ReceiveMessageMapper receiveMessageMapper;
 
+    @Autowired
     private SessionMapper sessionMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private MessageGroupMapper messageGroupMapper;
+
+    @Autowired
+    private GroupUsersMapper groupUsersMapper;
 
     public List<MessageVO> getMessagePromptList(MessageRequestVo params) {
         // 校验参数
@@ -40,27 +58,58 @@ public class MessageService {
                 IsReadType.getIsReadTypeByCode(params.getIsRead()));
 
         for (ReceiveMessage receiveMessage : recieveMessageList) {
-            // TODO:
             MessageVO messageVO = new MessageVO();
             messageVO.setIsRead(String.valueOf(receiveMessage.getIsread()));
             messageVO.setReadDate(receiveMessage.getReadtime());
+            messageVO.setSendDate(receiveMessage.getSendtime());
+
+            SendMessage sendMessage = sendMessageMapper.selectByPrimaryKey(receiveMessage.getSendmessageuid());
+            messageVO.setMessage(sendMessage.getMsgcontent());
+            messageVO.setMessageId(sendMessage.getUid());
+            messageVO.setPicUrl(sendMessage.getPicturepath());
+            messageVO.setSendUserId(sendMessage.getSenduseruid());
+            String nickName = userMapper.selectNickNameByPrimaryKey(sendMessage.getSenduseruid());
+            messageVO.setSendNickName(nickName);
+            String objUseruid = receiveMessage.getReceiveuseruid();
+
+            // 判断是否为群组消息
+            if (StringUtils.isNotEmpty(sendMessage.getGroupuid())) {
+                objUseruid = sendMessage.getGroupuid();
+                String groupName = messageGroupMapper.selectNameByPrimaryKey(objUseruid);
+                messageVO.setGroupName(groupName);
+            }
+            String conversationId = sessionMapper.selectBySessionUserId(sendMessage.getSenduseruid(), objUseruid);
+            messageVO.setConversationId(conversationId);
+
             resultList.add(messageVO);
+            updateReadState(receiveMessage.getUid());
         }
-        return null;
+        return resultList;
     }
-    
+
+    // 更新已读状态
+    private void updateReadState(String uid) {
+        ReceiveMessage receiveMessage = new ReceiveMessage();
+
+        receiveMessage.setUid(uid);
+        receiveMessage.setIsread(IsReadType.READ);
+        receiveMessage.setReadtime(new Date());
+
+        receiveMessageMapper.updateByPrimaryKeySelective(receiveMessage);
+    }
+
     /**
      * 
      * 创建新会话
-     *
+     * 
      * @param sendUserId 创建的用户
      * @param recieveUserId 会话对象用户id
      * @param typeCode 会话类型，单聊或群聊
      * @param msg 会话消息
      * @return
-     *
+     * 
      */
-    public String createSession(String sendUserId,String recieveUserId,String typeCode,String msg){
+    public String createSession(String sendUserId, String recieveUserId, String typeCode, String msg) {
         Session record = new Session();
         record.setUid(ToolUtil.getUUid());
         record.setUseruid(sendUserId);
@@ -69,11 +118,14 @@ public class MessageService {
         // fixme,消息存储
         record.setLastmsgcontent(msg);
         record.setLastmessagetime(new Date());
+        record.setCreateby(Constant.CREATE_BY);
+        record.setCreatedate(new Date());
         sessionMapper.insertSelective(record);
         return record.getUid();
     }
 
-    public void sendSessionMsg(String conversationId,String recieveUserId, String sendUserId, MessageAddVO messageAddVO,String sessionType) {
+    public void sendSessionMsg(String conversationId, String recieveUserId, String sendUserId,
+            MessageAddVO messageAddVO, String sessionType) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setUid(ToolUtil.getUUid());
         sendMessage.setMsgcontent(messageAddVO.getMessage());
@@ -81,23 +133,97 @@ public class MessageService {
         sendMessage.setSenduseruid(sendUserId);
         sendMessage.setSoundpath(messageAddVO.getSoundUrl());
         sendMessage.setPicturepath(messageAddVO.getPicUrl());
-        
-        // TODO :未完成
-        if(sessionType.equals(SessionType.GROUP_CHANNEL)){
+        sendMessage.setCreateby(Constant.CREATE_BY);
+        sendMessage.setCreatedate(new Date());
+        if (sessionType.equals(SessionType.GROUP_CHANNEL)) {
             sendMessage.setGroupuid(recieveUserId);
+
+            List<GroupUsers> groupUserList = groupUsersMapper.selectByGroupUserId(recieveUserId);
+            for (GroupUsers groupUser : groupUserList) {
+                // 给群组成员发送消息
+                saveRecieveMessage(groupUser.getUseruid(), sendMessage.getUid(), sendMessage.getSendtime());
+            }
+        } else {
+            // 给会话对象发送消息
+            saveRecieveMessage(recieveUserId, sendMessage.getUid(), sendMessage.getSendtime());
         }
-        
-        ReceiveMessage receiveMessage = new ReceiveMessage();
-        
-        receiveMessageMapper.insertSelective(receiveMessage);
+
         sendMessageMapper.insert(sendMessage);
     }
 
-    private void checkParams(MessageRequestVo params) {
-        if (null == MessageType.getMessageTypeByCode(params.getType())) {
-            throw new CampusException(190002, "类型错误，消息类型(0:系统公告;1:普通用户信息)");
+    public List<ConversationDetailVO> queryConversationList(String holdUserId, String conversationId) {
+
+        Session session = sessionMapper.selectByPrimaryKey(conversationId);
+        if (null == session) {
+            throw new CampusException(1900005, "没有该会话");
         }
 
+        List<ConversationDetailVO> resultList = new LinkedList<>();
+        if (SessionType.SINGLE_CHANNEL.getCode().equals(String.valueOf(session.getTypecode()))) {
+            // 单聊
+            setSingleMessages(resultList, session.getObjuseruid(), holdUserId);
+        } else {
+            // 群聊
+            setGroupMessages(resultList, session.getObjuseruid(), holdUserId);
+        }
+        return resultList;
+    }
+
+    private void setSingleMessages(List<ConversationDetailVO> resultList, String objuseruid, String holdUserId) {
+        // 单聊
+        List<ConversationDetail> list = receiveMessageMapper.selectMessageDetailSingle(holdUserId, objuseruid);
+        for (ConversationDetail conversationDetail : list) {
+            ConversationDetailVO detail = new ConversationDetailVO();
+            detail.setHoldFlag(conversationDetail.isHoldFlag());
+            detail.setMessage(conversationDetail.getMsgcontent());
+            detail.setPicUrl(conversationDetail.getPicturepath());
+            detail.setSendDate(conversationDetail.getSendtime());
+            detail.setSoundUrl(conversationDetail.getSoundpath());
+            String nickName = userMapper.selectNickNameByPrimaryKey(conversationDetail.getSenduseruid());
+            nickName = StringUtils.isEmpty(nickName) ? "未知用户" : nickName;
+            detail.setNickName(nickName);
+            resultList.add(detail);
+        }
+    }
+
+    private void setGroupMessages(List<ConversationDetailVO> resultList, String objuseruid, String holdUserId) {
+        // 群聊
+        List<SendMessage> list = sendMessageMapper.selectByGroupUID(objuseruid);
+
+        for (SendMessage sendMessage : list) {
+            ConversationDetailVO detail = new ConversationDetailVO();
+            detail.setMessage(sendMessage.getMsgcontent());
+            detail.setPicUrl(sendMessage.getPicturepath());
+            detail.setSendDate(sendMessage.getSendtime());
+            detail.setSoundUrl(sendMessage.getSoundpath());
+
+            // 设置消息持有者标识
+            if (holdUserId.equals(sendMessage.getSenduseruid())) {
+                detail.setHoldFlag(true);
+            } else {
+                detail.setHoldFlag(false);
+            }
+
+            String nickName = userMapper.selectNickNameByPrimaryKey(sendMessage.getSenduseruid());
+            nickName = StringUtils.isEmpty(nickName) ? "未知用户" : nickName;
+            detail.setNickName(nickName);
+            resultList.add(detail);
+        }
+    }
+
+    private void saveRecieveMessage(String recieveUserId, String sendMsgUid, Date sendtime) {
+        ReceiveMessage receiveMessage = new ReceiveMessage();
+        receiveMessage.setCreateby(Constant.CREATE_BY);
+        receiveMessage.setCreatedate(new Date());
+        receiveMessage.setIsread(IsReadType.UNREAD);
+        receiveMessage.setReceiveuseruid(recieveUserId);
+        receiveMessage.setSendmessageuid(sendMsgUid);
+        receiveMessage.setSendtime(sendtime);
+        receiveMessage.setUid(ToolUtil.getUUid());
+        receiveMessageMapper.insertSelective(receiveMessage);
+    }
+
+    private void checkParams(MessageRequestVo params) {
         if (null == IsReadType.getIsReadTypeByCode(params.getIsRead())) {
             throw new CampusException(190003, "类型错误，是否已读(0:未读;1:已读)");
         }

@@ -1,5 +1,4 @@
 package org.campus.vo;
-
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -13,9 +12,6 @@ public class MessageRequestVo {
     // 要查询的用户id
     private String userId;
     
-    // 消息类型(0:系统公告;1:普通用户信息)
-    private String type;
-    
     // 是否已读(0:未读;1:已读)
     private String isRead;
     
@@ -28,14 +24,6 @@ public class MessageRequestVo {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getIsRead() {
