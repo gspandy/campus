@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.campus.repository.UserFavoriteMapper" >
+  <resultMap id="BaseResultMap" type="org.campus.model.UserFavorite" >
+    <id column="uid" property="uid" jdbcType="VARCHAR" />
+    <result column="userid" property="userid" jdbcType="VARCHAR" />
+    <result column="postsid" property="postsid" jdbcType="VARCHAR" />
+    <result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="FreshNewsMap" type="org.campus.model.FavoriteFreshNews">
+  	<id column="uid" property="favoriteId" jdbcType="VARCHAR" />
+  	<result column="postsid" property="uid" jdbcType="VARCHAR" />
+  	<result column="NewsBrief" property="newsbrief" jdbcType="VARCHAR" />
+  	<result column="NewsBrief" property="newsbrief" jdbcType="VARCHAR" />
+	<result column="NewsContent" property="newscontent" jdbcType="VARCHAR" />
+	<result column="Pictures" property="pictures" jdbcType="VARCHAR" />
+	<result column="AddUserUID" property="adduseruid" jdbcType="VARCHAR" />
+	<result column="IsAnonymous" property="isanonymous" jdbcType="INTEGER" />
+	<result column="CommentNum" property="commentnum" jdbcType="INTEGER" />
+	<result column="SupportNum" property="supportnum" jdbcType="INTEGER" />
+	<result column="ComplainNum" property="complainnum" jdbcType="INTEGER" />
+	<result column="NotSupportNum" property="notsupportnum"	jdbcType="INTEGER" />
+	<result column="TransNum" property="transnum" jdbcType="INTEGER" />
+	<result column="IsShield" property="isshield" jdbcType="INTEGER" />
+	<result column="IsActive" property="isactive" jdbcType="INTEGER" />
+	<result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+	<result column="CreateDate" property="createdate" jdbcType="TIMESTAMP" />
+	<result column="LastUpdateBy" property="lastupdateby" jdbcType="VARCHAR" />
+	<result column="LastUpdateDate" property="lastupdatedate" jdbcType="TIMESTAMP" />
+	<result column="newstype" property="newstype" jdbcType="CHAR" />
+	<result column="ishot" property="ishot" jdbcType="CHAR" />
+	<result column="AddNickName" property="addnickname" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    uid, userid, postsid, createtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from ts_app_user_favorite
+    where uid = #{uid,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByUserId" resultMap="FreshNewsMap" parameterType="java.lang.String" >
+	SELECT a.uid,a.postsid,NewsBrief, NewsContent, Pictures, AddUserUID,
+		IsAnonymous,
+		CommentNum, SupportNum,
+		ComplainNum, NotSupportNum,
+		TransNum, IsShield, IsActive,
+		CreateBy, CreateDate, LastUpdateBy,
+		LastUpdateDate,newstype,ishot,AddNickName
+	from ts_app_user_favorite a, ts_app_freshnews b
+	where a.postsid = b.UID
+    and userid = #{userId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from ts_app_user_favorite
+    where uid = #{uid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.campus.model.UserFavorite" >
+    insert into ts_app_user_favorite (uid, userid, postsid, 
+      createtime)
+    values (#{uid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, #{postsid,jdbcType=VARCHAR}, 
+      #{createtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="org.campus.model.UserFavorite" >
+    insert into ts_app_user_favorite
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="postsid != null" >
+        postsid,
+      </if>
+      <if test="createtime != null" >
+        createtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=VARCHAR},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="postsid != null" >
+        #{postsid,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.campus.model.UserFavorite" >
+    update ts_app_user_favorite
+    <set >
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="postsid != null" >
+        postsid = #{postsid,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where uid = #{uid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.campus.model.UserFavorite" >
+    update ts_app_user_favorite
+    set userid = #{userid,jdbcType=VARCHAR},
+      postsid = #{postsid,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP}
+    where uid = #{uid,jdbcType=VARCHAR}
+  </update>
+</mapper>

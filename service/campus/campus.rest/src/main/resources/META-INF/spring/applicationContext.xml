@@ -32,7 +32,6 @@
 		<property name="maxActive" value="${db.maxActive}" />
 		<property name="initialSize" value="${db.initialSize}" />
 		<property name="maxWait" value="${db.maxActive}" />
-		<property name="maxIdle" value="${db.maxIdle}" />
 		<property name="minIdle" value="${db.minIdle}" />
 		<property name="validationQuery" value="${db.validationQuery}" />
 		<property name="testWhileIdle" value="${db.testWhileIdle}" />
