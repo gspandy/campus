@@ -57,11 +57,11 @@ $(function() {
 function addHeader(){
 	var obj=document.getElementById("headerTable");
 	var row=obj.rows.length;
-	$("#headerTable tbody").append("<tr id='table_tr_"+row+"'><td><input name='custom_header_"+row+"' type='text' id='header_"+row+"' style='width:80px'/></td><td><input name='custom_value_"+row+"' type='text' id='custom_value_"+row+"' style='width:300px;margin-left:-3px'/></td><td></td><td>header</td><td><input id='btnDelRow' class='btn' type='button' value='删除' onclick='DelTableRow(this)'/</td></tr>>");
+	$("#headerTable tbody").append("<tr id='table_tr_"+row+"'><td><input name='custom_header_"+row+"' type='text' id='header_"+row+"' style='width:80px'/></td><td><input name='custom_value_"+row+"' type='text' id='custom_value_"+row+"' style='width:300px;margin-left:-3px'/></td><td></td><td>header</td><td><input id='btnDelRow' class='btn' type='button' value='删除' onclick='DelTableRow("+row+")'/</td></tr>>");
 }
 
-function DelTableRow(nowTr){
-	$(nowTr).parent().parent().remove(); 
+function DelTableRow(row){
+	$("tr[id=table_tr_"+row+"]").remove(); 
 }
 
 function clippyCopiedCallback(a) {
