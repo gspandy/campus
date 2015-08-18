@@ -38,7 +38,7 @@
 		<result column="LastUpdateDate" property="lastupdatedate"
 			jdbcType="TIMESTAMP" />
 		<result column="IsActive" property="isactive" jdbcType="INTEGER" />
-		<result column="Integral" property="integral" jdbcType="LONG" />
+		<result column="Integral" property="integral" jdbcType="INTEGER" />
 		<result column="LoginCount" property="logincount" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
@@ -114,7 +114,7 @@
 		#{createby,jdbcType=VARCHAR},
 		#{createdate,jdbcType=TIMESTAMP}, #{lastupdateby,jdbcType=VARCHAR},
 		#{lastupdatedate,jdbcType=TIMESTAMP},
-		#{isactive,jdbcType=INTEGER},#{integral,jdbcType=LONG},#{logincount,jdbcType=INTEGER})
+		#{isactive,jdbcType=INTEGER},#{integral,jdbcType=INTEGER},#{logincount,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.User">
 		insert into ts_app_user
@@ -314,7 +314,7 @@
 				#{isactive,jdbcType=INTEGER},
 			</if>
 			<if test="integral != null">
-                #{integral,jdbcType=LONG},
+                #{integral,jdbcType=INTEGER},
             </if>
             <if test="logincount != null">
                 #{logincount,jdbcType=INTEGER},
@@ -415,7 +415,7 @@
 				IsActive = #{isactive,jdbcType=INTEGER},
 			</if>
 			<if test="integral != null">
-                Integral = #{integral,jdbcType=LONG},
+                Integral = #{integral,jdbcType=INTEGER},
             </if>
             <if test="logincount != null">
                 LoginCount = #{logincount,jdbcType=INTEGER},
@@ -477,7 +477,7 @@
 		IsActive =
 		#{isactive,jdbcType=INTEGER},
 		Integral =
-        #{integral,jdbcType=LONG},
+        #{integral,jdbcType=INTEGER},
         LoginCount =
         #{logincount,jdbcType=INTEGER}
 		where UserUID =
