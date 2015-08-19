@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserFavoriteMapper {
-	
+
     int deleteByPrimaryKey(String uid);
 
     int insert(UserFavorite record);
@@ -21,7 +21,9 @@ public interface UserFavoriteMapper {
     int updateByPrimaryKeySelective(UserFavorite record);
 
     int updateByPrimaryKey(UserFavorite record);
-    
+
     Page<FavoriteFreshNews> selectByUserId(@Param("userId") String userId, Pageable pageable);
-    
+
+    int isFavorited(@Param("postsId") String postsId, @Param("userId") String userId);
+
 }

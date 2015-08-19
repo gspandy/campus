@@ -54,4 +54,6 @@ public interface SupportMapper {
 
     int countMyCommentSupport(String sourceId);
 
+    int isSupported(@Param("sourceId") String sourceId, @Param("userId") String userId);
+
 }

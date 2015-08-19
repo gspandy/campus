@@ -29,6 +29,10 @@ public class BoardDetailVO {
 
     private int transNum;
 
+    private boolean isSupported;
+
+    private boolean isCollected;
+
     @ApiModelProperty(value = "发帖ID", required = true)
     public String getPostsId() {
         return postsId;
@@ -117,6 +121,26 @@ public class BoardDetailVO {
     @ApiModelProperty(value = "转发数", required = true)
     public void setTransNum(int transNum) {
         this.transNum = transNum;
+    }
+
+    @ApiModelProperty(value = "是否赞过", required = true)
+    public boolean isSupported() {
+        return isSupported;
+    }
+
+    @ApiModelProperty(value = "是否赞过", required = true)
+    public void setSupported(boolean isSupported) {
+        this.isSupported = isSupported;
+    }
+
+    @ApiModelProperty(value = "是否收藏过", required = true)
+    public boolean isCollected() {
+        return isCollected;
+    }
+
+    @ApiModelProperty(value = "是否收藏过", required = true)
+    public void setCollected(boolean isCollected) {
+        this.isCollected = isCollected;
     }
 
 }

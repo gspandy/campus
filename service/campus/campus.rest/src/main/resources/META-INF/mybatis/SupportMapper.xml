@@ -182,10 +182,19 @@
 		ts_app_support
 	</delete>
 	<select id="countMyCommentSupport" resultType="int">
-	select
-	count(1)
-	from ts_app_support
-	where SourceUID =
-	#{sourceId,jdbcType=VARCHAR}
+		select
+		count(1)
+		from ts_app_support
+		where SourceUID =
+		#{sourceId,jdbcType=VARCHAR}
+	</select>
+	<select id="isSupported" resultType="int">
+		select
+		count(1)
+		from
+		ts_app_support
+		where SourceUID =
+		#{sourceId,jdbcType=VARCHAR} AND
+		SupportUserUID=#{userId,jdbcType=VARCHAR}
 	</select>
 </mapper>

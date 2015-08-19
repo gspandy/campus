@@ -25,6 +25,8 @@ public class BoardVO {
 
     private String content;
 
+    private boolean isSupported;
+
     @ApiModelProperty(value = "发帖ID", required = true)
     public String getPostsId() {
         return postsId;
@@ -93,6 +95,16 @@ public class BoardVO {
     @ApiModelProperty(value = "发帖内容", required = false)
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @ApiModelProperty(value = "是否被赞过", required = false)
+    public boolean isSupported() {
+        return isSupported;
+    }
+
+    @ApiModelProperty(value = "是否被赞过", required = false)
+    public void setSupported(boolean isSupported) {
+        this.isSupported = isSupported;
     }
 
 }

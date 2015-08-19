@@ -36,7 +36,8 @@ public class IntegralServiceImpl implements IntegralService {
                 integral = loginIntegral(userId);
                 break;
             case POSTS:
-
+                integral = postsIntegral();
+                break;
             case CHECk_POSTS:
 
             case COMMENT:
@@ -91,6 +92,10 @@ public class IntegralServiceImpl implements IntegralService {
         return integral;
     }
 
+    private long postsIntegral() {
+        return SystemConfig.getLong("POSTS_PASS_CHECK");
+    }
+
     private long calcLoginIntegral(long integral, int count) {
         return integral + SystemConfig.getLong("EVERYDAY_INCREASE_INTEGRAL") * (count - 1);
     }
@@ -99,12 +104,6 @@ public class IntegralServiceImpl implements IntegralService {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH, amount);
         return cal.getTime();
-    }
-
-    public static void main(String[] args) {
-        IntegralServiceImpl impl = new IntegralServiceImpl();
-        Date date = impl.getDate(-1);
-        System.out.println(date);
     }
 
 }

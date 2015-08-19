@@ -47,12 +47,12 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "BoardController", description = "板块相关操作")
 public class BoardController {
 
-	@Autowired
-	TopicService topicSvc;
-	
-	@Autowired
-	NickNameService nickNameSvc;
-	
+    @Autowired
+    TopicService topicSvc;
+
+    @Autowired
+    NickNameService nickNameSvc;
+
     @ApiOperation(value = "*帖子列表查询:1.0", notes = "*帖子列表查询[API-Version=1.0]")
     @RequestMapping(value = "/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
@@ -60,40 +60,40 @@ public class BoardController {
             @ApiParam(name = "type", value = "1:休闲;2:新鲜;3:秘密;4:言论;5:热门;6:关注") @RequestParam(value = "type", required = true) String type,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             HttpSession session) {
-        Assert.hasLength(type,"帖子类型不能为空.");
-    	TopicType topicType = TopicType.getTypeCodeByCode(type);
-    	if(topicType == null){
-    		throw new CampusException(100201,"帖子类型不存在:"+type);
-    	}
-    	
-    	Page<FreshNews> freshNews;
-    	LoginResponseVO user = (LoginResponseVO)session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-    	if(user == null){
-    		//未登录用户查询
-    		//没有关注帖子
-    		if(topicType == TopicType.ATTENTION)
-    			throw new CampusException(100301,"未登录用户没有关注内容.");
-    		freshNews = topicSvc.getPostsForAnonymous(topicType, pageable); 
-    	}
-    	else{
-    		//登录用户查询
-    		freshNews = topicSvc.getPostsForRegister(user.getUserId(),topicType, pageable);
-    	}
+        Assert.hasLength(type, "帖子类型不能为空.");
+        TopicType topicType = TopicType.getTypeCodeByCode(type);
+        if (topicType == null) {
+            throw new CampusException(100201, "帖子类型不存在:" + type);
+        }
 
-    	List<FreshNews> listTopic = freshNews.getContent();
+        Page<FreshNews> freshNews;
+        LoginResponseVO user = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        if (user == null) {
+            // 未登录用户查询
+            // 没有关注帖子
+            if (topicType == TopicType.ATTENTION)
+                throw new CampusException(100301, "未登录用户没有关注内容.");
+            freshNews = topicSvc.getPostsForAnonymous(topicType, pageable);
+        } else {
+            // 登录用户查询
+            freshNews = topicSvc.getPostsForRegister(user.getUserId(), topicType, pageable);
+        }
+
+        List<FreshNews> listTopic = freshNews.getContent();
         List<BoardVO> boardVOs = new ArrayList<BoardVO>();
-        for(FreshNews topic:listTopic){
-        	BoardVO vo = new BoardVO();
-        	vo.setPostsId(topic.getUid());
-        	vo.setUserId(topic.getCreateby());
-        	vo.setNickName(topic.getAddnickname());
-        	vo.setBrief(topic.getNewsbrief());
-        	vo.setContent(topic.getNewscontent());
-        	vo.setPublishDate(topic.getCreatedate());
-        	String[] picUrls = topic.getPictures().split(",");
-        	vo.setPicUrls(Arrays.asList(picUrls));
-        	boardVOs.add(vo);
-    	}
+        for (FreshNews topic : listTopic) {
+            BoardVO vo = new BoardVO();
+            vo.setPostsId(topic.getUid());
+            vo.setUserId(topic.getCreateby());
+            vo.setNickName(topic.getAddnickname());
+            vo.setBrief(topic.getNewsbrief());
+            vo.setContent(topic.getNewscontent());
+            vo.setPublishDate(topic.getCreatedate());
+            String[] picUrls = topic.getPictures().split(",");
+            vo.setPicUrls(Arrays.asList(picUrls));
+            vo.setSupported(topicSvc.isSupported(topic.getUid(), user.getUserId()));
+            boardVOs.add(vo);
+        }
 
         Page<BoardVO> page = new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
         return page;
@@ -102,45 +102,48 @@ public class BoardController {
     @ApiOperation(value = "*帖子详情查询:1.0", notes = "帖子详情查询[API-Version=1.0]")
     @RequestMapping(value = "/posts/detail", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public BoardDetailVO findBoardDetail(@ApiParam(name = "postsId", value = "帖子的ID") @RequestParam(value = "postsId", required = true) String postsId) {
-    	BoardDetailVO boardVo = null;
-    	
-    	FreshNews topic = this.topicSvc.getPostsDetail(postsId);
-        if (topic!=null){
-        	boardVo = new BoardDetailVO();
-        	boardVo.setCommentNum(topic.getCommentnum());
-        	boardVo.setContent(topic.getNewscontent());
-        	boardVo.setNickName(topic.getAddnickname());
-        	
-        	String[] picUrls = topic.getPictures().split(",");
-        	boardVo.setPicUrls(Arrays.asList(picUrls));
-        	
-        	boardVo.setPostsId(postsId);
-        	boardVo.setPublishDate(topic.getCreatedate());
-        	boardVo.setSupportNum(topic.getSupportnum());
-        	boardVo.setTransNum(topic.getTransnum());
-        	boardVo.setUserId(topic.getCreateby());
+    public BoardDetailVO findBoardDetail(
+            @ApiParam(name = "postsId", value = "帖子的ID") @RequestParam(value = "postsId", required = true) String postsId,
+            HttpSession session) {
+        LoginResponseVO user = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        BoardDetailVO boardVo = null;
+        FreshNews topic = this.topicSvc.getPostsDetail(postsId);
+        if (topic != null) {
+            boardVo = new BoardDetailVO();
+            boardVo.setCommentNum(topic.getCommentnum());
+            boardVo.setContent(topic.getNewscontent());
+            boardVo.setNickName(topic.getAddnickname());
+
+            String[] picUrls = topic.getPictures().split(",");
+            boardVo.setPicUrls(Arrays.asList(picUrls));
+
+            boardVo.setPostsId(postsId);
+            boardVo.setPublishDate(topic.getCreatedate());
+            boardVo.setSupportNum(topic.getSupportnum());
+            boardVo.setTransNum(topic.getTransnum());
+            boardVo.setUserId(topic.getCreateby());
+            boardVo.setSupported(topicSvc.isSupported(postsId, user.getUserId()));
+            boardVo.setCollected(topicSvc.isFavorited(postsId, user.getUserId()));
         }
-    	
+
         return boardVo;
     }
 
     @ApiOperation(value = "*添加收藏:1.0", notes = "添加收藏[API-Version=1.0]")
     @RequestMapping(value = "/{postsId}/collect", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "收藏成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public void addCollect(@ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
-            HttpSession session) {
-    	Assert.hasLength(postsId,"必须指定待收藏的帖子.");
-    	//验证用户有无登录
-    	LoginResponseVO vo = (LoginResponseVO)session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-    	if(vo==null)
-    		throw new CampusException(100204,"请登录.");
-    	UserFavorite favorite = new UserFavorite();
-    	favorite.setUid(ToolUtil.getUUid());
-    	favorite.setPostsid(postsId);
-    	favorite.setUserid(vo.getUserId());
-    	favorite.setCreatetime(Calendar.getInstance().getTime());
-    	topicSvc.createFavorite(favorite);
+    public void addCollect(@ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId, HttpSession session) {
+        Assert.hasLength(postsId, "必须指定待收藏的帖子.");
+        // 验证用户有无登录
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        if (vo == null)
+            throw new CampusException(100204, "请登录.");
+        UserFavorite favorite = new UserFavorite();
+        favorite.setUid(ToolUtil.getUUid());
+        favorite.setPostsid(postsId);
+        favorite.setUserid(vo.getUserId());
+        favorite.setCreatetime(Calendar.getInstance().getTime());
+        topicSvc.createFavorite(favorite);
     }
 
     @ApiOperation(value = "*取消收藏:1.0", notes = "取消收藏[API-Version=1.0]")
@@ -148,42 +151,42 @@ public class BoardController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "取消收藏成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void cancelCollect(@ApiParam(name = "favoriteId", value = "收藏列表编号") @PathVariable String favoriteId,
             HttpSession session) {
-    	if(session.getAttribute(Constant.CAMPUS_SECURITY_SESSION)==null)
-    		throw new CampusException(100204,"请登录.");
-    	topicSvc.deleteFavorite(favoriteId);
+        if (session.getAttribute(Constant.CAMPUS_SECURITY_SESSION) == null)
+            throw new CampusException(100204, "请登录.");
+        topicSvc.deleteFavorite(favoriteId);
     }
 
     @ApiOperation(value = "*收藏列表查询:1.0", notes = "收藏列表查询[API-Version=1.0]")
     @RequestMapping(value = "/collects", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<BoardFavoriteVO> findCollects(
-    		@ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
-    		HttpSession session) {
-        
-    	//验证用户有无登录
-    	LoginResponseVO vo = (LoginResponseVO)session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-    	if(vo==null)
-    		throw new CampusException(100204,"请登录.");
-    	
-    	Page<FavoriteFreshNews> srcData = topicSvc.getUserFavorite(vo.getUserId(), pageable);
-    	List<FavoriteFreshNews> lstData = srcData.getContent();
-    	
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            HttpSession session) {
+
+        // 验证用户有无登录
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        if (vo == null)
+            throw new CampusException(100204, "请登录.");
+
+        Page<FavoriteFreshNews> srcData = topicSvc.getUserFavorite(vo.getUserId(), pageable);
+        List<FavoriteFreshNews> lstData = srcData.getContent();
+
         List<BoardFavoriteVO> boardVOs = new ArrayList<BoardFavoriteVO>();
-        for(FavoriteFreshNews data: lstData){
-        	BoardFavoriteVO favorite = new BoardFavoriteVO();
-        	favorite.setPostsId(data.getUid());
-        	favorite.setUserId(data.getCreateby());
-        	favorite.setNickName(data.getAddnickname());
-            
-        	String[] picUrls = data.getPictures().split(",");
-        	favorite.setPicUrls(Arrays.asList(picUrls));
-            
+        for (FavoriteFreshNews data : lstData) {
+            BoardFavoriteVO favorite = new BoardFavoriteVO();
+            favorite.setPostsId(data.getUid());
+            favorite.setUserId(data.getCreateby());
+            favorite.setNickName(data.getAddnickname());
+
+            String[] picUrls = data.getPictures().split(",");
+            favorite.setPicUrls(Arrays.asList(picUrls));
+
             favorite.setContent(data.getNewscontent());
-            
+
             favorite.setPublishDate(data.getCreatedate());
             boardVOs.add(favorite);
         }
- 
+
         Page<BoardFavoriteVO> page = new PageImpl<BoardFavoriteVO>(boardVOs, pageable, boardVOs.size());
         return page;
     }
@@ -193,66 +196,67 @@ public class BoardController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "发布成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void publish(@ApiParam(name = "BoardPublishVO", value = "发布内容体") @RequestBody BoardPublishVO boardPublishVO,
             HttpSession session) {
-        //验证用户有无登录
-    	LoginResponseVO vo = (LoginResponseVO)session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-    	if(vo==null)
-    		throw new CampusException(100204,"请登录.");
-    	DisplayModel model = (DisplayModel)session.getAttribute(Constant.CAMPUS_DISPLAYMODEL);
-    	
-    	String nickName = nickNameSvc.findRandomNickName(model, session.getId());
-    	nickName = nickName==null?vo.getNickName():nickName;
-    	
-    	FreshNews posts = new FreshNews();
-    	posts.setAddnickname(nickName);
-    	posts.setAdduseruid(vo.getUserId());
-    	posts.setCommentnum(0);
-    	posts.setComplainnum(0);
-    	posts.setCreateby(vo.getUserId());
-    	posts.setCreatedate(Calendar.getInstance().getTime());
-    	posts.setIsactive(1);
-    	posts.setIsanonymous(model==DisplayModel.MOON?AnonymousType.ANONYMOUS:AnonymousType.NOT_ANONYMOUS);
-    	posts.setIshot("0");
-    	posts.setIsshield(FreshNews.VIEW_REGISTER);//新帖必须屏蔽
-    	posts.setNewsbrief(boardPublishVO.getTitle());
-    	posts.setNewscontent(boardPublishVO.getContent());
-    	
-    	//newsType in (1,2,3,4)
-    	List<String> lst =Arrays.asList("1","2","3","4");
-    	if(!lst.contains(boardPublishVO.getType()))
-    		throw new CampusException(100205,"帖子类型错误.");
-    	posts.setNewstype(boardPublishVO.getType());
-    	
-    	posts.setNotsupportnum(0);
-    	
-    	List<String> pics = boardPublishVO.getPicUrls();
-    	if(pics==null || pics.size()==0)
-    		posts.setPictures("");
-    	else{
-    		StringBuilder sb = new StringBuilder();
-    		for(String s : pics){
-    			sb.append(s).append(",");
-    		}
-    		String urls = sb.toString().substring(0, sb.length()-1);
-    		posts.setPictures(urls);
-    	}
-    	posts.setSupportnum(0);
-    	posts.setTransnum(0);
-    	posts.setUid(ToolUtil.getUUid());
-    	
-    	topicSvc.publishPosts(posts);
+        // 验证用户有无登录
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        if (vo == null)
+            throw new CampusException(100204, "请登录.");
+        DisplayModel model = (DisplayModel) session.getAttribute(Constant.CAMPUS_DISPLAYMODEL);
+
+        String nickName = nickNameSvc.findRandomNickName(model, session.getId());
+        nickName = nickName == null ? vo.getNickName() : nickName;
+
+        FreshNews posts = new FreshNews();
+        posts.setAddnickname(nickName);
+        posts.setAdduseruid(vo.getUserId());
+        posts.setCommentnum(0);
+        posts.setComplainnum(0);
+        posts.setCreateby(vo.getUserId());
+        posts.setCreatedate(Calendar.getInstance().getTime());
+        posts.setIsactive(1);
+        posts.setIsanonymous(model == DisplayModel.MOON ? AnonymousType.ANONYMOUS : AnonymousType.NOT_ANONYMOUS);
+        posts.setIshot("0");
+        posts.setIsshield(FreshNews.VIEW_REGISTER);// 新帖必须屏蔽
+        posts.setNewsbrief(boardPublishVO.getTitle());
+        posts.setNewscontent(boardPublishVO.getContent());
+
+        // newsType in (1,2,3,4)
+        List<String> lst = Arrays.asList("1", "2", "3", "4");
+        if (!lst.contains(boardPublishVO.getType()))
+            throw new CampusException(100205, "帖子类型错误.");
+        posts.setNewstype(boardPublishVO.getType());
+
+        posts.setNotsupportnum(0);
+
+        List<String> pics = boardPublishVO.getPicUrls();
+        if (pics == null || pics.size() == 0)
+            posts.setPictures("");
+        else {
+            StringBuilder sb = new StringBuilder();
+            for (String s : pics) {
+                sb.append(s).append(",");
+            }
+            String urls = sb.toString().substring(0, sb.length() - 1);
+            posts.setPictures(urls);
+        }
+        posts.setSupportnum(0);
+        posts.setTransnum(0);
+        posts.setUid(ToolUtil.getUUid());
+
+        topicSvc.publishPosts(posts);
     }
 
     @ApiOperation(value = "*切换显示模式:1.0", notes = "切换显示模式[API-Version=1.0]")
     @RequestMapping(value = "/changeDisplayModel", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "发布成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public void changeDisplayModel(@ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true)String environment,
-    		HttpSession session){
-    	if(session.getAttribute(Constant.CAMPUS_SECURITY_SESSION)==null)
-    		throw new CampusException(100204,"请登录.");
-    	DisplayModel model = DisplayModel.getDisplayModelByCode(environment);
-    	if (model == null){
-    		throw new CampusException(100203,"显示模式错误.");
-    	}
-    	session.setAttribute(Constant.CAMPUS_DISPLAYMODEL, model);
+    public void changeDisplayModel(
+            @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
+            HttpSession session) {
+        if (session.getAttribute(Constant.CAMPUS_SECURITY_SESSION) == null)
+            throw new CampusException(100204, "请登录.");
+        DisplayModel model = DisplayModel.getDisplayModelByCode(environment);
+        if (model == null) {
+            throw new CampusException(100203, "显示模式错误.");
+        }
+        session.setAttribute(Constant.CAMPUS_DISPLAYMODEL, model);
     }
 }
