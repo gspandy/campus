@@ -9,6 +9,7 @@ import org.campus.model.Signin;
 import org.campus.model.User;
 import org.campus.model.enums.IntegralType;
 import org.campus.repository.IntegralMapper;
+import org.campus.repository.PostsCheckMapper;
 import org.campus.repository.SigninMapper;
 import org.campus.repository.UserMapper;
 import org.campus.service.IntegralService;
@@ -28,6 +29,9 @@ public class IntegralServiceImpl implements IntegralService {
     @Autowired
     private IntegralMapper integralMapper;
 
+    @Autowired
+    private PostsCheckMapper postsCheckMapper;
+
     @Override
     public long integral(String userId, IntegralType integralType) {
         long integral = 0;
@@ -36,10 +40,11 @@ public class IntegralServiceImpl implements IntegralService {
                 integral = loginIntegral(userId);
                 break;
             case POSTS:
-                integral = postsIntegral();
+                integral = postsIntegral(userId);
                 break;
             case CHECk_POSTS:
-
+                integral = checkIntegral(userId);
+                break;
             case COMMENT:
 
             case SHARE:
@@ -92,8 +97,46 @@ public class IntegralServiceImpl implements IntegralService {
         return integral;
     }
 
-    private long postsIntegral() {
-        return SystemConfig.getLong("POSTS_PASS_CHECK");
+    private long postsIntegral(String userId) {
+        long integral = SystemConfig.getLong("POSTS_PASS_CHECK");
+        User user = userMapper.selectByPrimaryKey(userId);
+        Integral record = new Integral();
+        record.setUid(ToolUtil.getUUid());
+        record.setUserid(userId);
+        record.setIntegraltype(IntegralType.POSTS);
+        record.setIntegraltime(getDate(0));
+        record.setIntegralincome(integral);
+        record.setIntegralexpend(0L);
+        record.setIntegralbalance((user.getIntegral() + record.getIntegralincome()) - record.getIntegralexpend());
+        record.setRemark("发帖通过审核");
+        integralMapper.insert(record);
+
+        user.setIntegral(user.getIntegral() + integral);
+        userMapper.updateByPrimaryKey(user);
+        return integral;
+    }
+
+    private long checkIntegral(String userId) {
+        long integral = 0;
+        int count = postsCheckMapper.findIntradayCountByUserId(userId, getDate(0));
+        if (count <= SystemConfig.getInt("CHECK_POSTS_UPPER_LIMIT")) {
+            integral = SystemConfig.getLong("CHECK_POST_GET_INTEGRAL");
+            User user = userMapper.selectByPrimaryKey(userId);
+            Integral record = new Integral();
+            record.setUid(ToolUtil.getUUid());
+            record.setUserid(userId);
+            record.setIntegraltype(IntegralType.CHECk_POSTS);
+            record.setIntegraltime(getDate(0));
+            record.setIntegralincome(integral);
+            record.setIntegralexpend(0L);
+            record.setIntegralbalance((user.getIntegral() + record.getIntegralincome()) - record.getIntegralexpend());
+            record.setRemark("审帖获取积分");
+            integralMapper.insert(record);
+
+            user.setIntegral(user.getIntegral() + integral);
+            userMapper.updateByPrimaryKey(user);
+        }
+        return integral;
     }
 
     private long calcLoginIntegral(long integral, int count) {
