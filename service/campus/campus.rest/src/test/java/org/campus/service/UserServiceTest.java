@@ -131,7 +131,7 @@ public class UserServiceTest extends BaseTest {
         CommentAddVO commentAddVO = new CommentAddVO();
         commentAddVO.setContent("测试");
         commentAddVO.setTrans(true);
-        userService.comment("1", "123", "Test", DisplayModel.MOON, commentAddVO);
+        userService.comment("1", "123", "Test", "127.0.0.1", DisplayModel.MOON, commentAddVO);
         shareMapper.deleteAll();
         freshNewsMapper.deleteAll();
         commentMapper.deleteAll();

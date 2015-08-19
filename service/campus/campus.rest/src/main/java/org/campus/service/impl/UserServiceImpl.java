@@ -121,7 +121,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void comment(String sourceId, String userId, String userName, DisplayModel model, CommentAddVO commentAddVO) {
+    public void comment(String sourceId, String userId, String userName, String ipaddress, DisplayModel model,
+            CommentAddVO commentAddVO) {
         FreshNews freshNews = freshNewsMapper.selectByPrimaryKey(sourceId);
         if (freshNews == null) {
             throw new CampusException(1100002, "查询不到数据");
@@ -137,6 +138,7 @@ public class UserServiceImpl implements UserService {
         comment.setCreatedate(new Date());
         comment.setLastupdateby(Constant.CREATE_BY);
         comment.setLastupdatedate(new Date());
+        comment.setIpaddress(ipaddress);
         commentMapper.insert(comment);
 
         if (commentAddVO.isTrans()) {

@@ -128,7 +128,8 @@ public interface UserService {
      * @param comment
      *
      */
-    void comment(String sourceId, String userId, String userName, DisplayModel model, CommentAddVO commentAddVO);
+    void comment(String sourceId, String userId, String userName, String ipaddress, DisplayModel model,
+            CommentAddVO commentAddVO);
 
     /**
      * 

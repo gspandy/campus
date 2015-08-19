@@ -3,6 +3,7 @@ package org.campus.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,6 +16,7 @@ import org.campus.model.enums.InteractType;
 import org.campus.service.NickNameService;
 import org.campus.service.UserService;
 import org.campus.util.CollectionUtils;
+import org.campus.util.ToolUtil;
 import org.campus.vo.BoardVO;
 import org.campus.vo.CommentAddVO;
 import org.campus.vo.CommentVO;
@@ -139,7 +141,7 @@ public class UserController {
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         String userName = nickNameService.findRandomNickName(model, session.getId());
-        userName = userName==null?responseVO.getNickName():userName;
+        userName = userName == null ? responseVO.getNickName() : userName;
         userService.photoSupport(photoId, responseVO.getUserId(), userName, type);
     }
 
@@ -154,7 +156,7 @@ public class UserController {
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         String userName = nickNameService.findRandomNickName(model, session.getId());
-        userName = userName==null?responseVO.getNickName():userName;
+        userName = userName == null ? responseVO.getNickName() : userName;
         userService.commentSupport(commentId, responseVO.getUserId(), userName, type);
     }
 
@@ -166,11 +168,12 @@ public class UserController {
             @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
             @ApiParam(name = "commentAddVO", value = "评论体信息") @RequestBody CommentAddVO commentAddVO,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
-            HttpSession session) {
+            HttpSession session, HttpServletRequest request) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         String userName = nickNameService.findRandomNickName(model, session.getId());
-        userName = userName==null?responseVO.getNickName():userName;
-        userService.comment(photoId, responseVO.getUserId(), userName, model, commentAddVO);
+        userName = userName == null ? responseVO.getNickName() : userName;
+        userService
+                .comment(photoId, responseVO.getUserId(), userName, ToolUtil.getIpAddr(request), model, commentAddVO);
     }
 
     @ApiOperation(value = "*添加关注:1.0", notes = "添加关注[API-Version=1.0]")
@@ -311,14 +314,14 @@ public class UserController {
         return page;
     }
 
-//    private String getNickName(DisplayModel model, LoginResponseVO responseVO) {
-//        String userName = responseVO.getNickName();
-//        if (DisplayModel.MOON.equals(model)) {
-//            NickName nickName = nickNameService.findRandomNickName();
-//            userName = nickName.getNickname();
-//        }
-//        return userName;
-//    }
+    // private String getNickName(DisplayModel model, LoginResponseVO responseVO) {
+    // String userName = responseVO.getNickName();
+    // if (DisplayModel.MOON.equals(model)) {
+    // NickName nickName = nickNameService.findRandomNickName();
+    // userName = nickName.getNickname();
+    // }
+    // return userName;
+    // }
 
     private List<FriendVO> getFriendsVOs(List<User> users) {
         List<FriendVO> friendVOs = new ArrayList<FriendVO>();

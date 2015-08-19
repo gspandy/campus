@@ -18,13 +18,14 @@
 		<result column="LastUpdateBy" property="lastupdateby" jdbcType="VARCHAR" />
 		<result column="LastUpdateDate" property="lastupdatedate"
 			jdbcType="TIMESTAMP" />
+		<result column="IpAddress" property="ipaddress" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UID, SourceUID, ComUserUID, UserNickName, ObjUserUID,
 		ObjUserNickName,
 		CommentContent,
 		TypeCode, isActive, CreateBy,
-		CreateDate, LastUpdateBy, LastUpdateDate
+		CreateDate, LastUpdateBy, LastUpdateDate,IpAddress
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -44,7 +45,7 @@
 		UserNickName, ObjUserUID, ObjUserNickName,
 		CommentContent, TypeCode, isActive,
 		CreateBy, CreateDate, LastUpdateBy,
-		LastUpdateDate)
+		LastUpdateDate,IpAddress)
 		values (#{uid,jdbcType=VARCHAR},
 		#{sourceuid,jdbcType=VARCHAR},
 		#{comuseruid,jdbcType=VARCHAR},
@@ -54,7 +55,8 @@
 		#{isactive,jdbcType=INTEGER},
 		#{createby,jdbcType=VARCHAR},
 		#{createdate,jdbcType=TIMESTAMP}, #{lastupdateby,jdbcType=VARCHAR},
-		#{lastupdatedate,jdbcType=TIMESTAMP})
+		#{lastupdatedate,jdbcType=TIMESTAMP},
+		#{ipaddress,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.Comment">
 		insert into ts_app_comment
@@ -98,6 +100,9 @@
 			<if test="lastupdatedate != null">
 				LastUpdateDate,
 			</if>
+			<if test="ipaddress != null">
+				IpAddress,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uid != null">
@@ -138,6 +143,9 @@
 			</if>
 			<if test="lastupdatedate != null">
 				#{lastupdatedate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="ipaddress != null">
+				#{ipaddress,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -180,6 +188,9 @@
 			<if test="lastupdatedate != null">
 				LastUpdateDate = #{lastupdatedate,jdbcType=TIMESTAMP},
 			</if>
+			<if test="ipaddress != null">
+				IpAddress = #{ipaddress,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where UID = #{uid,jdbcType=VARCHAR}
 	</update>
@@ -205,7 +216,9 @@
 		LastUpdateBy =
 		#{lastupdateby,jdbcType=VARCHAR},
 		LastUpdateDate =
-		#{lastupdatedate,jdbcType=TIMESTAMP}
+		#{lastupdatedate,jdbcType=TIMESTAMP},
+		IpAddress =
+		#{ipaddress,jdbcType=VARCHAR}
 		where UID =
 		#{uid,jdbcType=VARCHAR}
 	</update>
