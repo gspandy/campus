@@ -6,3 +6,4 @@ create table TS_app_posts_check
    CheckTime            datetime comment '审核时间',
    CheckType            char(2) comment '审核结果类型(1 投诉;2 赞; 3 踩)'
 );
+ALTER table ts_app_comment add(IpAddress varchar(40) COMMENT '用户IP');
