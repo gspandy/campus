@@ -1,7 +1,5 @@
 package org.campus.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -12,7 +10,6 @@ import org.campus.model.enums.IsNewSession;
 import org.campus.model.enums.SessionType;
 import org.campus.service.MessageService;
 import org.campus.vo.ConversationDetailVO;
-import org.campus.vo.ConversationVO;
 import org.campus.vo.LoginResponseVO;
 import org.campus.vo.MessageAddVO;
 import org.campus.vo.MessageRequestVo;
@@ -43,41 +40,28 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
-    @ApiOperation(value = "查询信息提示列表:1.0", notes = "查询信息提示列表[API-Version=1.0]")
-    @RequestMapping(value = "/lists", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiOperation(value = "*查询信息提示列表:1.0", notes = "查询信息提示列表[API-Version=1.0]")
+    @RequestMapping(value = "/lists", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<MessageVO> getLoginUserInfo(
-            @ApiParam(name = "type", value = "消息类型(0:系统公告;1:普通用户信息)") @RequestParam(value = "type", required = true) String type,
             @ApiParam(name = "isRead", value = "是否已读(0:未读;1:已读)") @RequestParam(value = "isRead", required = true) String isRead,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         // 1.校验用户session信息
         LoginResponseVO vo = checkLogin(session);
-        // 2.TODO：校验signId 校验数据库中signId是否一致。
-        // 3.查询
+        // 2.查询
         MessageRequestVo params = new MessageRequestVo();
         params.setIsRead(isRead);
         params.setPageable(pageable);
         params.setUserId(vo.getUserId());
-        params.setType(type);
         List<MessageVO> messageVOs = messageService.getMessagePromptList(params);
-        // List<MessageVO> messageVOs = new ArrayList<MessageVO>();
-        // MessageVO messageVO = new MessageVO();
-        // messageVO.setConversationId("4565645");
-        // messageVO.setMessageId("123123");
-        // messageVO.setMessage("测试测试测试测试测试测试测试测试测试测试试测试测试测试试测试测试测试");
-        // messageVO.setSendDate(new Date());
-        // messageVO.setSendUserId("123321");
-        // messageVO.setIsRead(isRead);
-        // messageVO.setSendNickName("gh123123");
-        // messageVOs.add(messageVO);
         Page<MessageVO> page = new PageImpl<MessageVO>(messageVOs, pageable, messageVOs.size());
         return page;
     }
 
-    @ApiOperation(value = "信息发送:1.0", notes = "信息发送[API-Version=1.0]")
-    @RequestMapping(value = "/send/{userId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @ApiOperation(value = "*信息发送:1.0", notes = "信息发送[API-Version=1.0]")
+    @RequestMapping(value = "/send/{userId}", method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "发送成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void send(
             @ApiParam(name = "userId", value = "接收方用户ID") @PathVariable String userId,
@@ -89,7 +73,6 @@ public class MessageController {
             HttpSession session) {
         // 1.校验用户session信息
         LoginResponseVO vo = checkLogin(session);
-
         // 2.校验sessionType,isNewSession，conversationId
         checkParams(sessionType, isNewSession, conversationId);
 
@@ -111,36 +94,22 @@ public class MessageController {
         }
     }
 
-    @ApiOperation(value = "查询会话列表:1.0", notes = "查询会话列表[API-Version=1.0]")
-    @RequestMapping(value = "/conversation/{conversationId}", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiOperation(value = "*查询会话列表:1.0", notes = "查询会话列表[API-Version=1.0]")
+    @RequestMapping(value = "/conversation/{conversationId}", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "读取成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public ConversationVO getConversation(
+    public Page<ConversationDetailVO> getConversation(
             @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-        // TODO:待完成
+        // 1.校验用户session信息
+        LoginResponseVO vo = checkLogin(session);
+        // 查询会话详细信息
+        List<ConversationDetailVO> detailList = messageService.queryConversationList(vo.getUserId(),conversationId);
         // 需建立一张聊天会话表，关联两个用户之间的聊天记录
-        ConversationVO conversationVO = new ConversationVO();
-        conversationVO.setConversationId("123123");
-        conversationVO.setReceiveNickName("gt123");
-        List<ConversationDetailVO> conversationDetailVOs = new ArrayList<ConversationDetailVO>();
-        ConversationDetailVO conversationDetailVO1 = new ConversationDetailVO();
-        conversationDetailVO1.setSendMessage("Hi");
-        conversationDetailVO1.setSendDate(new Date());
-        conversationDetailVO1.setIsRead("1");
-        conversationDetailVO1.setReadDate(new Date());
-        conversationDetailVOs.add(conversationDetailVO1);
-        ConversationDetailVO conversationDetailVO12 = new ConversationDetailVO();
-        conversationDetailVO12.setReceiveMessage("Hello");
-        conversationDetailVO12.setSendDate(new Date());
-        conversationDetailVO12.setIsRead("1");
-        conversationDetailVO12.setReadDate(new Date());
-        conversationDetailVOs.add(conversationDetailVO12);
-        Page<ConversationDetailVO> page = new PageImpl<ConversationDetailVO>(conversationDetailVOs, pageable,
-                conversationDetailVOs.size());
-        conversationVO.setPage(page);
-        return conversationVO;
+        Page<ConversationDetailVO> page = new PageImpl<ConversationDetailVO>(detailList, pageable,
+                detailList.size());
+        return page;
     }
 
     private LoginResponseVO checkLogin(HttpSession session) {

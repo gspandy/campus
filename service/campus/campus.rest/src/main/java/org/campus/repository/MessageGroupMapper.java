@@ -52,4 +52,6 @@ public interface MessageGroupMapper {
      * @mbggenerated Sun Aug 09 23:25:01 CST 2015
      */
     int updateByPrimaryKey(MessageGroup record);
+    
+    String selectNameByPrimaryKey(String uid);
 }

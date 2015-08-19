@@ -1,5 +1,6 @@
 package org.campus.repository;
 
+import org.apache.ibatis.annotations.Param;
 import org.campus.model.Session;
 import org.springframework.stereotype.Repository;
 
@@ -36,4 +37,6 @@ public interface SessionMapper {
      * @mbggenerated Sun Aug 09 23:25:01 CST 2015
      */
     int updateByPrimaryKeySelective(Session record);
+    
+    String selectBySessionUserId(@Param("useruid")String useruid,@Param("objUseruid")String objUseruid);
 }

@@ -35,6 +35,11 @@
     from ts_app_messagegroup
     where UID = #{uid,jdbcType=VARCHAR}
   </select>
+  <select id="selectNameByPrimaryKey" resultType="java.lang.String" parameterType="java.lang.String" >
+    select GroupName
+    from ts_app_messagegroup
+    where UID = #{uid}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     <!--
       WARNING - @mbggenerated

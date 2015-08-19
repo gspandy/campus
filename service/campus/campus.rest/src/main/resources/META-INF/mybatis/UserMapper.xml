@@ -502,4 +502,11 @@
 			CONCAT('%','${friendNickName}','%' )
 		</if>
 	</select>
+	<select id="selectNickNameByPrimaryKey" resultType="java.lang.String"
+		parameterType="java.lang.String">
+		select
+		NickName
+		from ts_app_user
+		where UserUID = #{useruid}
+	</select>
 </mapper>

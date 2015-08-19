@@ -62,4 +62,5 @@ public interface UserMapper {
 
     List<User> findMyFans(@Param("myUserId") String myUserId, @Param("friendNickName") String friendNickName);
 
+    String selectNickNameByPrimaryKey(String useruid);
 }

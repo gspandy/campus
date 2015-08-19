@@ -1,9 +1,7 @@
 package org.campus.vo;
 
-import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -13,9 +11,6 @@ public class MessageAddVO {
     private String message;
 
     private List<String> faceKey;
-
-    @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-    private Date sendDate;
 
     private String picUrl;
     
@@ -40,16 +35,6 @@ public class MessageAddVO {
     @ApiModelProperty(value = "表情键值列表", required = false)
     public void setFaceKey(List<String> faceKey) {
         this.faceKey = faceKey;
-    }
-
-    @ApiModelProperty(value = "发送者时间", required = true)
-    public Date getSendDate() {
-        return sendDate;
-    }
-
-    @ApiModelProperty(value = "发送者时间", required = true)
-    public void setSendDate(Date sendDate) {
-        this.sendDate = sendDate;
     }
 
     @ApiModelProperty(value = "发送图片地址", required = false)

@@ -2,9 +2,10 @@ package org.campus.repository;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+import org.campus.model.ConversationDetail;
 import org.campus.model.ReceiveMessage;
 import org.campus.model.enums.IsReadType;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -42,4 +43,6 @@ public interface ReceiveMessageMapper {
      * @mbggenerated Sun Aug 09 23:25:01 CST 2015
      */
     int updateByPrimaryKeySelective(ReceiveMessage record);
+    
+    List<ConversationDetail> selectMessageDetailSingle(@Param("sessionUserId")String sessionUserId,@Param("objUserId")String objUserId);
 }
