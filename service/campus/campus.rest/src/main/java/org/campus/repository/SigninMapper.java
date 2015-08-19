@@ -1,5 +1,8 @@
 package org.campus.repository;
 
+import java.util.Date;
+
+import org.apache.ibatis.annotations.Param;
 import org.campus.model.Signin;
 import org.springframework.stereotype.Repository;
 
@@ -46,4 +49,7 @@ public interface SigninMapper {
      * @mbggenerated Tue Aug 18 15:57:38 CST 2015
      */
     int updateByPrimaryKey(Signin record);
+
+    Signin findDayByUserId(@Param("userId") String userId, @Param("date") Date date);
+
 }
