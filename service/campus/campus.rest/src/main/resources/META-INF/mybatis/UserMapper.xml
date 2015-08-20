@@ -40,6 +40,8 @@
 		<result column="IsActive" property="isactive" jdbcType="INTEGER" />
 		<result column="Integral" property="integral" jdbcType="INTEGER" />
 		<result column="LoginCount" property="logincount" jdbcType="INTEGER" />
+		<result column="ApiType" property="apiType" jdbcType="VARCHAR" />
+		<result column="ApiId" property="apiId" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UserUID, StudentID, RealName, NamePinYin, NameFirstLetter,
@@ -54,7 +56,7 @@
 		IsLocked, IsOpen, IsGraduate, CreateBy, CreateDate,
 		LastUpdateBy,
 		LastUpdateDate,
-		IsActive,Integral,LoginCount
+		IsActive,Integral,LoginCount,ApiType,ApiId
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -88,33 +90,40 @@
 		ProvinceName, IsValidated, IsLocked,
 		IsOpen, IsGraduate, CreateBy,
 		CreateDate, LastUpdateBy, LastUpdateDate,
-		IsActive,Integral,LoginCount)
-		values (#{useruid,jdbcType=VARCHAR},
+		IsActive,Integral,LoginCount,ApiType,ApiId)
+		values
+		(#{useruid,jdbcType=VARCHAR},
 		#{studentid,jdbcType=VARCHAR},
 		#{realname,jdbcType=VARCHAR},
-		#{namepinyin,jdbcType=VARCHAR}, #{namefirstletter,jdbcType=VARCHAR},
+		#{namepinyin,jdbcType=VARCHAR},
+		#{namefirstletter,jdbcType=VARCHAR},
 		#{nickname,jdbcType=VARCHAR},
 		#{sextype,jdbcType=VARCHAR},
 		#{email,jdbcType=VARCHAR},
 		#{idcard,jdbcType=VARCHAR},
-		#{headpic,jdbcType=VARCHAR}, #{backgroundimg,jdbcType=VARCHAR},
+		#{headpic,jdbcType=VARCHAR},
+		#{backgroundimg,jdbcType=VARCHAR},
 		#{schooluid,jdbcType=VARCHAR},
 		#{schoolname,jdbcType=VARCHAR},
 		#{collegeuid,jdbcType=VARCHAR},
 		#{collegename,jdbcType=VARCHAR},
-		#{professionuid,jdbcType=VARCHAR}, #{professionname,jdbcType=VARCHAR},
+		#{professionuid,jdbcType=VARCHAR},
+		#{professionname,jdbcType=VARCHAR},
 		#{inschoolyear,jdbcType=INTEGER},
 		#{citycode,jdbcType=VARCHAR},
 		#{cityname,jdbcType=VARCHAR},
 		#{provincecode,jdbcType=VARCHAR},
-		#{provincename,jdbcType=VARCHAR}, #{isvalidated,jdbcType=INTEGER},
+		#{provincename,jdbcType=VARCHAR},
+		#{isvalidated,jdbcType=INTEGER},
 		#{islocked,jdbcType=INTEGER},
 		#{isopen,jdbcType=INTEGER},
 		#{isgraduate,jdbcType=INTEGER},
 		#{createby,jdbcType=VARCHAR},
-		#{createdate,jdbcType=TIMESTAMP}, #{lastupdateby,jdbcType=VARCHAR},
+		#{createdate,jdbcType=TIMESTAMP},
+		#{lastupdateby,jdbcType=VARCHAR},
 		#{lastupdatedate,jdbcType=TIMESTAMP},
-		#{isactive,jdbcType=INTEGER},#{integral,jdbcType=INTEGER},#{logincount,jdbcType=INTEGER})
+		#{isactive,jdbcType=INTEGER},#{integral,jdbcType=INTEGER},#{logincount,jdbcType=INTEGER},
+		#{apiType,jdbcType=VARCHAR}, #{apiId,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.User">
 		insert into ts_app_user
@@ -213,11 +222,17 @@
 				IsActive,
 			</if>
 			<if test="integral != null">
-                Integral,
-            </if>
-            <if test="logincount != null">
-                LoginCount,
-            </if>
+				Integral,
+			</if>
+			<if test="logincount != null">
+				LoginCount,
+			</if>
+			<if test="apiType != null">
+				ApiType,
+			</if>
+			<if test="apiId != null">
+				ApiId,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="useruid != null">
@@ -314,11 +329,17 @@
 				#{isactive,jdbcType=INTEGER},
 			</if>
 			<if test="integral != null">
-                #{integral,jdbcType=INTEGER},
-            </if>
-            <if test="logincount != null">
-                #{logincount,jdbcType=INTEGER},
-            </if>
+				#{integral,jdbcType=INTEGER},
+			</if>
+			<if test="logincount != null">
+				#{logincount,jdbcType=INTEGER},
+			</if>
+			<if test="apiType != null">
+				#{apiType,jdbcType=VARCHAR},
+			</if>
+			<if test="apiId != null">
+				#{apiId,jdbcType=VARCHAR},
+			</if>
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="org.campus.model.User">
@@ -415,11 +436,17 @@
 				IsActive = #{isactive,jdbcType=INTEGER},
 			</if>
 			<if test="integral != null">
-                Integral = #{integral,jdbcType=INTEGER},
-            </if>
-            <if test="logincount != null">
-                LoginCount = #{logincount,jdbcType=INTEGER},
-            </if>
+				Integral = #{integral,jdbcType=INTEGER},
+			</if>
+			<if test="logincount != null">
+				LoginCount = #{logincount,jdbcType=INTEGER},
+			</if>
+			<if test="apiType != null">
+				ApiType = #{apiType,jdbcType=VARCHAR},
+			</if>
+			<if test="apiId != null">
+				ApiId = #{apiId,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where UserUID = #{useruid,jdbcType=VARCHAR}
 	</update>
@@ -477,10 +504,15 @@
 		IsActive =
 		#{isactive,jdbcType=INTEGER},
 		Integral =
-        #{integral,jdbcType=INTEGER},
-        LoginCount =
-        #{logincount,jdbcType=INTEGER}
-		where UserUID =
+		#{integral,jdbcType=INTEGER},
+		LoginCount =
+		#{logincount,jdbcType=INTEGER},
+		ApiType =
+		#{apiType,jdbcType=VARCHAR},
+		ApiId =
+		#{apiId,jdbcType=VARCHAR}
+		where
+		UserUID =
 		#{useruid,jdbcType=VARCHAR}
 	</update>
 	<select id="findMyFriends" resultMap="BaseResultMap">

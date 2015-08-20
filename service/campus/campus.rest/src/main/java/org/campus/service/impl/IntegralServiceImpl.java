@@ -50,7 +50,8 @@ public class IntegralServiceImpl implements IntegralService {
             case SHARE:
 
             case TRANSFER:
-
+                integral = 0;
+                break;
             default:
                 integral = 0;
                 break;
@@ -136,6 +137,12 @@ public class IntegralServiceImpl implements IntegralService {
             user.setIntegral(user.getIntegral() + integral);
             userMapper.updateByPrimaryKey(user);
         }
+        return integral;
+    }
+
+    private long commentIntegral(String userId) {
+        long integral = 0;
+
         return integral;
     }
 
