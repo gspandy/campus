@@ -10,6 +10,8 @@ public class ApiLoginRequestVO {
 
     private String code;
 
+    private String redirectUrl;
+
     private ApiType apiType;
 
     @ApiModelProperty(value = "qq、微博、微信授权返回的code", required = true)
@@ -20,6 +22,16 @@ public class ApiLoginRequestVO {
     @ApiModelProperty(value = "qq、微博、微信授权返回的code", required = true)
     public void setCode(String code) {
         this.code = code;
+    }
+
+    @ApiModelProperty(value = "回调地址，qq认证需传递", required = true)
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    @ApiModelProperty(value = "回调地址，qq认证需传递", required = true)
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
     }
 
     @ApiModelProperty(value = "第三方类型", required = true)

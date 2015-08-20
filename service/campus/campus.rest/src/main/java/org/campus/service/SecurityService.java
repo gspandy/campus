@@ -2,7 +2,9 @@ package org.campus.service;
 
 import java.util.Calendar;
 
+import org.campus.api.TencentApi;
 import org.campus.api.WeixinApi;
+import org.campus.api.domain.QqUserinfo;
 import org.campus.api.domain.SnsapiUserinfo;
 import org.campus.core.exception.CampusException;
 import org.campus.model.SysUser;
@@ -33,6 +35,9 @@ public class SecurityService {
 
     @Autowired
     private WeixinApi weixinApi;
+
+    @Autowired
+    private TencentApi tencentApi;
 
     /**
      * 用户注册
@@ -119,37 +124,71 @@ public class SecurityService {
         userMapper.updateByPrimaryKeySelective(user);
     }
 
-    public User apiLogin(String code, ApiType apiType) {
+    public User apiLogin(String code, String redirectUrl, ApiType apiType) {
         User user = null;
         switch (apiType) {
             case QQ:
-
+                QqUserinfo qqUserinfo = null;
+                try {
+                    qqUserinfo = tencentApi.getQqUserinfo(code, redirectUrl);
+                    user = userMapper.findByApiId(qqUserinfo.getOpenId());
+                    if (user == null) {
+                        SysUser sysUser = new SysUser();
+                        sysUser.setUid(ToolUtil.getUUid());
+                        sysUser.setIscheck(1);
+                        sysUser.setCreatedate(Calendar.getInstance().getTime());
+                        sysUser.setIsactive(1);
+                        User appUser = new User();
+                        appUser.setUseruid(sysUser.getUid());
+                        appUser.setNickname(qqUserinfo.getNickname());
+                        appUser.setCreatedate(sysUser.getCreatedate());
+                        appUser.setIsactive(1);
+                        appUser.setIsgraduate(0);
+                        appUser.setIslocked(0);
+                        appUser.setIsopen(1);
+                        appUser.setIsvalidated(0);
+                        appUser.setIntegral(0L);
+                        appUser.setLogincount(0);
+                        appUser.setApiId(qqUserinfo.getOpenId());
+                        appUser.setHeadpic(qqUserinfo.getFigureurl_qq_2());
+                        registe(sysUser, appUser);
+                        user = appUser;
+                    }
+                } catch (Exception e) {
+                    throw new CampusException(1000002, "认证失败");
+                }
+                break;
             case WEIBO:
 
             case WEIXIN:
-                SnsapiUserinfo userInfo = weixinApi.getSnsapiUserinfo(code);
-                user = userMapper.findByApiId(userInfo.getOpenid());
-                if (user == null) {
-                    SysUser sysUser = new SysUser();
-                    sysUser.setUid(ToolUtil.getUUid());
-                    sysUser.setIscheck(1);
-                    sysUser.setCreatedate(Calendar.getInstance().getTime());
-                    sysUser.setIsactive(1);
-                    User appUser = new User();
-                    appUser.setUseruid(sysUser.getUid());
-                    appUser.setNickname(userInfo.getNickname());
-                    appUser.setCreatedate(sysUser.getCreatedate());
-                    appUser.setIsactive(1);
-                    appUser.setIsgraduate(0);
-                    appUser.setIslocked(0);
-                    appUser.setIsopen(1);
-                    appUser.setIsvalidated(0);
-                    appUser.setIntegral(0L);
-                    appUser.setLogincount(0);
-                    appUser.setApiId(userInfo.getOpenid());
-                    appUser.setHeadpic(userInfo.getHeadimgurl());
-                    registe(sysUser, appUser);
-                    user = appUser;
+                SnsapiUserinfo userInfo = null;
+                try {
+                    userInfo = weixinApi.getSnsapiUserinfo(code);
+                    user = userMapper.findByApiId(userInfo.getOpenid());
+                    if (user == null) {
+                        SysUser sysUser = new SysUser();
+                        sysUser.setUid(ToolUtil.getUUid());
+                        sysUser.setIscheck(1);
+                        sysUser.setCreatedate(Calendar.getInstance().getTime());
+                        sysUser.setIsactive(1);
+                        User appUser = new User();
+                        appUser.setUseruid(sysUser.getUid());
+                        appUser.setNickname(userInfo.getNickname());
+                        appUser.setCreatedate(sysUser.getCreatedate());
+                        appUser.setIsactive(1);
+                        appUser.setIsgraduate(0);
+                        appUser.setIslocked(0);
+                        appUser.setIsopen(1);
+                        appUser.setIsvalidated(0);
+                        appUser.setIntegral(0L);
+                        appUser.setLogincount(0);
+                        appUser.setApiId(userInfo.getOpenid());
+                        appUser.setHeadpic(userInfo.getHeadimgurl());
+                        registe(sysUser, appUser);
+                        user = appUser;
+                    }
+                } catch (Exception e) {
+                    throw new CampusException(1000002, "认证失败");
                 }
                 break;
             default:

@@ -3,6 +3,7 @@ package org.campus.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class CollectionUtils {
 
@@ -12,6 +13,14 @@ public class CollectionUtils {
 
     public static <T> boolean isNotEmpty(Collection<T> collection) {
         return !isEmpty(collection);
+    }
+
+    public static <K, V> boolean isEmpty(Map<K, V> map) {
+        return map == null || map.isEmpty();
+    }
+
+    public static <K, V> boolean isNotEmpty(Map<K, V> map) {
+        return !isEmpty(map);
     }
 
     public static <T> List<List<T>> split(List<T> resList, int count) {
