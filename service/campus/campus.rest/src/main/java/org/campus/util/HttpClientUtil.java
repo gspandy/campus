@@ -96,6 +96,10 @@ public class HttpClientUtil {
         }
     };
 
+    public static String get(String url) {
+        return get(url, null, null);
+    }
+
     public static String get(String url, String charset) {
         return get(url, null, charset);
     }

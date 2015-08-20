@@ -22,6 +22,7 @@ import org.campus.service.SendMessage;
 import org.campus.util.MD5Util;
 import org.campus.util.ToolUtil;
 import org.campus.util.VerificationCode;
+import org.campus.vo.ApiLoginRequestVO;
 import org.campus.vo.LoginRequestVO;
 import org.campus.vo.LoginResponseVO;
 import org.campus.vo.RegisterVO;
@@ -100,6 +101,31 @@ public class SecurityController {
         securitySvc.updateSysUser(udpUser);
         integralService.integral(sysUser.getUid(), IntegralType.LOGIN);
 
+        return responseVO;
+    }
+
+    @ApiOperation(value = "*第三方登录:1.0", notes = "第三方登录[API-Version=1.0]")
+    @RequestMapping(value = "/api/login", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "登录成功"), @ApiResponse(code = 500, message = "内部处理错误"),
+            @ApiResponse(code = 1000002, message = "登录失败") })
+    public LoginResponseVO apiLogin(
+            @ApiParam(name = "apiLoginRequestVO", value = "第三方登录信息体") @RequestBody ApiLoginRequestVO apiLoginRequestVO,
+            HttpSession session) {
+        User user = securitySvc.apiLogin(apiLoginRequestVO.getCode(), apiLoginRequestVO.getApiType());
+        LoginResponseVO responseVO = new LoginResponseVO();
+        String signId = ToolUtil.getUUid();
+        responseVO.setSignId(signId);
+        responseVO.setUserId(user.getUseruid());
+        responseVO.setHeadPic(user.getHeadpic());
+        responseVO.setNickName(user.getNickname());
+        session.setAttribute(Constant.CAMPUS_SECURITY_SESSION, responseVO);
+        session.setAttribute(Constant.CAMPUS_DISPLAYMODEL, DisplayModel.SUN);
+        SysUser udpUser = new SysUser();
+        udpUser.setUid(user.getUseruid());
+        udpUser.setLastlogintime(Calendar.getInstance().getTime());
+        udpUser.setSignid(signId);
+        securitySvc.updateSysUser(udpUser);
+        integralService.integral(user.getUseruid(), IntegralType.LOGIN);
         return responseVO;
     }
 
