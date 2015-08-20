@@ -104,7 +104,7 @@ public class SecurityController {
         return responseVO;
     }
 
-    @ApiOperation(value = "*第三方登录:1.0", notes = "第三方登录[API-Version=1.0]")
+    @ApiOperation(value = "*第三方登录:1.0", notes = "第三方登录,前端获取code，由后台获取用户信息，并注册登录[API-Version=1.0]")
     @RequestMapping(value = "/api/login", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "登录成功"), @ApiResponse(code = 500, message = "内部处理错误"),
             @ApiResponse(code = 1000002, message = "登录失败") })
