@@ -2,9 +2,9 @@ package org.campus.api.domain;
 
 import java.io.Serializable;
 
-public class QqAccessToken implements Serializable {
+public class WeiboAccessToken implements Serializable {
 
-    private static final long serialVersionUID = 7933972480952186708L;
+    private static final long serialVersionUID = -7394158006031309443L;
 
     private String access_token;
 
@@ -13,7 +13,7 @@ public class QqAccessToken implements Serializable {
      */
     private String expires_in;
 
-    private String refresh_token;
+    private String remind_in;
 
     public String getAccess_token() {
         return access_token;
@@ -31,12 +31,12 @@ public class QqAccessToken implements Serializable {
         this.expires_in = expires_in;
     }
 
-    public String getRefresh_token() {
-        return refresh_token;
+    public String getRemind_in() {
+        return remind_in;
     }
 
-    public void setRefresh_token(String refresh_token) {
-        this.refresh_token = refresh_token;
+    public void setRemind_in(String remind_in) {
+        this.remind_in = remind_in;
     }
 
 }

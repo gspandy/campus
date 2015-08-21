@@ -3,9 +3,11 @@ package org.campus.service;
 import java.util.Calendar;
 
 import org.campus.api.TencentApi;
+import org.campus.api.WeiboApi;
 import org.campus.api.WeixinApi;
 import org.campus.api.domain.QqUserinfo;
 import org.campus.api.domain.SnsapiUserinfo;
+import org.campus.api.domain.WeiboUserInfo;
 import org.campus.core.exception.CampusException;
 import org.campus.model.SysUser;
 import org.campus.model.User;
@@ -38,6 +40,9 @@ public class SecurityService {
 
     @Autowired
     private TencentApi tencentApi;
+
+    @Autowired
+    private WeiboApi weiboApi;
 
     /**
      * 用户注册
@@ -131,62 +136,27 @@ public class SecurityService {
                 QqUserinfo qqUserinfo = null;
                 try {
                     qqUserinfo = tencentApi.getQqUserinfo(code, redirectUrl);
-                    user = userMapper.findByApiId(qqUserinfo.getOpenId());
-                    if (user == null) {
-                        SysUser sysUser = new SysUser();
-                        sysUser.setUid(ToolUtil.getUUid());
-                        sysUser.setIscheck(1);
-                        sysUser.setCreatedate(Calendar.getInstance().getTime());
-                        sysUser.setIsactive(1);
-                        User appUser = new User();
-                        appUser.setUseruid(sysUser.getUid());
-                        appUser.setNickname(qqUserinfo.getNickname());
-                        appUser.setCreatedate(sysUser.getCreatedate());
-                        appUser.setIsactive(1);
-                        appUser.setIsgraduate(0);
-                        appUser.setIslocked(0);
-                        appUser.setIsopen(1);
-                        appUser.setIsvalidated(0);
-                        appUser.setIntegral(0L);
-                        appUser.setLogincount(0);
-                        appUser.setApiId(qqUserinfo.getOpenId());
-                        appUser.setHeadpic(qqUserinfo.getFigureurl_qq_2());
-                        registe(sysUser, appUser);
-                        user = appUser;
-                    }
+                    user = apiRegist(qqUserinfo.getOpenId(), qqUserinfo.getNickname(), qqUserinfo.getFigureurl_qq_2());
                 } catch (Exception e) {
                     throw new CampusException(1000002, "认证失败");
                 }
                 break;
             case WEIBO:
-
-            case WEIXIN:
-                SnsapiUserinfo userInfo = null;
+                WeiboUserInfo weiboUserinfo = null;
                 try {
-                    userInfo = weixinApi.getSnsapiUserinfo(code);
-                    user = userMapper.findByApiId(userInfo.getOpenid());
-                    if (user == null) {
-                        SysUser sysUser = new SysUser();
-                        sysUser.setUid(ToolUtil.getUUid());
-                        sysUser.setIscheck(1);
-                        sysUser.setCreatedate(Calendar.getInstance().getTime());
-                        sysUser.setIsactive(1);
-                        User appUser = new User();
-                        appUser.setUseruid(sysUser.getUid());
-                        appUser.setNickname(userInfo.getNickname());
-                        appUser.setCreatedate(sysUser.getCreatedate());
-                        appUser.setIsactive(1);
-                        appUser.setIsgraduate(0);
-                        appUser.setIslocked(0);
-                        appUser.setIsopen(1);
-                        appUser.setIsvalidated(0);
-                        appUser.setIntegral(0L);
-                        appUser.setLogincount(0);
-                        appUser.setApiId(userInfo.getOpenid());
-                        appUser.setHeadpic(userInfo.getHeadimgurl());
-                        registe(sysUser, appUser);
-                        user = appUser;
-                    }
+                    weiboUserinfo = weiboApi.getWeiboUserinfo(code, redirectUrl);
+                    user = apiRegist(String.valueOf(weiboUserinfo.getId()), weiboUserinfo.getScreen_name(),
+                            weiboUserinfo.getProfile_image_url());
+                } catch (Exception e) {
+                    throw new CampusException(1000002, "认证失败");
+                }
+                break;
+            case WEIXIN:
+                SnsapiUserinfo snsapiUserInfo = null;
+                try {
+                    snsapiUserInfo = weixinApi.getSnsapiUserinfo(code);
+                    user = apiRegist(snsapiUserInfo.getOpenid(), snsapiUserInfo.getNickname(),
+                            snsapiUserInfo.getHeadimgurl());
                 } catch (Exception e) {
                     throw new CampusException(1000002, "认证失败");
                 }
@@ -197,4 +167,32 @@ public class SecurityService {
 
         return user;
     }
+
+    private User apiRegist(String apiId, String nickName, String headImgUrl) {
+        User user = userMapper.findByApiId(apiId);
+        if (user == null) {
+            SysUser sysUser = new SysUser();
+            sysUser.setUid(ToolUtil.getUUid());
+            sysUser.setIscheck(1);
+            sysUser.setCreatedate(Calendar.getInstance().getTime());
+            sysUser.setIsactive(1);
+            User appUser = new User();
+            appUser.setUseruid(sysUser.getUid());
+            appUser.setNickname(nickName);
+            appUser.setCreatedate(sysUser.getCreatedate());
+            appUser.setIsactive(1);
+            appUser.setIsgraduate(0);
+            appUser.setIslocked(0);
+            appUser.setIsopen(1);
+            appUser.setIsvalidated(0);
+            appUser.setIntegral(0L);
+            appUser.setLogincount(0);
+            appUser.setApiId(apiId);
+            appUser.setHeadpic(headImgUrl);
+            registe(sysUser, appUser);
+            user = appUser;
+        }
+        return user;
+    }
+
 }

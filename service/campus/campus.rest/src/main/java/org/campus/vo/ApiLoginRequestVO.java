@@ -24,12 +24,12 @@ public class ApiLoginRequestVO {
         this.code = code;
     }
 
-    @ApiModelProperty(value = "回调地址，qq认证需传递", required = true)
+    @ApiModelProperty(value = "回调地址，微博、qq认证需传递", required = false)
     public String getRedirectUrl() {
         return redirectUrl;
     }
 
-    @ApiModelProperty(value = "回调地址，qq认证需传递", required = true)
+    @ApiModelProperty(value = "回调地址，微博、qq认证需传递", required = false)
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
     }

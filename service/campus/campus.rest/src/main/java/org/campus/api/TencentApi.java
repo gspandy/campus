@@ -22,12 +22,12 @@ public class TencentApi {
     public QqUserinfo getQqUserinfo(String code, String redirectUrl) {
         QqUserinfo qqUserinfo = null;
         Map<String, String> accessTokenMap = getQQAccessToken(code, redirectUrl);
-        String openId = getSnsapiUserinfo(accessTokenMap.get("access_token"));
+        String openId = getOpenId(accessTokenMap.get("access_token"));
         Map<String, String> map = new HashMap<String, String>();
         map.put("access_token", accessTokenMap.get("access_token"));
         map.put("oauth_consumer_key", SystemConfig.getString("QQ_CONSUMER_KEY"));
         map.put("openid", openId);
-        String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("WEIXIN_USERINFO_URL")));
+        String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("QQ_USERINFO_URL")));
         try {
             qqUserinfo = JsonUtil.getInstance().toJavaBean(response, QqUserinfo.class);
             if (qqUserinfo == null) {
@@ -38,18 +38,6 @@ public class TencentApi {
             throw new CampusException("获取用户信息失败");
         }
         return qqUserinfo;
-    }
-
-    private String getSnsapiUserinfo(String accessToken) {
-        Map<String, String> respMap = null;
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("access_token", accessToken);
-        String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("QQ_OPENID_URL")));
-        respMap = parseResponse(response);
-        if (CollectionUtils.isEmpty(respMap) || StringUtils.isEmpty(respMap.get("openid"))) {
-            throw new CampusException("获取openid失败");
-        }
-        return respMap.get("openid");
     }
 
     private static String getURL(Map<String, String> smsMap, String urlAddress) {
@@ -90,6 +78,18 @@ public class TencentApi {
         return respMap;
     }
 
+    private String getOpenId(String accessToken) {
+        Map<String, String> respMap = null;
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("access_token", accessToken);
+        String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("QQ_OPENID_URL")));
+        respMap = parseResponse(response);
+        if (CollectionUtils.isEmpty(respMap) || StringUtils.isEmpty(respMap.get("openid"))) {
+            throw new CampusException("获取openid失败");
+        }
+        return respMap.get("openid");
+    }
+
     private Map<String, String> parseResponse(String response) {
         Map<String, String> respMap = new HashMap<String, String>();
         String[] responses = response.split("&");
@@ -103,4 +103,5 @@ public class TencentApi {
         }
         return respMap;
     }
+
 }

@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,6 +42,8 @@ public class JsonUtil {
     }
 
     public <T> T toJavaBean(String content, Class<T> valueType) {
+        // 忽略json中有，而javabean中没有的属性
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         try {
             return objectMapper.readValue(content, valueType);
         } catch (JsonParseException e) {
@@ -52,5 +55,4 @@ public class JsonUtil {
         }
         return null;
     }
-
 }

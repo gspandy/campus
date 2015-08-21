@@ -1,6 +1,10 @@
 package org.campus.api.domain;
 
-public class WebAccessToken {
+import java.io.Serializable;
+
+public class WebAccessToken implements Serializable {
+
+    private static final long serialVersionUID = 3997930412857807397L;
 
     private String access_token;
 
