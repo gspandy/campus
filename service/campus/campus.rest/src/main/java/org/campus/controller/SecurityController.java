@@ -220,7 +220,7 @@ public class SecurityController {
         Assert.notNull(checkCode, "请输入短信验证码.");
         Assert.notNull(loginName, "请输入登录号.");
 
-        if (password.equals(secPassword))
+        if (!password.equals(secPassword))
             throw new CampusException(100004, "请输入正确的密码.");
 
         if (!checkCode.equals((String) session.getAttribute(Constant.SMS_CHECKCODE)))
