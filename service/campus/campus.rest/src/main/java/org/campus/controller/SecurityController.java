@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.campus.cache.RedisCache;
 import org.campus.config.SystemConfig;
 import org.campus.constant.Constant;
 import org.campus.constant.ErrorCode;
@@ -53,6 +54,9 @@ public class SecurityController {
 
     @Autowired
     private IntegralService integralService;
+
+    @Autowired
+    private RedisCache redisCache;
 
     @ApiOperation(value = "*登录:1.0", notes = "登录[API-Version=1.0]")
     @RequestMapping(value = "/login", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
@@ -159,7 +163,8 @@ public class SecurityController {
         Assert.hasLength(registerVO.getMobileCheckCode(), "请输入短信验证码");
 
         // SMS验证码检查
-        if (!registerVO.getMobileCheckCode().equals((String) session.getAttribute(Constant.SMS_CHECKCODE))) {
+        if (!registerVO.getMobileCheckCode().equals(
+                redisCache.getValue(registerVO.getLoginName() + "_checkCode_" + SMSType.SMS_REGISTER.getCode()))) {
             throw new CampusException(100003, "短信验证码错误.");
         }
 
@@ -223,7 +228,7 @@ public class SecurityController {
         if (!password.equals(secPassword))
             throw new CampusException(100004, "请输入正确的密码.");
 
-        if (!checkCode.equals((String) session.getAttribute(Constant.SMS_CHECKCODE)))
+        if (!checkCode.equals(redisCache.getValue(loginName + "_checkCode_" + SMSType.SMS_FORGET.getCode())))
             throw new CampusException(100004, "短信验证码错误.");
 
         SysUser sysUser = securitySvc.getUserByAccount(loginName);
@@ -255,7 +260,7 @@ public class SecurityController {
         if (vo == null)
             throw new CampusException(100007, "请登录.");
 
-        if (!checkCode.equals((String) session.getAttribute(Constant.SMS_CHECKCODE)))
+        if (!checkCode.equals(redisCache.getValue(newPhone + "_checkCode_" + SMSType.SMS_MODIFY_PHONE.getCode())))
             throw new CampusException(100007, "短信验证码错误.");
 
         // 如果新手机号码已经存在，则置为失效;
@@ -367,15 +372,15 @@ public class SecurityController {
             @ApiResponse(code = 500, message = "内部处理错误") })
     public void getCheckCode(
             @ApiParam(name = "phone", value = "手机号码") @RequestParam(value = "phone", required = true) String phone,
-            @ApiParam(name = "type", value = "短信验证码类型(1.注册短信;2.找回密码;3.修改手机号)") @RequestParam(value = "type", required = true) String type,
+            @ApiParam(name = "type", value = "短信验证码类型(1.注册短信;2.找回密码;3.修改手机号)") @RequestParam(value = "type", required = true) SMSType type,
             HttpSession session) {
         Assert.notNull(phone, "手机号码不能为空.");
         Assert.notNull(type, "请指定短信验证码类型.");
         String checkCode = ToolUtil.getSmsCheckColde();
         String smsTemplate = SystemConfig.getString("SMS_CHECK_CODE_TEMPLATE");
         String smsContent = String.format(smsTemplate, checkCode);
-        sendSmsSvc.sendMessage(phone, smsContent, SMSType.getSMSTypeByCode(type));
-        session.setAttribute(Constant.SMS_CHECKCODE, checkCode);
+        sendSmsSvc.sendMessage(phone, smsContent, type);
+        redisCache.cache(phone + "_checkCode_" + type.getCode(), checkCode);
     }
 
     @ApiOperation(value = "*登出:1.0", notes = "登出[API-Version=1.0]")

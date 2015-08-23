@@ -7,7 +7,7 @@ import org.campus.core.type.EnumDescriptionGetter;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum SMSType implements EnumCodeGetter, EnumDescriptionGetter {
-    SMS_REGISTER("1", "注册短信"), SMS_FORGET("2", "找回密码短信");
+    SMS_REGISTER("1", "注册短信"), SMS_FORGET("2", "找回密码短信"), SMS_MODIFY_PHONE("3", "修改手机");
 
     private String code;
 

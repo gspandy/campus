@@ -25,6 +25,14 @@ public class RedisCache {
         this.cacheTime = cacheTime;
     }
 
+    public Object getValue(String key) {
+        Object cacheValue = checkCahce(key);
+        if (cacheValue != null) {
+            return cacheValue;
+        }
+        return null;
+    }
+
     public Object getValue(String key, Object value) {
         Object cacheValue = checkCahce(key);
         if (cacheValue != null) {
@@ -33,6 +41,10 @@ public class RedisCache {
             cache(key, value);
             return value;
         }
+    }
+
+    public void deleteKey(String key) {
+        redisTemplate.delete(key);
     }
 
     public void cache(final String cacheKey, final Object value) {

@@ -52,6 +52,10 @@ public class SecurityService {
      */
     @Transactional
     public void registe(SysUser sysUser, User appUser) {
+        SysUser user = sysUserMapper.selectByAccount(sysUser.getUseraccount());
+        if (user != null) {
+            throw new CampusException(100003, "该用户已注册");
+        }
         // sys_user操作
         sysUserMapper.insert(sysUser);
         // app_user操作
