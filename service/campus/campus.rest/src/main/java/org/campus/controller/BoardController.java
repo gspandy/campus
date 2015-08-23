@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.campus.annotation.NeedRoles;
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.model.FavoriteFreshNews;
@@ -56,6 +57,7 @@ public class BoardController {
     @ApiOperation(value = "*帖子列表查询:1.0", notes = "*帖子列表查询[API-Version=1.0]")
     @RequestMapping(value = "/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public Page<BoardVO> findBoard(
             @ApiParam(name = "type", value = "1:休闲;2:新鲜;3:秘密;4:言论;5:热门;6:关注") @RequestParam(value = "type", required = true) String type,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
@@ -102,6 +104,7 @@ public class BoardController {
     @ApiOperation(value = "*帖子详情查询:1.0", notes = "帖子详情查询[API-Version=1.0]")
     @RequestMapping(value = "/posts/detail", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public BoardDetailVO findBoardDetail(
             @ApiParam(name = "postsId", value = "帖子的ID") @RequestParam(value = "postsId", required = true) String postsId,
             HttpSession session) {
@@ -132,6 +135,7 @@ public class BoardController {
     @ApiOperation(value = "*添加收藏:1.0", notes = "添加收藏[API-Version=1.0]")
     @RequestMapping(value = "/{postsId}/collect", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "收藏成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public void addCollect(@ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId, HttpSession session) {
         Assert.hasLength(postsId, "必须指定待收藏的帖子.");
         // 验证用户有无登录
@@ -149,6 +153,7 @@ public class BoardController {
     @ApiOperation(value = "*取消收藏:1.0", notes = "取消收藏[API-Version=1.0]")
     @RequestMapping(value = "/collect/{postsId}/cancel", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "取消收藏成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public void cancelCollect(@ApiParam(name = "favoriteId", value = "收藏列表编号") @PathVariable String favoriteId,
             HttpSession session) {
         if (session.getAttribute(Constant.CAMPUS_SECURITY_SESSION) == null)
@@ -159,6 +164,7 @@ public class BoardController {
     @ApiOperation(value = "*收藏列表查询:1.0", notes = "收藏列表查询[API-Version=1.0]")
     @RequestMapping(value = "/collects", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public Page<BoardFavoriteVO> findCollects(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             HttpSession session) {
@@ -194,6 +200,7 @@ public class BoardController {
     @ApiOperation(value = "*帖子发布:1.0", notes = "帖子发布[API-Version=1.0]")
     @RequestMapping(value = "/publish", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "发布成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public void publish(@ApiParam(name = "BoardPublishVO", value = "发布内容体") @RequestBody BoardPublishVO boardPublishVO,
             HttpSession session) {
         // 验证用户有无登录

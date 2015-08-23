@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.campus.annotation.NeedRoles;
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.model.enums.IsNewSession;
@@ -43,6 +44,7 @@ public class MessageController {
     @ApiOperation(value = "*查询信息提示列表:1.0", notes = "查询信息提示列表[API-Version=1.0]")
     @RequestMapping(value = "/lists", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public Page<MessageVO> getLoginUserInfo(
             @ApiParam(name = "isRead", value = "是否已读(0:未读;1:已读)") @RequestParam(value = "isRead", required = true) String isRead,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
@@ -63,6 +65,7 @@ public class MessageController {
     @ApiOperation(value = "*信息发送:1.0", notes = "信息发送[API-Version=1.0]")
     @RequestMapping(value = "/send/{userId}", method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "发送成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public void send(
             @ApiParam(name = "userId", value = "接收方用户ID") @PathVariable String userId,
             @ApiParam(name = "messageAddVO", value = "消息发送体") @RequestBody MessageAddVO messageAddVO,
@@ -78,9 +81,10 @@ public class MessageController {
 
         // 3.创建会话
         if (isNewSession.equals(IsNewSession.CREATE.getCode())) {
-            conversationId = messageService.createSession(vo.getUserId(), userId, sessionType, messageAddVO.getMessage());
+            conversationId = messageService.createSession(vo.getUserId(), userId, sessionType,
+                    messageAddVO.getMessage());
         }
-        
+
         // 4.发送消息
         messageService.sendSessionMsg(conversationId, userId, vo.getUserId(), messageAddVO, sessionType);
     }
@@ -97,6 +101,7 @@ public class MessageController {
     @ApiOperation(value = "*查询会话列表:1.0", notes = "查询会话列表[API-Version=1.0]")
     @RequestMapping(value = "/conversation/{conversationId}", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "读取成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public Page<ConversationDetailVO> getConversation(
             @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
@@ -105,10 +110,9 @@ public class MessageController {
         // 1.校验用户session信息
         LoginResponseVO vo = checkLogin(session);
         // 查询会话详细信息
-        List<ConversationDetailVO> detailList = messageService.queryConversationList(vo.getUserId(),conversationId);
+        List<ConversationDetailVO> detailList = messageService.queryConversationList(vo.getUserId(), conversationId);
         // 需建立一张聊天会话表，关联两个用户之间的聊天记录
-        Page<ConversationDetailVO> page = new PageImpl<ConversationDetailVO>(detailList, pageable,
-                detailList.size());
+        Page<ConversationDetailVO> page = new PageImpl<ConversationDetailVO>(detailList, pageable, detailList.size());
         return page;
     }
 

@@ -49,14 +49,19 @@
 	</bean>
 
 	<bean class="org.campus.core.swagger.SelfSpringSwaggerConfig" />
-	
-	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
-        <property name="converters">
-            <set>
-                <bean class="org.campus.core.converter.CodeToEnumConverterFactory"/>
-            </set>
-        </property>
-    </bean>
+
+	<bean id="conversionService"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+			<set>
+				<bean class="org.campus.core.converter.CodeToEnumConverterFactory" />
+			</set>
+		</property>
+	</bean>
+
+	<mvc:interceptors>
+		<bean class="org.campus.annotation.interceptor.NeedRolesInterceptor" />
+	</mvc:interceptors>
 
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">

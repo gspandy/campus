@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.campus.annotation.NeedRoles;
 import org.campus.cache.RedisCache;
 import org.campus.config.SystemConfig;
 import org.campus.constant.Constant;
@@ -251,6 +252,7 @@ public class SecurityController {
     @RequestMapping(value = "/phone/change", headers = { "API-Version=1.0" }, method = RequestMethod.PUT)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "修改手机号码成功"),
             @ApiResponse(code = 500, message = "内部处理错误"), @ApiResponse(code = 1000007, message = "修改密码失败") })
+    @NeedRoles
     public void changePhone(
             @ApiParam(name = "phone", value = "老手机号码") @RequestParam(value = "phone", required = true) String phone,
             @ApiParam(name = "newPhone", value = "新手机号码") @RequestParam(value = "newPhone", required = true) String newPhone,
@@ -294,6 +296,7 @@ public class SecurityController {
     @RequestMapping(value = "/password/change", headers = { "API-Version=1.0" }, method = RequestMethod.PUT)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "修改密码成功"), @ApiResponse(code = 500, message = "内部处理错误"),
             @ApiResponse(code = 1000005, message = "修改密码失败") })
+    @NeedRoles
     public void changePassword(
             @ApiParam(name = "oldPassword", value = "新密码") @RequestParam(value = "oldPassword", required = true) String oldPassword,
             @ApiParam(name = "newPassword", value = "新密码") @RequestParam(value = "newPassword", required = true) String newPassword,
@@ -323,6 +326,7 @@ public class SecurityController {
     @RequestMapping(value = "/nickname/set", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "设置、修改昵称成功"),
             @ApiResponse(code = 500, message = "内部处理错误"), @ApiResponse(code = 1000006, message = "修改昵称失败") })
+    @NeedRoles
     public void setNickName(
             @ApiParam(name = "nickName", value = "昵称") @RequestParam(value = "nickName", required = true) String nickName,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,

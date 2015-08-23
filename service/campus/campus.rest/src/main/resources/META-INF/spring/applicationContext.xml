@@ -102,5 +102,12 @@
 		<aop:advisor pointcut-ref="txMethods" advice-ref="txAdvice" />
 	</aop:config>
 	<!-- 数据库事务配置结束 -->
+	
+	<bean id="messageFilePathList" class="org.campus.config.ConfigurationLoader" factory-method="getMessageFilePathList"/>
+
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames" ref="messageFilePathList"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
 
 </beans>
