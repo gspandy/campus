@@ -290,7 +290,7 @@ public class SecurityController {
         Assert.notNull(newPassword, "请输入正确的密码.");
         Assert.notNull(newSecPassword, "请输入正确的密码.");
         Assert.notNull(oldPassword, "需要提供旧密码.");
-        if (newPassword.equals(newSecPassword))
+        if (!newPassword.equals(newSecPassword))
             throw new CampusException(100005, "请输入正确的密码.");
 
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
