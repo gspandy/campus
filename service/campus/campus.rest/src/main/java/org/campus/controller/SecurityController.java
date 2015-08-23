@@ -74,7 +74,13 @@ public class SecurityController {
                 throw new CampusException(100002, "验证码错误.");
             }
         }
-        SysUser sysUser = securitySvc.checkUserAndPassword(loginVO.getLoginName(), loginVO.getPassword());
+        SysUser sysUser = null;
+        try {
+            sysUser = securitySvc.checkUserAndPassword(loginVO.getLoginName(), loginVO.getPassword());
+        } catch (CampusException e) {
+            securitySvc.loginFailCount(loginVO.getLoginName());
+            throw new CampusException(e.getCode(), e.getContent());
+        }
         // 创建SignId
         sysUser.setSignid(ToolUtil.getUUid());
         LoginResponseVO responseVO = new LoginResponseVO();
@@ -105,6 +111,7 @@ public class SecurityController {
         udpUser.setSignid(sysUser.getSignid());
         securitySvc.updateSysUser(udpUser);
         integralService.integral(sysUser.getUid(), IntegralType.LOGIN);
+        redisCache.deleteKey(loginVO.getLoginName() + "_login_fail_count");
 
         return responseVO;
     }
@@ -389,6 +396,14 @@ public class SecurityController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "登出成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void logout(HttpSession session) {
         session.invalidate();
+    }
+
+    @ApiOperation(value = "*是否需要显示验证码:1.0", notes = "是否需要显示验证码[API-Version=1.0]")
+    @RequestMapping(value = "/needPicCode", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public boolean isNeedVerifyCode(
+            @ApiParam(name = "loginName", value = "登录名") @RequestParam(value = "loginName", required = true) String loginName) {
+        return securitySvc.isNeedVerifyCode(loginName);
     }
 
 }
