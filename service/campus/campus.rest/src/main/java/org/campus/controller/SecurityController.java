@@ -20,6 +20,7 @@ import org.campus.model.enums.SMSType;
 import org.campus.service.IntegralService;
 import org.campus.service.SecurityService;
 import org.campus.service.SendMessage;
+import org.campus.util.FirstLetterUtil;
 import org.campus.util.MD5Util;
 import org.campus.util.ToolUtil;
 import org.campus.util.VerificationCode;
@@ -205,7 +206,7 @@ public class SecurityController {
         appUser.setIntegral(0L);
         appUser.setLogincount(0);
         // appUser.setNickname(registerVO.getNickName());
-
+        appUser.setNickFirstLetter(FirstLetterUtil.getPinYinHeadChar(registerVO.getNickName()));
         this.securitySvc.registe(sysUser, appUser);
 
     }

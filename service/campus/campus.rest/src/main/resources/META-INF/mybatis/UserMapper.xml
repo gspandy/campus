@@ -42,6 +42,7 @@
 		<result column="LoginCount" property="logincount" jdbcType="INTEGER" />
 		<result column="ApiType" property="apiType" jdbcType="VARCHAR" />
 		<result column="ApiId" property="apiId" jdbcType="VARCHAR" />
+		<result column="NickFirstLetter" property="nickFirstLetter" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UserUID, StudentID, RealName, NamePinYin, NameFirstLetter,
@@ -56,7 +57,7 @@
 		IsLocked, IsOpen, IsGraduate, CreateBy, CreateDate,
 		LastUpdateBy,
 		LastUpdateDate,
-		IsActive,Integral,LoginCount,ApiType,ApiId
+		IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -90,7 +91,7 @@
 		ProvinceName, IsValidated, IsLocked,
 		IsOpen, IsGraduate, CreateBy,
 		CreateDate, LastUpdateBy, LastUpdateDate,
-		IsActive,Integral,LoginCount,ApiType,ApiId)
+		IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter)
 		values
 		(#{useruid,jdbcType=VARCHAR},
 		#{studentid,jdbcType=VARCHAR},
@@ -123,7 +124,7 @@
 		#{lastupdateby,jdbcType=VARCHAR},
 		#{lastupdatedate,jdbcType=TIMESTAMP},
 		#{isactive,jdbcType=INTEGER},#{integral,jdbcType=INTEGER},#{logincount,jdbcType=INTEGER},
-		#{apiType,jdbcType=VARCHAR}, #{apiId,jdbcType=VARCHAR})
+		#{apiType,jdbcType=VARCHAR}, #{apiId,jdbcType=VARCHAR},#{nickFirstLetter,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.User">
 		insert into ts_app_user
@@ -233,6 +234,9 @@
 			<if test="apiId != null">
 				ApiId,
 			</if>
+			<if test="nickFirstLetter != null">
+				NickFirstLetter,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="useruid != null">
@@ -339,6 +343,9 @@
 			</if>
 			<if test="apiId != null">
 				#{apiId,jdbcType=VARCHAR},
+			</if>
+			<if test="nickFirstLetter != null">
+			    #{nickFirstLetter,jdbcType=VARCHAR}
 			</if>
 		</trim>
 	</insert>
@@ -447,6 +454,9 @@
 			<if test="apiId != null">
 				ApiId = #{apiId,jdbcType=VARCHAR},
 			</if>
+			<if test="nickFirstLetter != null">
+			    NickFirstLetter = #{nickFirstLetter,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where UserUID = #{useruid,jdbcType=VARCHAR}
 	</update>
@@ -510,7 +520,9 @@
 		ApiType =
 		#{apiType,jdbcType=VARCHAR},
 		ApiId =
-		#{apiId,jdbcType=VARCHAR}
+		#{apiId,jdbcType=VARCHAR},
+		NickFirstLetter =
+		#{nickFirstLetter,jdbcType=VARCHAR},
 		where
 		UserUID =
 		#{useruid,jdbcType=VARCHAR}
