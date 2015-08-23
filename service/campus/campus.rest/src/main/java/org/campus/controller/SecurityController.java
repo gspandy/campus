@@ -19,6 +19,7 @@ import org.campus.model.enums.SMSType;
 import org.campus.service.IntegralService;
 import org.campus.service.SecurityService;
 import org.campus.service.SendMessage;
+import org.campus.util.FirstLetterUtil;
 import org.campus.util.MD5Util;
 import org.campus.util.ToolUtil;
 import org.campus.util.VerificationCode;
@@ -140,7 +141,7 @@ public class SecurityController {
     }
 
     @ApiOperation(value = "*注册:1.0", notes = "注册[API-Version=1.0]")
-    @RequestMapping(value = "/register", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "注册成功"), @ApiResponse(code = 500, message = "内部处理错误"),
             @ApiResponse(code = 1000003, message = "注册失败") })
     public void register(@ApiParam(name = "registerVO", value = "注册信息体") @RequestBody RegisterVO registerVO,
@@ -159,9 +160,9 @@ public class SecurityController {
         Assert.hasLength(registerVO.getMobileCheckCode(), "请输入短信验证码");
 
         // SMS验证码检查
-        if (!registerVO.getMobileCheckCode().equals((String) session.getAttribute(Constant.SMS_CHECKCODE))) {
-            throw new CampusException(100003, "短信验证码错误.");
-        }
+//        if (!registerVO.getMobileCheckCode().equals((String) session.getAttribute(Constant.SMS_CHECKCODE))) {
+//            throw new CampusException(100003, "短信验证码错误.");
+//        }
 
         // //昵称唯一验证
         // if(StringUtils.hasText(registerVO.getNickName()) && securitySvc.nickNameExsit(registerVO.getNickName())){
@@ -200,7 +201,7 @@ public class SecurityController {
         appUser.setIntegral(0L);
         appUser.setLogincount(0);
         // appUser.setNickname(registerVO.getNickName());
-
+        appUser.setNickFirstLetter(FirstLetterUtil.getPinYinHeadChar(registerVO.getNickName()));
         this.securitySvc.registe(sysUser, appUser);
 
     }

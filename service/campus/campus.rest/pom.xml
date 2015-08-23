@@ -152,8 +152,14 @@
 			<version>4.0.5.RELEASE</version>
 		</dependency>
 		<dependency>
-		   <groupId>org.imgscalr</groupId>
-	       <artifactId>imgscalr-lib</artifactId>
-	       <version>4.2</version></dependency>
-	    </dependencies>
+			<groupId>org.imgscalr</groupId>
+			<artifactId>imgscalr-lib</artifactId>
+			<version>4.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.belerweb</groupId>
+			<artifactId>pinyin4j</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+	</dependencies>
 </project>

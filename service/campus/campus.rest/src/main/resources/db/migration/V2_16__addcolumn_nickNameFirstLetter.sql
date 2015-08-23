@@ -1,0 +1,1 @@
+ALTER table ts_app_user add(NickFirstLetter varchar(8) COMMENT '昵称首字母');
