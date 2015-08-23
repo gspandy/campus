@@ -68,7 +68,7 @@ public class SecurityController {
         Assert.notNull(loginVO, "请求参数错误.");
         Assert.notNull(loginVO.getLoginName(), "用户名不允许为空.");
         Assert.notNull(loginVO.getPassword(), "请输入正确的用户密码.");
-        if (session.getAttribute(Constant.VERFICATION_CODE) != null) {
+        if (securitySvc.isNeedVerifyCode(loginVO.getLoginName())) {
             Assert.notNull(loginVO.getVerificationCode(), "验证码不允许为空.");
             if (!loginVO.getVerificationCode().equals(session.getAttribute(Constant.VERFICATION_CODE))) {
                 throw new CampusException(100002, "验证码错误.");
