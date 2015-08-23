@@ -25,7 +25,7 @@ public class TencentApi {
         String openId = getOpenId(accessTokenMap.get("access_token"));
         Map<String, String> map = new HashMap<String, String>();
         map.put("access_token", accessTokenMap.get("access_token"));
-        map.put("oauth_consumer_key", SystemConfig.getString("QQ_CONSUMER_KEY"));
+        map.put("oauth_consumer_key", SystemConfig.getString("QQ_CLIENT_ID"));
         map.put("openid", openId);
         String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("QQ_USERINFO_URL")));
         try {

@@ -24,7 +24,7 @@ public class WeiboApi {
         WeiboAccessToken accessToken = getWeiboAccessToken(code, redirectUrl);
         WeiboUid uid = getUid(accessToken.getAccess_token());
         Map<String, String> map = new HashMap<String, String>();
-        map.put("source", SystemConfig.getString("WEIBO_APPKEY"));
+        map.put("source", SystemConfig.getString("WEIBO_CLIENT_ID"));
         map.put("access_token", accessToken.getAccess_token());
         map.put("uid", uid.getUid());
         String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("WEIBO_USERINFO_URL")));
@@ -80,7 +80,7 @@ public class WeiboApi {
     private WeiboUid getUid(String accessToken) {
         WeiboUid weiboUid = null;
         Map<String, String> map = new HashMap<String, String>();
-        map.put("source", SystemConfig.getString("WEIBO_APPKEY"));
+        map.put("source", SystemConfig.getString("WEIBO_CLIENT_ID"));
         map.put("access_token", accessToken);
         String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("WEIBO_UID_URL")));
         weiboUid = JsonUtil.getInstance().toJavaBean(response, WeiboUid.class);
