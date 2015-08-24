@@ -34,7 +34,7 @@ public class RegisterVO {
 //    
 //    private String provinceName;
 //    
-    private String nickName;
+//    private String nickName;
 //    
 //    private String sex;
     
@@ -190,15 +190,15 @@ public class RegisterVO {
 //		this.sex = sex;
 //	}
 //
-    @ApiModelProperty(value = "昵称")
-	public String getNickName() {
-		return nickName;
-	}
-
-    @ApiModelProperty(value = "昵称")
-	public void setNickName(String nickName) {
-		this.nickName = nickName;
-	}
+//    @ApiModelProperty(value = "昵称")
+//	public String getNickName() {
+//		return nickName;
+//	}
+//
+//    @ApiModelProperty(value = "昵称")
+//	public void setNickName(String nickName) {
+//		this.nickName = nickName;
+//	}
 
     @ApiModelProperty(value = "手机验证码")
 	public String getMobileCheckCode() {

@@ -201,7 +201,8 @@ public class SecurityController {
         appUser.setIntegral(0L);
         appUser.setLogincount(0);
         // appUser.setNickname(registerVO.getNickName());
-        appUser.setNickFirstLetter(FirstLetterUtil.getPinYinHeadChar(registerVO.getNickName()));
+        String nickName = String.valueOf(ToolUtil.getId());
+        appUser.setNickFirstLetter(FirstLetterUtil.getPinYinHeadChar(nickName));
         this.securitySvc.registe(sysUser, appUser);
 
     }
@@ -328,7 +329,7 @@ public class SecurityController {
         User user = new User();
         user.setUseruid(vo.getUserId());
         user.setNickname(nickName);
-
+        user.setNickFirstLetter(FirstLetterUtil.getPinYinHeadChar(nickName));
         securitySvc.updateUser(user);
     }
 
