@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.campus.annotation.NeedRoles;
 import org.campus.model.College;
 import org.campus.model.Profession;
 import org.campus.model.School;
@@ -36,17 +37,17 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @RequestMapping("/school")
 @Api(value = "SchoolController", description = "院校相关操作")
 public class SchoolController {
-	
-	@Autowired
-	private SchoolService schoolSvc;
-	
+
+    @Autowired
+    private SchoolService schoolSvc;
+
     @ApiOperation(value = "添加用户学校信息:1.0", notes = "添加用户学校信息 [API-Version=1.0]")
-    @RequestMapping(value = "/user/school", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/user/school", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public UserSchoolVO getUserSchool(
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-    	//TODO:待完成
+        // TODO:待完成
         UserSchoolVO schoolVO = new UserSchoolVO();
         schoolVO.setSchoolId("123");
         schoolVO.setSchoolName("北京大学");
@@ -59,95 +60,96 @@ public class SchoolController {
     }
 
     @ApiOperation(value = "*学校信息:1.0", notes = "学校信息 [API-Version=1.0]")
-    @RequestMapping(value = "/schools", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/schools", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public Page<SchoolVO> findSchools(@ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable) {
-    	List<SchoolVO> schoolVOs = new ArrayList<SchoolVO>();
+    public Page<SchoolVO> findSchools(
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        List<SchoolVO> schoolVOs = new ArrayList<SchoolVO>();
 
-    	Page<School> pageSchools = this.schoolSvc.getAllSchool(pageable);
-    	List<School> schools = pageSchools.getContent();
-    	for (School school:schools){
-    		SchoolVO schoolVO = new SchoolVO();
-    		schoolVO.setSchoolId(school.getUid());
-    		schoolVO.setSchoolName(school.getSchoolname());
-    		schoolVO.setCityCode(school.getCitycode());
-    		schoolVO.setCityName(school.getCityname());
-    		schoolVO.setProvinceCode(school.getProvincecode());
-    		schoolVO.setProvinceName(school.getProvincename());
-    		schoolVOs.add(schoolVO);
-    	}
-    	
+        Page<School> pageSchools = this.schoolSvc.getAllSchool(pageable);
+        List<School> schools = pageSchools.getContent();
+        for (School school : schools) {
+            SchoolVO schoolVO = new SchoolVO();
+            schoolVO.setSchoolId(school.getUid());
+            schoolVO.setSchoolName(school.getSchoolname());
+            schoolVO.setCityCode(school.getCitycode());
+            schoolVO.setCityName(school.getCityname());
+            schoolVO.setProvinceCode(school.getProvincecode());
+            schoolVO.setProvinceName(school.getProvincename());
+            schoolVOs.add(schoolVO);
+        }
+
         Page<SchoolVO> page = new PageImpl<SchoolVO>(schoolVOs, pageable, schoolVOs.size());
         return page;
     }
 
     @ApiOperation(value = "*院系信息:1.0", notes = "院系信息 [API-Version=1.0]")
-    @RequestMapping(value = "/{schoolId}/colleges", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/{schoolId}/colleges", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    public List<CollegeVO> findColleges(
-            @ApiParam(name = "schoolId", value = "学校ID") @PathVariable String schoolId) {
+    public List<CollegeVO> findColleges(@ApiParam(name = "schoolId", value = "学校ID") @PathVariable String schoolId) {
         List<CollegeVO> collegeVOs = new ArrayList<CollegeVO>();
-        
+
         List<College> colleges = this.schoolSvc.getSchoolCollege(schoolId);
-        for (College college:colleges){
-        	CollegeVO collegeVO = new CollegeVO();
-        	collegeVO.setCollegeId(college.getUid());
-        	collegeVO.setCollegeName(college.getCollegename());
-        	collegeVOs.add(collegeVO);
+        for (College college : colleges) {
+            CollegeVO collegeVO = new CollegeVO();
+            collegeVO.setCollegeId(college.getUid());
+            collegeVO.setCollegeName(college.getCollegename());
+            collegeVOs.add(collegeVO);
         }
-        
+
         return collegeVOs;
     }
 
     @ApiOperation(value = "*专业信息:1.0", notes = "专业信息 [API-Version=1.0]")
-    @RequestMapping(value = "/{schoolId}/{collegeId}/professions", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/{schoolId}/{collegeId}/professions", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<ProfessionVO> findProfessions(
             @ApiParam(name = "collegeId", value = "院系ID") @PathVariable("collegeId") String collegeId,
             @ApiParam(name = "schoolId", value = "学校ID") @PathVariable("schoolId") String schoolId) {
         List<ProfessionVO> professionVOs = new ArrayList<ProfessionVO>();
-        
+
         List<Profession> professions = this.schoolSvc.getCollegeProfession(collegeId, schoolId);
-        for(Profession profession:professions){
-        	ProfessionVO professionVO = new ProfessionVO();
-        	professionVO.setProfessionId(profession.getUid());
-        	professionVO.setProfessionName(profession.getProfessionname());
-        	professionVOs.add(professionVO);
+        for (Profession profession : professions) {
+            ProfessionVO professionVO = new ProfessionVO();
+            professionVO.setProfessionId(profession.getUid());
+            professionVO.setProfessionName(profession.getProfessionname());
+            professionVOs.add(professionVO);
         }
         return professionVOs;
     }
 
     @ApiOperation(value = "*入学年份:1.0", notes = "入学年份 [API-Version=1.0]")
-    @RequestMapping(value = "/inSchoolYear", headers={"API-Version=1.0"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/inSchoolYear", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public List<String> getInSchoolYear() {
         List<String> integers = new ArrayList<String>();
         Calendar cal = Calendar.getInstance();
         int thisYear = cal.get(Calendar.YEAR);
-        for(int i=2006;i<=thisYear;i++){
-        	integers.add(Integer.toString(i));
+        for (int i = 2006; i <= thisYear; i++) {
+            integers.add(Integer.toString(i));
         }
         return integers;
     }
 
     @ApiOperation(value = "添加专业:1.0", notes = "添加专业[API-Version=1.0]")
-    @RequestMapping(value = "/profession/add", headers={"API-Version=1.0"}, method = RequestMethod.POST)
+    @RequestMapping(value = "/profession/add", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public String addProfession(
             @ApiParam(name = "professionName", value = "专业名称") @RequestParam(value = "professionName", required = true) String professionName,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
-    	//TODO:待完成
+        // TODO:待完成
         return "123123";
     }
 
     @ApiOperation(value = "修改、添加用户学校信息:1.0", notes = "修改、添加用户学校信息[API-Version=1.0]")
-    @RequestMapping(value = "/school/add", headers={"API-Version=1.0"}, method = RequestMethod.POST)
+    @RequestMapping(value = "/school/add", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public void addSchool(
             @ApiParam(name = "userSchoolVO", value = "用户学习信息体") @RequestBody UserSchoolVO userSchoolVO,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-    	//TODO:待完成
+        // TODO:待完成
     }
 
 }

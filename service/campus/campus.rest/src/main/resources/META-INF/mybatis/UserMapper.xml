@@ -45,19 +45,19 @@
 		<result column="NickFirstLetter" property="nickFirstLetter" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		UserUID, StudentID, RealName, NamePinYin, NameFirstLetter,
-		NickName, SexType,
-		Email,
-		IDCard, HeadPic, BackGroundImg, SchoolUID,
-		SchoolName, CollegeUID,
-		CollegeName, ProfessionUID,
-		ProfessionName,
-		InSchoolYear, CityCode, CityName, ProvinceCode, ProvinceName,
-		IsValidated,
-		IsLocked, IsOpen, IsGraduate, CreateBy, CreateDate,
-		LastUpdateBy,
-		LastUpdateDate,
-		IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter
+	UserUID, StudentID, RealName, NamePinYin, NameFirstLetter,
+	NickName, SexType,
+	Email,
+	IDCard, HeadPic, BackGroundImg, SchoolUID,
+	SchoolName, CollegeUID,
+	CollegeName, ProfessionUID,
+	ProfessionName,
+	InSchoolYear, CityCode, CityName, ProvinceCode, ProvinceName,
+	IsValidated,
+	IsLocked, IsOpen, IsGraduate, CreateBy, CreateDate,
+	LastUpdateBy,
+	LastUpdateDate,
+	IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -522,7 +522,7 @@
 		ApiId =
 		#{apiId,jdbcType=VARCHAR},
 		NickFirstLetter =
-		#{nickFirstLetter,jdbcType=VARCHAR},
+		#{nickFirstLetter,jdbcType=VARCHAR}
 		where
 		UserUID =
 		#{useruid,jdbcType=VARCHAR}

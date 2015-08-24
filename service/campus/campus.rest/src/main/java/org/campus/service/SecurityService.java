@@ -8,6 +8,8 @@ import org.campus.api.WeixinApi;
 import org.campus.api.domain.QqUserinfo;
 import org.campus.api.domain.SnsapiUserinfo;
 import org.campus.api.domain.WeiboUserInfo;
+import org.campus.cache.RedisCache;
+import org.campus.config.SystemConfig;
 import org.campus.core.exception.CampusException;
 import org.campus.model.SysUser;
 import org.campus.model.User;
@@ -44,6 +46,9 @@ public class SecurityService {
     @Autowired
     private WeiboApi weiboApi;
 
+    @Autowired
+    private RedisCache redisCache;
+
     /**
      * 用户注册
      * 
@@ -52,6 +57,10 @@ public class SecurityService {
      */
     @Transactional
     public void registe(SysUser sysUser, User appUser) {
+        SysUser user = sysUserMapper.selectByAccount(sysUser.getUseraccount());
+        if (user != null) {
+            throw new CampusException(100003, "该用户已注册");
+        }
         // sys_user操作
         sysUserMapper.insert(sysUser);
         // app_user操作
@@ -166,6 +175,27 @@ public class SecurityService {
         }
 
         return user;
+    }
+
+    public void loginFailCount(String loginName) {
+        redisCache.setCacheTime(86400);
+        Object value = redisCache.getValue(loginName + "_login_fail_count");
+        int count = 1;
+        if (value != null) {
+            count = (int) value + 1;
+        }
+        redisCache.cache(loginName + "_login_fail_count", count);
+    }
+
+    public boolean isNeedVerifyCode(String loginName) {
+        boolean flag = false;
+        Object value = redisCache.getValue(loginName + "_login_fail_count");
+        if (value != null) {
+            if ((int) value >= SystemConfig.getInt("LOGIN_FAILED_NEED_VERIFY_CODE")) {
+                flag = true;
+            }
+        }
+        return flag;
     }
 
     private User apiRegist(String apiId, String nickName, String headImgUrl) {

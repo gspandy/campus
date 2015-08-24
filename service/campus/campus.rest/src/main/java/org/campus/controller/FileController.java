@@ -33,20 +33,19 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @RequestMapping("file")
 @Api(value = "FileController", description = "文件上传相关操作")
 public class FileController {
-    
+
     @Autowired
     private FastdfsClientFactory fastdfsClientFactory;
 
-    @SuppressWarnings("null")
     @ApiOperation(value = "*图片上传:1.0", notes = "图片上传:[API-Version=1.0]")
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "请求成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public FileUploadVO uploadidentityCardPicture(
             @ApiParam(name = "multipartFile", value = "图片", required = true) @RequestParam("multipartFile") MultipartFile multipartFile) {
         FastdfsClient fastdfsClient = fastdfsClientFactory.getFastdfsClient();
-        File file= FileUtil.transToFile(multipartFile);
+        File file = FileUtil.transToFile(multipartFile);
         // 元数据信息
-        Map<String,String> meta = new HashMap<String, String>();
+        Map<String, String> meta = new HashMap<String, String>();
         meta.put("fileName", multipartFile.getOriginalFilename());
         String fileId = fastdfsClient.upload(file, file.getName(), meta);
         // 删除临时图片
@@ -57,19 +56,20 @@ public class FileController {
         fileUploadVO.setPicFullUrl(fileId);
         return fileUploadVO;
     }
-    
+
     @ApiOperation(value = "*图片下载:1.0", notes = "图片下载:[API-Version=1.0]")
     @RequestMapping(value = "/downLoad", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "请求成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void downLoadidentityCardPicture(
-            @ApiParam(name = "fileId", value = "图片id", required = true) @RequestParam("fileId") String fileId,HttpServletResponse response) {
+            @ApiParam(name = "fileId", value = "图片id", required = true) @RequestParam("fileId") String fileId,
+            HttpServletResponse response) {
         FastdfsClient fastdfsClient = fastdfsClientFactory.getFastdfsClient();
         byte[] data = fastdfsClient.downLoad(fileId);
         ServletOutputStream out;
         try {
             out = response.getOutputStream();
-            ByteArrayInputStream in = new ByteArrayInputStream(data);    //将b作为输入流；
-            BufferedImage image = ImageIO.read(in);   
+            ByteArrayInputStream in = new ByteArrayInputStream(data); // 将b作为输入流；
+            BufferedImage image = ImageIO.read(in);
             // write the data out
             ImageIO.write(image, "jpg", out);
             try {
@@ -78,9 +78,9 @@ public class FileController {
                 out.close();
             }
         } catch (IOException e) {
-            throw new CampusException(100010,"系统异常");
+            throw new CampusException(100010, "系统异常");
         }
-         
+
     }
 
 }

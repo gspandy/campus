@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -61,7 +62,8 @@ public abstract class ConfigurationLoader {
         for (Resource resource : resources) {
             logger.info("Loading properties file from {}", resource);
             try {
-                PropertiesLoaderUtils.fillProperties(props, resource);
+                EncodedResource encResource = new EncodedResource(resource,"UTF-8"); 
+                PropertiesLoaderUtils.fillProperties(props, encResource);
             } catch (IOException e) {
                 logger.warn("Could not load properties from {}: " + e.getMessage(), resource);
                 throw e;

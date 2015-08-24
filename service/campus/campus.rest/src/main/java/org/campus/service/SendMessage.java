@@ -5,7 +5,7 @@ import java.util.List;
 import org.campus.model.enums.SMSType;
 
 public interface SendMessage {
-
+    
     /**
      * 
      * 功能描述: <br>

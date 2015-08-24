@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.campus.annotation.NeedRoles;
 import org.campus.constant.Constant;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
@@ -57,6 +58,7 @@ public class UserController {
     @ApiOperation(value = "*登录用户信息查询:1.0", notes = "登录用户信息查询[API-Version=1.0]")
     @RequestMapping(value = "/info", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public UserVO getLoginUserInfo(
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
@@ -67,6 +69,7 @@ public class UserController {
     @ApiOperation(value = "*其他用户的信息查询:1.0", notes = "其他用户的信息查询[API-Version=1.0]")
     @RequestMapping(value = "/{userId}/info", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public UserVO getUserInfo(
             @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -80,6 +83,7 @@ public class UserController {
     @ApiOperation(value = "*查询登录用户相册:1.0", notes = "查询登录用户相册[API-Version=1.0]")
     @RequestMapping(value = "/photos", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public Page<UserPhotosVO> getUserPhotos(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -92,6 +96,7 @@ public class UserController {
     @ApiOperation(value = "*查询其他用户的相册:1.0", notes = "查询其他用户的相册[API-Version=1.0]")
     @RequestMapping(value = "/{userId}/photos", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public Page<UserPhotosVO> getUserPhotos(
             @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
@@ -104,6 +109,7 @@ public class UserController {
     @ApiOperation(value = "*查询相册评论:1.0", notes = "查询相册评论[API-Version=1.0]")
     @RequestMapping(value = "/{photoId}/comments", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public Page<CommentVO> getPhotoComments(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
@@ -133,6 +139,7 @@ public class UserController {
     @ApiOperation(value = "*相册点赞/踩:1.0", notes = "相册点赞[API-Version=1.0]")
     @RequestMapping(value = "/photo/{photoId}/interact", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public void postSupport(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
             @ApiParam(name = "type", value = "赞/踩(0:踩,1:赞)") @RequestParam(value = "type", required = true) InteractType type,
@@ -148,6 +155,7 @@ public class UserController {
     @ApiOperation(value = "*相册评论点赞:1.0", notes = "相册评论点赞[API-Version=1.0]")
     @RequestMapping(value = "/comment/{commentId}/interact", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "点赞成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public void commentSupport(
             @ApiParam(name = "commentId", value = "帖子评论的ID") @PathVariable String commentId,
             @ApiParam(name = "type", value = "赞/踩(0:踩,1:赞)") @RequestParam(value = "type", required = true) InteractType type,
@@ -163,6 +171,7 @@ public class UserController {
     @ApiOperation(value = "*相册评论:1.0", notes = "相册评论[API-Version=1.0]")
     @RequestMapping(value = "/{photoId}/comment", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "评论成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public void addComment(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
             @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
@@ -179,6 +188,7 @@ public class UserController {
     @ApiOperation(value = "*添加关注:1.0", notes = "添加关注[API-Version=1.0]")
     @RequestMapping(value = "/attention/{userId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "添加关注成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public void attention(
             @ApiParam(name = "userId", value = "用户ID") @PathVariable String userId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -190,6 +200,7 @@ public class UserController {
     @ApiOperation(value = "*取消关注:1.0", notes = "取消关注[API-Version=1.0]")
     @RequestMapping(value = "/remove/{userId}/attention", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "取消关注成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public void removeAttention(
             @ApiParam(name = "userId", value = "用户ID") @PathVariable String userId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -201,6 +212,7 @@ public class UserController {
     @ApiOperation(value = "*查询好友列表:1.0", notes = "查询好友列表[API-Version=1.0]")
     @RequestMapping(value = "/friends", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询好友成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public List<FriendVO> getFriends(
             @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -213,6 +225,7 @@ public class UserController {
     @ApiOperation(value = "*查询粉丝列表:1.0", notes = "查询粉丝列表[API-Version=1.0]")
     @RequestMapping(value = "/fans", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询粉丝成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public List<FriendVO> getFans(
             @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -225,6 +238,7 @@ public class UserController {
     @ApiOperation(value = "*查询我评论过的帖子:1.0", notes = "查询我评论过的帖子[API-Version=1.0]")
     @RequestMapping(value = "/mycomments", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public Page<MyCommentVO> getMycomments(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -252,6 +266,7 @@ public class UserController {
     @ApiOperation(value = "*查询我点过的赞:1.0", notes = "查询我点过的赞[API-Version=1.0]")
     @RequestMapping(value = "/mysupports", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public Page<BoardVO> getMysupports(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,

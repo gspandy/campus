@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.campus.annotation.NeedRoles;
+import org.campus.cache.RedisCache;
 import org.campus.config.SystemConfig;
 import org.campus.constant.Constant;
 import org.campus.constant.ErrorCode;
@@ -55,6 +57,9 @@ public class SecurityController {
     @Autowired
     private IntegralService integralService;
 
+    @Autowired
+    private RedisCache redisCache;
+
     @ApiOperation(value = "*登录:1.0", notes = "登录[API-Version=1.0]")
     @RequestMapping(value = "/login", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "登录成功"), @ApiResponse(code = 500, message = "内部处理错误"),
@@ -64,13 +69,19 @@ public class SecurityController {
         Assert.notNull(loginVO, "请求参数错误.");
         Assert.notNull(loginVO.getLoginName(), "用户名不允许为空.");
         Assert.notNull(loginVO.getPassword(), "请输入正确的用户密码.");
-        if (session.getAttribute(Constant.VERFICATION_CODE) != null) {
+        if (securitySvc.isNeedVerifyCode(loginVO.getLoginName())) {
             Assert.notNull(loginVO.getVerificationCode(), "验证码不允许为空.");
             if (!loginVO.getVerificationCode().equals(session.getAttribute(Constant.VERFICATION_CODE))) {
                 throw new CampusException(100002, "验证码错误.");
             }
         }
-        SysUser sysUser = securitySvc.checkUserAndPassword(loginVO.getLoginName(), loginVO.getPassword());
+        SysUser sysUser = null;
+        try {
+            sysUser = securitySvc.checkUserAndPassword(loginVO.getLoginName(), loginVO.getPassword());
+        } catch (CampusException e) {
+            securitySvc.loginFailCount(loginVO.getLoginName());
+            throw new CampusException(e.getCode(), e.getContent());
+        }
         // 创建SignId
         sysUser.setSignid(ToolUtil.getUUid());
         LoginResponseVO responseVO = new LoginResponseVO();
@@ -101,6 +112,7 @@ public class SecurityController {
         udpUser.setSignid(sysUser.getSignid());
         securitySvc.updateSysUser(udpUser);
         integralService.integral(sysUser.getUid(), IntegralType.LOGIN);
+        redisCache.deleteKey(loginVO.getLoginName() + "_login_fail_count");
 
         return responseVO;
     }
@@ -141,7 +153,7 @@ public class SecurityController {
     }
 
     @ApiOperation(value = "*注册:1.0", notes = "注册[API-Version=1.0]")
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "注册成功"), @ApiResponse(code = 500, message = "内部处理错误"),
             @ApiResponse(code = 1000003, message = "注册失败") })
     public void register(@ApiParam(name = "registerVO", value = "注册信息体") @RequestBody RegisterVO registerVO,
@@ -160,9 +172,10 @@ public class SecurityController {
         Assert.hasLength(registerVO.getMobileCheckCode(), "请输入短信验证码");
 
         // SMS验证码检查
-//        if (!registerVO.getMobileCheckCode().equals((String) session.getAttribute(Constant.SMS_CHECKCODE))) {
-//            throw new CampusException(100003, "短信验证码错误.");
-//        }
+        if (!registerVO.getMobileCheckCode().equals(
+                redisCache.getValue(registerVO.getLoginName() + "_checkCode_" + SMSType.SMS_REGISTER.getCode()))) {
+            throw new CampusException(100003, "短信验证码错误.");
+        }
 
         // //昵称唯一验证
         // if(StringUtils.hasText(registerVO.getNickName()) && securitySvc.nickNameExsit(registerVO.getNickName())){
@@ -225,7 +238,7 @@ public class SecurityController {
         if (!password.equals(secPassword))
             throw new CampusException(100004, "请输入正确的密码.");
 
-        if (!checkCode.equals((String) session.getAttribute(Constant.SMS_CHECKCODE)))
+        if (!checkCode.equals(redisCache.getValue(loginName + "_checkCode_" + SMSType.SMS_FORGET.getCode())))
             throw new CampusException(100004, "短信验证码错误.");
 
         SysUser sysUser = securitySvc.getUserByAccount(loginName);
@@ -240,6 +253,7 @@ public class SecurityController {
     @RequestMapping(value = "/phone/change", headers = { "API-Version=1.0" }, method = RequestMethod.PUT)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "修改手机号码成功"),
             @ApiResponse(code = 500, message = "内部处理错误"), @ApiResponse(code = 1000007, message = "修改密码失败") })
+    @NeedRoles
     public void changePhone(
             @ApiParam(name = "phone", value = "老手机号码") @RequestParam(value = "phone", required = true) String phone,
             @ApiParam(name = "newPhone", value = "新手机号码") @RequestParam(value = "newPhone", required = true) String newPhone,
@@ -257,7 +271,7 @@ public class SecurityController {
         if (vo == null)
             throw new CampusException(100007, "请登录.");
 
-        if (!checkCode.equals((String) session.getAttribute(Constant.SMS_CHECKCODE)))
+        if (!checkCode.equals(redisCache.getValue(newPhone + "_checkCode_" + SMSType.SMS_MODIFY_PHONE.getCode())))
             throw new CampusException(100007, "短信验证码错误.");
 
         // 如果新手机号码已经存在，则置为失效;
@@ -283,6 +297,7 @@ public class SecurityController {
     @RequestMapping(value = "/password/change", headers = { "API-Version=1.0" }, method = RequestMethod.PUT)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "修改密码成功"), @ApiResponse(code = 500, message = "内部处理错误"),
             @ApiResponse(code = 1000005, message = "修改密码失败") })
+    @NeedRoles
     public void changePassword(
             @ApiParam(name = "oldPassword", value = "新密码") @RequestParam(value = "oldPassword", required = true) String oldPassword,
             @ApiParam(name = "newPassword", value = "新密码") @RequestParam(value = "newPassword", required = true) String newPassword,
@@ -312,6 +327,7 @@ public class SecurityController {
     @RequestMapping(value = "/nickname/set", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "设置、修改昵称成功"),
             @ApiResponse(code = 500, message = "内部处理错误"), @ApiResponse(code = 1000006, message = "修改昵称失败") })
+    @NeedRoles
     public void setNickName(
             @ApiParam(name = "nickName", value = "昵称") @RequestParam(value = "nickName", required = true) String nickName,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -369,15 +385,15 @@ public class SecurityController {
             @ApiResponse(code = 500, message = "内部处理错误") })
     public void getCheckCode(
             @ApiParam(name = "phone", value = "手机号码") @RequestParam(value = "phone", required = true) String phone,
-            @ApiParam(name = "type", value = "短信验证码类型(1.注册短信;2.找回密码;3.修改手机号)") @RequestParam(value = "type", required = true) String type,
+            @ApiParam(name = "type", value = "短信验证码类型(1.注册短信;2.找回密码;3.修改手机号)") @RequestParam(value = "type", required = true) SMSType type,
             HttpSession session) {
         Assert.notNull(phone, "手机号码不能为空.");
         Assert.notNull(type, "请指定短信验证码类型.");
         String checkCode = ToolUtil.getSmsCheckColde();
         String smsTemplate = SystemConfig.getString("SMS_CHECK_CODE_TEMPLATE");
         String smsContent = String.format(smsTemplate, checkCode);
-        sendSmsSvc.sendMessage(phone, smsContent, SMSType.getSMSTypeByCode(type));
-        session.setAttribute(Constant.SMS_CHECKCODE, checkCode);
+        sendSmsSvc.sendMessage(phone, smsContent, type);
+        redisCache.cache(phone + "_checkCode_" + type.getCode(), checkCode);
     }
 
     @ApiOperation(value = "*登出:1.0", notes = "登出[API-Version=1.0]")
@@ -385,6 +401,14 @@ public class SecurityController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "登出成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void logout(HttpSession session) {
         session.invalidate();
+    }
+
+    @ApiOperation(value = "*是否需要显示验证码:1.0", notes = "是否需要显示验证码[API-Version=1.0]")
+    @RequestMapping(value = "/needPicCode", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public boolean isNeedVerifyCode(
+            @ApiParam(name = "loginName", value = "登录名") @RequestParam(value = "loginName", required = true) String loginName) {
+        return securitySvc.isNeedVerifyCode(loginName);
     }
 
 }

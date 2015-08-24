@@ -31,7 +31,7 @@ public class ExceptionAdvice {
             String message = null;
             if (code != null) {
                 try {
-                    message = SystemConfig.getString(code.toString(), String.valueOf(exceptionInfo.getMessage()));
+                    message = SystemConfig.getString(code.toString(), exceptionInfo.getMessage());
                 } catch (Exception e) {
                     logger.error("根据异常编码获取异常描述信息发生异常，errorCode：" + code);
                     message = exceptionInfo.getMessage();
