@@ -16,6 +16,8 @@ public class BoardVO {
 
     private String nickName;
 
+    private String headPic;
+
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date publishDate;
 
@@ -55,6 +57,16 @@ public class BoardVO {
     @ApiModelProperty(value = "发帖用户昵称", required = true)
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    @ApiModelProperty(value = "头像", required = false)
+    public String getHeadPic() {
+        return headPic;
+    }
+
+    @ApiModelProperty(value = "头像", required = false)
+    public void setHeadPic(String headPic) {
+        this.headPic = headPic;
     }
 
     @ApiModelProperty(value = "发帖时间", required = true)

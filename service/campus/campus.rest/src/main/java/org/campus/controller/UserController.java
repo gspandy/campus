@@ -89,7 +89,8 @@ public class UserController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        Page<UserPhotosVO> page = findUserPhotos(pageable, responseVO.getUserId(), responseVO.getNickName());
+        Page<UserPhotosVO> page = findUserPhotos(pageable, responseVO.getUserId(), responseVO.getNickName(),
+                responseVO.getHeadPic());
         return page;
     }
 
@@ -102,7 +103,7 @@ public class UserController {
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
         User user = userService.findByUserId(userId);
-        Page<UserPhotosVO> page = findUserPhotos(pageable, userId, user.getNickname());
+        Page<UserPhotosVO> page = findUserPhotos(pageable, userId, user.getNickname(), user.getHeadpic());
         return page;
     }
 
@@ -301,10 +302,11 @@ public class UserController {
         userVO.setPostCount(userService.countPost(userId));
         userVO.setFansCount(userService.countFans(userId));
         userVO.setAttentionCount(userService.countAttention(userId));
+        userVO.setHeadPic(user.getHeadpic());
         return userVO;
     }
 
-    private Page<UserPhotosVO> findUserPhotos(Pageable pageable, String userId, String nickName) {
+    private Page<UserPhotosVO> findUserPhotos(Pageable pageable, String userId, String nickName, String headPic) {
         Page<FreshNews> photos = userService.findUserPhotos(userId, pageable);
         List<UserPhotosVO> photosVOs = new ArrayList<UserPhotosVO>();
         if (photos == null || photos.getContent().size() == 0) {
@@ -315,6 +317,7 @@ public class UserController {
             userPhotosVO = new UserPhotosVO();
             userPhotosVO.setPhotoId(freshNews.getUid());
             userPhotosVO.setNickName(nickName);
+            userPhotosVO.setHeadPic(headPic);
             userPhotosVO.setPubDate(freshNews.getCreatedate());
             userPhotosVO.setBrief(freshNews.getNewsbrief());
             userPhotosVO.setContent(freshNews.getNewscontent());

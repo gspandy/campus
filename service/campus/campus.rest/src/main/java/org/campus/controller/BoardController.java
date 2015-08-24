@@ -88,6 +88,7 @@ public class BoardController {
             vo.setPostsId(topic.getUid());
             vo.setUserId(topic.getCreateby());
             vo.setNickName(topic.getAddnickname());
+            vo.setHeadPic(user.getHeadPic());
             vo.setBrief(topic.getNewsbrief());
             vo.setContent(topic.getNewscontent());
             vo.setPublishDate(topic.getCreatedate());

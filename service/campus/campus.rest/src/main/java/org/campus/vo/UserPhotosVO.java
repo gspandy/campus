@@ -13,6 +13,8 @@ public class UserPhotosVO {
 
     private String nickName;
 
+    private String headPic;
+
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date pubDate;
 
@@ -50,6 +52,16 @@ public class UserPhotosVO {
     @ApiModelProperty(value = "昵称", required = true)
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    @ApiModelProperty(value = "头像", required = false)
+    public String getHeadPic() {
+        return headPic;
+    }
+
+    @ApiModelProperty(value = "头像", required = false)
+    public void setHeadPic(String headPic) {
+        this.headPic = headPic;
     }
 
     @ApiModelProperty(value = "发布时间", required = true)

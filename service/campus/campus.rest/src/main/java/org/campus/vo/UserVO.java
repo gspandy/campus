@@ -10,6 +10,8 @@ public class UserVO {
 
     private String nickName;
 
+    private String headPic;
+
     private String signature;
 
     private String qrcode;
@@ -40,6 +42,16 @@ public class UserVO {
     @ApiModelProperty(value = "昵称", required = true)
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    @ApiModelProperty(value = "头像", required = false)
+    public String getHeadPic() {
+        return headPic;
+    }
+
+    @ApiModelProperty(value = "头像", required = false)
+    public void setHeadPic(String headPic) {
+        this.headPic = headPic;
     }
 
     @ApiModelProperty(value = "个人介绍", required = false)
