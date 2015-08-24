@@ -1,6 +1,8 @@
 package org.campus.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -66,7 +68,7 @@ public class MessageController {
     @RequestMapping(value = "/send/{userId}", method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "发送成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
-    public void send(
+    public Map<String, String> send(
             @ApiParam(name = "userId", value = "接收方用户ID") @PathVariable String userId,
             @ApiParam(name = "messageAddVO", value = "消息发送体") @RequestBody MessageAddVO messageAddVO,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -87,6 +89,9 @@ public class MessageController {
 
         // 4.发送消息
         messageService.sendSessionMsg(conversationId, userId, vo.getUserId(), messageAddVO, sessionType);
+        Map<String, String> converstionMap = new HashMap<String, String>(1);
+        converstionMap.put("conversationId", conversationId);
+        return converstionMap;
     }
 
     private void checkParams(String sessionType, String isNewSession, String conversationId) {
