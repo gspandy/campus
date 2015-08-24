@@ -29,6 +29,16 @@ public class BoardVO {
 
     private boolean isSupported;
 
+    private int transNum;
+
+    private int commentNum;
+
+    private int supportNum;
+
+    private int notSupportNum;
+
+    private int complainNum;
+
     @ApiModelProperty(value = "发帖ID", required = true)
     public String getPostsId() {
         return postsId;
@@ -117,6 +127,56 @@ public class BoardVO {
     @ApiModelProperty(value = "是否被赞过", required = false)
     public void setSupported(boolean isSupported) {
         this.isSupported = isSupported;
+    }
+
+    @ApiModelProperty(value = "转发数", required = true)
+    public int getTransNum() {
+        return transNum;
+    }
+
+    @ApiModelProperty(value = "转发数", required = true)
+    public void setTransNum(int transNum) {
+        this.transNum = transNum;
+    }
+
+    @ApiModelProperty(value = "评论数", required = true)
+    public int getCommentNum() {
+        return commentNum;
+    }
+
+    @ApiModelProperty(value = "评论数", required = true)
+    public void setCommentNum(int commentNum) {
+        this.commentNum = commentNum;
+    }
+
+    @ApiModelProperty(value = "点赞数", required = true)
+    public int getSupportNum() {
+        return supportNum;
+    }
+
+    @ApiModelProperty(value = "点赞数", required = true)
+    public void setSupportNum(int supportNum) {
+        this.supportNum = supportNum;
+    }
+
+    @ApiModelProperty(value = "踩数", required = true)
+    public int getNotSupportNum() {
+        return notSupportNum;
+    }
+
+    @ApiModelProperty(value = "踩数", required = true)
+    public void setNotSupportNum(int notSupportNum) {
+        this.notSupportNum = notSupportNum;
+    }
+
+    @ApiModelProperty(value = "投诉数", required = true)
+    public int getComplainNum() {
+        return complainNum;
+    }
+
+    @ApiModelProperty(value = "投诉数", required = true)
+    public void setComplainNum(int complainNum) {
+        this.complainNum = complainNum;
     }
 
 }

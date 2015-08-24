@@ -1,6 +1,7 @@
 package org.campus.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.campus.model.User;
 import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.InteractType;
 import org.campus.service.NickNameService;
+import org.campus.service.TopicService;
 import org.campus.service.UserService;
 import org.campus.util.CollectionUtils;
 import org.campus.util.ToolUtil;
@@ -24,7 +26,6 @@ import org.campus.vo.CommentVO;
 import org.campus.vo.FriendVO;
 import org.campus.vo.LoginResponseVO;
 import org.campus.vo.MyCommentVO;
-import org.campus.vo.UserPhotosVO;
 import org.campus.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -55,6 +56,9 @@ public class UserController {
     @Autowired
     private NickNameService nickNameService;
 
+    @Autowired
+    TopicService topicSvc;
+
     @ApiOperation(value = "*登录用户信息查询:1.0", notes = "登录用户信息查询[API-Version=1.0]")
     @RequestMapping(value = "/info", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
@@ -84,12 +88,12 @@ public class UserController {
     @RequestMapping(value = "/photos", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
-    public Page<UserPhotosVO> getUserPhotos(
+    public Page<BoardVO> getUserPhotos(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        Page<UserPhotosVO> page = findUserPhotos(pageable, responseVO.getUserId(), responseVO.getNickName(),
+        Page<BoardVO> page = findUserPhotos(pageable, responseVO.getUserId(), responseVO.getNickName(),
                 responseVO.getHeadPic());
         return page;
     }
@@ -98,12 +102,12 @@ public class UserController {
     @RequestMapping(value = "/{userId}/photos", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
-    public Page<UserPhotosVO> getUserPhotos(
+    public Page<BoardVO> getUserPhotos(
             @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
         User user = userService.findByUserId(userId);
-        Page<UserPhotosVO> page = findUserPhotos(pageable, userId, user.getNickname(), user.getHeadpic());
+        Page<BoardVO> page = findUserPhotos(pageable, userId, user.getNickname(), user.getHeadpic());
         return page;
     }
 
@@ -306,21 +310,25 @@ public class UserController {
         return userVO;
     }
 
-    private Page<UserPhotosVO> findUserPhotos(Pageable pageable, String userId, String nickName, String headPic) {
+    private Page<BoardVO> findUserPhotos(Pageable pageable, String userId, String nickName, String headPic) {
         Page<FreshNews> photos = userService.findUserPhotos(userId, pageable);
-        List<UserPhotosVO> photosVOs = new ArrayList<UserPhotosVO>();
+        List<BoardVO> photosVOs = new ArrayList<BoardVO>();
         if (photos == null || photos.getContent().size() == 0) {
-            return new PageImpl<UserPhotosVO>(photosVOs, pageable, photosVOs.size());
+            return new PageImpl<BoardVO>(photosVOs, pageable, photosVOs.size());
         }
-        UserPhotosVO userPhotosVO = null;
+        BoardVO userPhotosVO = null;
         for (FreshNews freshNews : photos.getContent()) {
-            userPhotosVO = new UserPhotosVO();
-            userPhotosVO.setPhotoId(freshNews.getUid());
-            userPhotosVO.setNickName(nickName);
+            userPhotosVO = new BoardVO();
+            userPhotosVO.setPostsId(freshNews.getUid());
+            userPhotosVO.setUserId(freshNews.getCreateby());
+            userPhotosVO.setNickName(freshNews.getAddnickname());
             userPhotosVO.setHeadPic(headPic);
-            userPhotosVO.setPubDate(freshNews.getCreatedate());
             userPhotosVO.setBrief(freshNews.getNewsbrief());
             userPhotosVO.setContent(freshNews.getNewscontent());
+            userPhotosVO.setPublishDate(freshNews.getCreatedate());
+            String[] picUrls = freshNews.getPictures().split(",");
+            userPhotosVO.setPicUrls(Arrays.asList(picUrls));
+            userPhotosVO.setSupported(topicSvc.isSupported(freshNews.getUid(), userId));
             userPhotosVO.setTransNum(freshNews.getTransnum());
             userPhotosVO.setCommentNum(freshNews.getCommentnum());
             userPhotosVO.setSupportNum(freshNews.getSupportnum());
@@ -328,18 +336,9 @@ public class UserController {
             userPhotosVO.setComplainNum(freshNews.getComplainnum());
             photosVOs.add(userPhotosVO);
         }
-        Page<UserPhotosVO> page = new PageImpl<UserPhotosVO>(photosVOs, pageable, photosVOs.size());
+        Page<BoardVO> page = new PageImpl<BoardVO>(photosVOs, pageable, photosVOs.size());
         return page;
     }
-
-    // private String getNickName(DisplayModel model, LoginResponseVO responseVO) {
-    // String userName = responseVO.getNickName();
-    // if (DisplayModel.MOON.equals(model)) {
-    // NickName nickName = nickNameService.findRandomNickName();
-    // userName = nickName.getNickname();
-    // }
-    // return userName;
-    // }
 
     private List<FriendVO> getFriendsVOs(List<User> users) {
         List<FriendVO> friendVOs = new ArrayList<FriendVO>();

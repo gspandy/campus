@@ -18,6 +18,7 @@ import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.TopicType;
 import org.campus.service.NickNameService;
 import org.campus.service.TopicService;
+import org.campus.service.UserService;
 import org.campus.util.ToolUtil;
 import org.campus.vo.BoardDetailVO;
 import org.campus.vo.BoardFavoriteVO;
@@ -53,6 +54,9 @@ public class BoardController {
 
     @Autowired
     NickNameService nickNameSvc;
+
+    @Autowired
+    UserService userService;
 
     @ApiOperation(value = "*帖子列表查询:1.0", notes = "*帖子列表查询[API-Version=1.0]")
     @RequestMapping(value = "/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
@@ -95,6 +99,11 @@ public class BoardController {
             String[] picUrls = topic.getPictures().split(",");
             vo.setPicUrls(Arrays.asList(picUrls));
             vo.setSupported(topicSvc.isSupported(topic.getUid(), user.getUserId()));
+            vo.setTransNum(topic.getTransnum());
+            vo.setCommentNum(topic.getCommentnum());
+            vo.setSupportNum(topic.getSupportnum());
+            vo.setNotSupportNum(topic.getNotsupportnum());
+            vo.setComplainNum(topic.getComplainnum());
             boardVOs.add(vo);
         }
 
