@@ -25,6 +25,7 @@ import org.campus.vo.BoardFavoriteVO;
 import org.campus.vo.BoardPublishVO;
 import org.campus.vo.BoardVO;
 import org.campus.vo.LoginResponseVO;
+import org.campus.vo.TransferVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -277,4 +278,17 @@ public class BoardController {
         }
         session.setAttribute(Constant.CAMPUS_DISPLAYMODEL, model);
     }
+
+    @ApiOperation(value = "*转发评论:1.0", notes = "转发评论[API-Version=1.0]")
+    @RequestMapping(value = "/transfer/{postsId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "发布成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void transfer(
+            @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
+            @ApiParam(name = "transferVO", value = "转发内容") @RequestBody TransferVO transferVO,
+            @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
+            HttpSession session) {
+        return;
+    }
+
 }
