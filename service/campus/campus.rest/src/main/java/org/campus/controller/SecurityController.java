@@ -103,6 +103,7 @@ public class SecurityController {
         responseVO.setHeadPic(user.getHeadpic());
         // responseVO.setInSchoolYear(user.getInschoolyear());
         responseVO.setNickName(user.getNickname());
+        responseVO.setIntegral(user.getIntegral());
         // responseVO.setProfessionId(user.getProfessionuid());
         // responseVO.setProfessionName(user.getProfessionname());
         // responseVO.setSchoolId(user.getSchooluid());

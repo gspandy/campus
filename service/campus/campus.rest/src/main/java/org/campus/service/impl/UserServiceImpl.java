@@ -141,6 +141,9 @@ public class UserServiceImpl implements UserService {
         comment.setIpaddress(ipaddress);
         commentMapper.insert(comment);
 
+        freshNews.setCommentnum(freshNews.getCommentnum() == null ? 1 : freshNews.getCommentnum() + 1);
+        freshNewsMapper.updateByPrimaryKey(freshNews);
+
         if (commentAddVO.isTrans()) {
             freshNews.setUid(ToolUtil.getUUid());
             freshNews.setAdduseruid(userId);
@@ -242,7 +245,7 @@ public class UserServiceImpl implements UserService {
         notSupport.setSourceuid(sourceId);
         notSupport.setUseruid(userId);
         notSupport.setUsernickname(userName);
-        notSupport.setTypecode(TypeCode.PHOTOS);
+        notSupport.setTypecode(TypeCode.FRESH_NEWS);
         notSupport.setIsactive(ActiveType.ACTIVE);
         notSupport.setCreateby(Constant.CREATE_BY);
         notSupport.setCreatedate(new Date());
@@ -257,7 +260,7 @@ public class UserServiceImpl implements UserService {
         support.setSourceuid(sourceId);
         support.setSupportuseruid(userId);
         support.setUsernickname(userName);
-        support.setTypecode(TypeCode.PHOTOS);
+        support.setTypecode(TypeCode.FRESH_NEWS);
         support.setIsactive(ActiveType.ACTIVE);
         support.setCreateby(Constant.CREATE_BY);
         support.setCreatedate(new Date());

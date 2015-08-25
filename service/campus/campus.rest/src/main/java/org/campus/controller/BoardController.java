@@ -230,6 +230,7 @@ public class BoardController {
         posts.setCreateby(vo.getUserId());
         posts.setCreatedate(Calendar.getInstance().getTime());
         posts.setIsactive(1);
+        posts.setIsshield(1);
         posts.setIsanonymous(model == DisplayModel.MOON ? AnonymousType.ANONYMOUS : AnonymousType.NOT_ANONYMOUS);
         posts.setIshot("0");
         posts.setIsshield(FreshNews.VIEW_REGISTER);// 新帖必须屏蔽
