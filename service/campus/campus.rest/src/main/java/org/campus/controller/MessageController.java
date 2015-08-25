@@ -120,6 +120,22 @@ public class MessageController {
         Page<ConversationDetailVO> page = new PageImpl<ConversationDetailVO>(detailList, pageable, detailList.size());
         return page;
     }
+    
+    @ApiOperation(value = "*获取会话id:1.0", notes = "根据会话对象获取会话id[API-Version=1.0]")
+    @RequestMapping(value = "/getConId/{objUserId}", method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "读取成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+//    @NeedRoles
+    public Map<String, String> getConversationId(@ApiParam(name = "objUserId", value = "会话对象用户ID") @PathVariable String objUserId,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session){
+        // 1.校验用户session信息
+        LoginResponseVO vo = checkLogin(session);
+        String conversationId = messageService.getConversationId(vo.getUserId(), objUserId);
+        
+        Map<String, String> resultMap = new HashMap<String, String>(1);
+        resultMap.put("conversationId", conversationId);
+        return resultMap;
+    }
 
     private LoginResponseVO checkLogin(HttpSession session) {
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);

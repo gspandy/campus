@@ -1,5 +1,6 @@
 package org.campus.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.campus.service.MessageService;
 import org.campus.util.ToolUtil;
 import org.campus.vo.ConversationDetailVO;
 import org.campus.vo.MessageAddVO;
+import org.campus.vo.MessageListVO;
 import org.campus.vo.MessageRequestVo;
 import org.campus.vo.MessageVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,33 +60,61 @@ public class MessageService {
                 IsReadType.getIsReadTypeByCode(params.getIsRead()));
 
         for (ReceiveMessage receiveMessage : recieveMessageList) {
-            MessageVO messageVO = new MessageVO();
-            messageVO.setIsRead(String.valueOf(receiveMessage.getIsread()));
-            messageVO.setReadDate(receiveMessage.getReadtime());
-            messageVO.setSendDate(receiveMessage.getSendtime());
+            MessageListVO messageListVO = new MessageListVO();
+            messageListVO.setIsRead(String.valueOf(receiveMessage.getIsread()));
+            messageListVO.setReadDate(receiveMessage.getReadtime());
+            messageListVO.setSendDate(receiveMessage.getSendtime());
 
             SendMessage sendMessage = sendMessageMapper.selectByPrimaryKey(receiveMessage.getSendmessageuid());
-            messageVO.setMessage(sendMessage.getMsgcontent());
-            messageVO.setMessageId(sendMessage.getUid());
-            messageVO.setPicUrl(sendMessage.getPicturepath());
-            messageVO.setSendUserId(sendMessage.getSenduseruid());
+            messageListVO.setMessage(sendMessage.getMsgcontent());
+            messageListVO.setMessageId(sendMessage.getUid());
+            messageListVO.setPicUrl(sendMessage.getPicturepath());
+            messageListVO.setSendUserId(sendMessage.getSenduseruid());
             String nickName = userMapper.selectNickNameByPrimaryKey(sendMessage.getSenduseruid());
-            messageVO.setSendNickName(nickName);
+            messageListVO.setSendNickName(nickName);
             String objUseruid = receiveMessage.getReceiveuseruid();
 
             // 判断是否为群组消息
             if (StringUtils.isNotEmpty(sendMessage.getGroupuid())) {
                 objUseruid = sendMessage.getGroupuid();
                 String groupName = messageGroupMapper.selectNameByPrimaryKey(objUseruid);
-                messageVO.setGroupName(groupName);
+                messageListVO.setGroupName(groupName);
             }
             String conversationId = sessionMapper.selectBySessionUserId(sendMessage.getSenduseruid(), objUseruid);
-            messageVO.setConversationId(conversationId);
-
-            resultList.add(messageVO);
+            processMessage(resultList, conversationId, messageListVO);
             updateReadState(receiveMessage.getUid());
         }
         return resultList;
+    }
+    
+    private void processMessage(List<MessageVO> resultList, String conversationId,MessageListVO messageListVO){
+       boolean flag = true;
+        for (MessageVO messageVO : resultList) {
+            if(messageVO.getConversationId().equals(conversationId)){
+                flag = false;
+                resultList.remove(messageVO);
+                messageVO.getMessageList().add(messageListVO);
+                resultList.add(messageVO);
+                break;
+            }
+        }
+        
+        if(flag){
+            MessageVO messageVO = new MessageVO();
+            messageVO.setConversationId(conversationId);
+            List<MessageListVO> messageList = new ArrayList<MessageListVO>();
+            messageList.add(messageListVO);
+            messageVO.setMessageList(messageList);
+            resultList.add(messageVO);
+        }
+    }
+    
+    public String getConversationId(String userId,String objUserId){
+        String conversationId = sessionMapper.selectBySessionUserId(userId, objUserId);
+        if(StringUtils.isEmpty(conversationId)){
+            return "";
+        }
+        return conversationId;
     }
 
     // 更新已读状态
@@ -110,6 +140,10 @@ public class MessageService {
      * 
      */
     public String createSession(String sendUserId, String recieveUserId, String typeCode, String msg) {
+        String conversationId = sessionMapper.selectBySessionUserId(sendUserId, recieveUserId);
+        if(StringUtils.isNotEmpty(conversationId)){
+            return conversationId;
+        }
         Session record = new Session();
         record.setUid(ToolUtil.getUUid());
         record.setUseruid(sendUserId);
@@ -161,7 +195,11 @@ public class MessageService {
         List<ConversationDetailVO> resultList = new LinkedList<>();
         if (SessionType.SINGLE_CHANNEL.getCode().equals(String.valueOf(session.getTypecode()))) {
             // 单聊
-            setSingleMessages(resultList, session.getObjuseruid(), holdUserId);
+            String objUserId = session.getObjuseruid();
+            if(objUserId.equals(holdUserId)){
+                objUserId = session.getUseruid();
+            }
+            setSingleMessages(resultList, objUserId, holdUserId);
         } else {
             // 群聊
             setGroupMessages(resultList, session.getObjuseruid(), holdUserId);

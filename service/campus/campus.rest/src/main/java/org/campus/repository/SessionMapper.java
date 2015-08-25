@@ -39,4 +39,6 @@ public interface SessionMapper {
     int updateByPrimaryKeySelective(Session record);
     
     String selectBySessionUserId(@Param("useruid")String useruid,@Param("objUseruid")String objUseruid);
+    
+    String selectBySessionUserIdOr(@Param("useruid")String useruid,@Param("objUseruid")String objUseruid);
 }

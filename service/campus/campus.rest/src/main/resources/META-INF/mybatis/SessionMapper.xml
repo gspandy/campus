@@ -107,4 +107,14 @@
 		where UserUID = #{useruid} and 
               ObjUserUID = #{objUseruid}
 	</select>
+	
+	<select id="selectBySessionUserIdOr" resultType="java.lang.String"
+		parameterType="java.lang.String">
+		select
+		UID
+		from ts_app_session
+		where (UserUID = #{useruid} and 
+              ObjUserUID = #{objUseruid}) or (UserUID = #{objUseruid} and 
+              ObjUserUID = #{useruid})
+	</select>
 </mapper>
