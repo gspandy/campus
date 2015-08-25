@@ -116,6 +116,44 @@ public class BoardController {
         return page;
     }
 
+    @ApiOperation(value = "*帖子搜索:1.0", notes = "*帖子搜索[API-Version=1.0]")
+    @RequestMapping(value = "/posts/search", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Page<BoardVO> search(
+            @ApiParam(name = "keyword", value = "关键字") @RequestParam(value = "keyword", required = true) String keyword,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            HttpSession session) {
+        Page<FreshNews> freshNews = topicSvc.search(keyword, pageable);
+        LoginResponseVO user = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        List<FreshNews> listTopic = freshNews.getContent();
+        List<BoardVO> boardVOs = new ArrayList<BoardVO>();
+        User postUser = null;
+        for (FreshNews topic : listTopic) {
+            BoardVO vo = new BoardVO();
+            vo.setPostsId(topic.getUid());
+            vo.setUserId(topic.getCreateby());
+            vo.setNickName(topic.getAddnickname());
+            postUser = userService.findByUserId(topic.getCreateby());
+            vo.setHeadPic(postUser.getHeadpic());
+            vo.setBrief(topic.getNewsbrief());
+            vo.setContent(topic.getNewscontent());
+            vo.setPublishDate(topic.getCreatedate());
+            String[] picUrls = topic.getPictures().split(",");
+            vo.setPicUrls(Arrays.asList(picUrls));
+            vo.setSupported(topicSvc.isSupported(topic.getUid(), user.getUserId()));
+            vo.setTransNum(topic.getTransnum());
+            vo.setCommentNum(topic.getCommentnum());
+            vo.setSupportNum(topic.getSupportnum());
+            vo.setNotSupportNum(topic.getNotsupportnum());
+            vo.setComplainNum(topic.getComplainnum());
+            boardVOs.add(vo);
+        }
+
+        Page<BoardVO> page = new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
+        return page;
+    }
+
     @ApiOperation(value = "*帖子详情查询:1.0", notes = "帖子详情查询[API-Version=1.0]")
     @RequestMapping(value = "/posts/detail", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })

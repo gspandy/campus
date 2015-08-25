@@ -92,4 +92,6 @@ public interface FreshNewsMapper {
      */
     Page<FreshNews> getAuditPosts(@Param("userId") String userId, @Param("isShield") int isShield, Pageable pageable);
 
+    Page<FreshNews> search(@Param("keyword") String keyword, Pageable pageable);
+
 }

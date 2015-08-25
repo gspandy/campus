@@ -204,4 +204,8 @@ public class TopicService {
         record.setAudittime(new Date());
         freshNewsAuditMapper.insert(record);
     }
+
+    public Page<FreshNews> search(String keyword, Pageable pageable) {
+        return freshMapper.search(keyword, pageable);
+    }
 }

@@ -391,4 +391,14 @@
 		UserId=#{userId,jdbcType=VARCHAR})
 		order by CreateDate desc
 	</select>
+	<select id="search" resultMap="BaseResultMap">
+		SELECT * from ts_app_freshnews WHERE
+		<if test="keyword != null and keyword != ''">
+			AND NewsBrief like
+			CONCAT('%','${keyword}','%' )
+			OR NewsContent like
+			CONCAT('%','${keyword}','%' )
+		</if>
+		ORDER BY CreateDate desc
+	</select>
 </mapper>

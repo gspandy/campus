@@ -578,11 +578,11 @@
 		where ApiId = #{apiId}
 	</select>
 	<select id="findByNickName" resultMap="BaseResultMap">
-		SELECT u.* from ts_app_user WHERE
+		SELECT * from ts_app_user WHERE
 		<if test="nickName != null and nickName != ''">
-			AND u.NickName like
+			AND NickName like
 			CONCAT('%','${nickName}','%' )
 		</if>
-		ORDER BY u.NickFirstLetter
+		ORDER BY NickFirstLetter
 	</select>
 </mapper>
