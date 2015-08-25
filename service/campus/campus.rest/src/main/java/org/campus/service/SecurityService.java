@@ -1,6 +1,7 @@
 package org.campus.service;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import org.campus.api.TencentApi;
 import org.campus.api.WeiboApi;
@@ -11,9 +12,11 @@ import org.campus.api.domain.WeiboUserInfo;
 import org.campus.cache.RedisCache;
 import org.campus.config.SystemConfig;
 import org.campus.core.exception.CampusException;
+import org.campus.model.Install;
 import org.campus.model.SysUser;
 import org.campus.model.User;
 import org.campus.model.enums.ApiType;
+import org.campus.repository.InstallMapper;
 import org.campus.repository.SysUserMapper;
 import org.campus.repository.UserMapper;
 import org.campus.util.MD5Util;
@@ -48,6 +51,9 @@ public class SecurityService {
 
     @Autowired
     private RedisCache redisCache;
+
+    @Autowired
+    private InstallMapper installMapper;
 
     /**
      * 用户注册
@@ -196,6 +202,14 @@ public class SecurityService {
             }
         }
         return flag;
+    }
+
+    public void andriodInstall(String source) {
+        Install record = new Install();
+        record.setUid(ToolUtil.getUUid());
+        record.setSource(source);
+        record.setCreatedate(new Date());
+        installMapper.insert(record);
     }
 
     private User apiRegist(String apiId, String nickName, String headImgUrl) {

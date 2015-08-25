@@ -433,4 +433,14 @@ public class SecurityController {
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         userService.uploadHeadPic(headPic, vo.getUserId());
     }
+
+    @ApiOperation(value = "*安卓用户安装记录:1.0", notes = "安卓用户安装记录，第一次启动时调用[API-Version=1.0]")
+    @RequestMapping(value = "/andriod/install", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "记录成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void andriodInstall(
+            @ApiParam(name = "source", value = "下载来源") @RequestParam(value = "source", required = true) String source,
+            HttpSession session) {
+        securitySvc.andriodInstall(source);
+    }
+
 }
