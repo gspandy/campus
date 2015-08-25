@@ -42,23 +42,24 @@
 		<result column="LoginCount" property="logincount" jdbcType="INTEGER" />
 		<result column="ApiType" property="apiType" jdbcType="VARCHAR" />
 		<result column="ApiId" property="apiId" jdbcType="VARCHAR" />
-		<result column="NickFirstLetter" property="nickFirstLetter" jdbcType="VARCHAR" />
+		<result column="NickFirstLetter" property="nickFirstLetter"
+			jdbcType="VARCHAR" />
 		<result column="AuditFlag" property="auditFlag" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
-	UserUID, StudentID, RealName, NamePinYin, NameFirstLetter,
-	NickName, SexType,
-	Email,
-	IDCard, HeadPic, BackGroundImg, SchoolUID,
-	SchoolName, CollegeUID,
-	CollegeName, ProfessionUID,
-	ProfessionName,
-	InSchoolYear, CityCode, CityName, ProvinceCode, ProvinceName,
-	IsValidated,
-	IsLocked, IsOpen, IsGraduate, CreateBy, CreateDate,
-	LastUpdateBy,
-	LastUpdateDate,
-	IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter,AuditFlag
+		UserUID, StudentID, RealName, NamePinYin, NameFirstLetter,
+		NickName, SexType,
+		Email,
+		IDCard, HeadPic, BackGroundImg, SchoolUID,
+		SchoolName, CollegeUID,
+		CollegeName, ProfessionUID,
+		ProfessionName,
+		InSchoolYear, CityCode, CityName, ProvinceCode, ProvinceName,
+		IsValidated,
+		IsLocked, IsOpen, IsGraduate, CreateBy, CreateDate,
+		LastUpdateBy,
+		LastUpdateDate,
+		IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter,AuditFlag
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -125,7 +126,8 @@
 		#{lastupdateby,jdbcType=VARCHAR},
 		#{lastupdatedate,jdbcType=TIMESTAMP},
 		#{isactive,jdbcType=INTEGER},#{integral,jdbcType=INTEGER},#{logincount,jdbcType=INTEGER},
-		#{apiType,jdbcType=VARCHAR}, #{apiId,jdbcType=VARCHAR},#{nickFirstLetter,jdbcType=VARCHAR},
+		#{apiType,jdbcType=VARCHAR},
+		#{apiId,jdbcType=VARCHAR},#{nickFirstLetter,jdbcType=VARCHAR},
 		#{auditFlag,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.User">
@@ -240,8 +242,8 @@
 				NickFirstLetter,
 			</if>
 			<if test="auditFlag != null">
-                AuditFlag,
-            </if>
+				AuditFlag,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="useruid != null">
@@ -350,11 +352,11 @@
 				#{apiId,jdbcType=VARCHAR},
 			</if>
 			<if test="nickFirstLetter != null">
-			    #{nickFirstLetter,jdbcType=VARCHAR}
+				#{nickFirstLetter,jdbcType=VARCHAR}
 			</if>
 			<if test="auditFlag != null">
-                #{auditFlag,jdbcType=VARCHAR}
-            </if>
+				#{auditFlag,jdbcType=VARCHAR}
+			</if>
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="org.campus.model.User">
@@ -463,11 +465,11 @@
 				ApiId = #{apiId,jdbcType=VARCHAR},
 			</if>
 			<if test="nickFirstLetter != null">
-			    NickFirstLetter = #{nickFirstLetter,jdbcType=VARCHAR},
+				NickFirstLetter = #{nickFirstLetter,jdbcType=VARCHAR},
 			</if>
 			<if test="auditFlag != null">
-                AuditFlag = #{auditFlag,jdbcType=VARCHAR},
-            </if>
+				AuditFlag = #{auditFlag,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where UserUID = #{useruid,jdbcType=VARCHAR}
 	</update>
@@ -534,8 +536,8 @@
 		#{apiId,jdbcType=VARCHAR},
 		NickFirstLetter =
 		#{nickFirstLetter,jdbcType=VARCHAR},
-        AuditFlag =
-        #{auditFlag,jdbcType=VARCHAR}
+		AuditFlag =
+		#{auditFlag,jdbcType=VARCHAR}
 		where
 		UserUID =
 		#{useruid,jdbcType=VARCHAR}
@@ -574,5 +576,13 @@
 		*
 		from ts_app_user
 		where ApiId = #{apiId}
+	</select>
+	<select id="findByNickName" resultMap="BaseResultMap">
+		SELECT u.* from ts_app_user WHERE
+		<if test="nickName != null and nickName != ''">
+			AND u.NickName like
+			CONCAT('%','${nickName}','%' )
+		</if>
+		ORDER BY u.NickFirstLetter
 	</select>
 </mapper>

@@ -330,6 +330,20 @@ public class UserController {
         return new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
     }
 
+    @ApiOperation(value = "*用户搜索:1.0", notes = "用户搜索[API-Version=1.0]")
+    @RequestMapping(value = "/user/search", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Page<UserVO> searchUser(
+            @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        Page<UserVO> user = findUserInfoByNickName(responseVO.getUserId(), nickName, pageable);
+        return user;
+    }
+
     private UserVO findUserInfo(String userId) {
         User user = userService.findByUserId(userId);
         UserVO userVO = new UserVO();
@@ -340,6 +354,28 @@ public class UserController {
         userVO.setAttentionCount(userService.countAttention(userId));
         userVO.setHeadPic(user.getHeadpic());
         return userVO;
+    }
+
+    private Page<UserVO> findUserInfoByNickName(String userId, String nickName, Pageable pageable) {
+        Page<User> users = userService.findByNickName(nickName);
+        List<UserVO> userVOs = new ArrayList<UserVO>();
+        if (users == null || CollectionUtils.isEmpty(users.getContent())) {
+            return new PageImpl<UserVO>(userVOs, pageable, userVOs.size());
+        }
+        UserVO userVO = null;
+        for (User user : users.getContent()) {
+            userVO = new UserVO();
+            userVO.setUserId(user.getUseruid());
+            userVO.setNickName(user.getNickname());
+            userVO.setPostCount(userService.countPost(user.getUseruid()));
+            userVO.setFansCount(userService.countFans(user.getUseruid()));
+            userVO.setAttentionCount(userService.countAttention(user.getUseruid()));
+            userVO.setHeadPic(user.getHeadpic());
+            userVO.setAttention(userService.isAttention(userId, user.getUseruid()));
+            userVOs.add(userVO);
+        }
+
+        return new PageImpl<UserVO>(userVOs, pageable, userVOs.size());
     }
 
     private Page<BoardVO> findUserPhotos(Pageable pageable, String userId, String nickName, String headPic) {

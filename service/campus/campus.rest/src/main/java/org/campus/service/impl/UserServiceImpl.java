@@ -276,4 +276,9 @@ public class UserServiceImpl implements UserService {
         supportMapper.insert(support);
     }
 
+    @Override
+    public Page<User> findByNickName(String nickName) {
+        return userMapper.findByNickName(nickName);
+    }
+
 }

@@ -258,4 +258,6 @@ public interface UserService {
      */
     void beginAudit(String userId);
 
+    Page<User> findByNickName(String nickName);
+
 }
