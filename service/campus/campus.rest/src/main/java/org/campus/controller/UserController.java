@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.campus.annotation.NeedRoles;
 import org.campus.constant.Constant;
+import org.campus.core.exception.CampusException;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
 import org.campus.model.User;
@@ -79,6 +80,9 @@ public class UserController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         UserVO user = findUserInfo(userId);
+        if (user == null) {
+            throw new CampusException(1000003, "用户不存在");
+        }
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         user.setAttention(userService.isAttention(responseVO.getUserId(), userId));
         return user;
@@ -107,6 +111,9 @@ public class UserController {
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
         User user = userService.findByUserId(userId);
+        if (user == null) {
+            throw new CampusException(1000003, "用户不存在");
+        }
         Page<BoardVO> page = findUserPhotos(pageable, userId, user.getNickname(), user.getHeadpic());
         return page;
     }
