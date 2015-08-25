@@ -248,4 +248,14 @@ public interface UserService {
      */
     void uploadHeadPic(String headPic, String userId);
 
+    /**
+     * 
+     * 功能描述: <br>
+     * 开始审帖增加标识
+     *
+     * @param userId
+     *
+     */
+    void beginAudit(String userId);
+
 }

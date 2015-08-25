@@ -32,6 +32,8 @@ public class LoginResponseVO {
 
     private long integral;
 
+    private String auditFlag;
+
     @ApiModelProperty(value = "调用业务接口所需唯一标识", required = true)
     public String getSignId() {
         return signId;
@@ -160,6 +162,16 @@ public class LoginResponseVO {
     @ApiModelProperty(value = "积分")
     public void setIntegral(long integral) {
         this.integral = integral;
+    }
+
+    @ApiModelProperty(value = "是否审过帖标识,0:未审过 1:已审过")
+    public String getAuditFlag() {
+        return auditFlag;
+    }
+
+    @ApiModelProperty(value = "是否审过帖标识,0:未审过 1:已审过")
+    public void setAuditFlag(String auditFlag) {
+        this.auditFlag = auditFlag;
     }
 
 }

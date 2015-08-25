@@ -291,4 +291,27 @@ public class BoardController {
         return;
     }
 
+    @ApiOperation(value = "*开始审帖:1.0", notes = "开始审帖[API-Version=1.0]")
+    @RequestMapping(value = "/audit", headers = { "API-Version=1.0" }, method = RequestMethod.PUT)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "审核成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void beginAudit(
+            @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
+            HttpSession session) {
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        userService.beginAudit(vo.getUserId());
+    }
+
+    @ApiOperation(value = "*审核:1.0", notes = "审核[API-Version=1.0]")
+    @RequestMapping(value = "/audit/{postsId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "审核成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void audit(
+            @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
+            @ApiParam(name = "transferVO", value = "转发内容") @RequestBody TransferVO transferVO,
+            @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
+            HttpSession session) {
+        return;
+    }
+
 }

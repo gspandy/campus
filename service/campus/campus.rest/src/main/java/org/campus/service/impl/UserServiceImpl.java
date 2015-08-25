@@ -239,6 +239,13 @@ public class UserServiceImpl implements UserService {
         userMapper.updateByPrimaryKeySelective(record);
     }
 
+    @Override
+    public void beginAudit(String userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        user.setAuditFlag("1");
+        userMapper.updateByPrimaryKeySelective(user);
+    }
+
     private void notSupport(String sourceId, String userId, String userName) {
         NotSupport notSupport = new NotSupport();
         notSupport.setUid(ToolUtil.getUUid());
