@@ -237,4 +237,15 @@ public interface UserService {
      */
     Page<FreshNews> findMySupportPosts(String userId, Pageable pageable);
 
+    /**
+     * 
+     * 功能描述: <br>
+     * 添加用户头像
+     *
+     * @param headPic
+     * @param userId
+     *
+     */
+    void uploadHeadPic(String headPic, String userId);
+
 }

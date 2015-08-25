@@ -14,6 +14,7 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 public class FirstLetterUtil {
 
     private final static Logger logger = LoggerFactory.getLogger(FirstLetterUtil.class);
+
     /**
      * 得到 全拼
      * 
@@ -54,20 +55,18 @@ public class FirstLetterUtil {
      * @return
      */
     public static String getPinYinHeadChar(String str) {
-        if(StringUtils.isEmpty(str)){
+        if (StringUtils.isEmpty(str)) {
             return "";
         }
         String convert = "";
-        for (int j = 0; j < str.length(); j++) {
-            char word = str.charAt(j);
-            String[] pinyinArray = PinyinHelper.toHanyuPinyinStringArray(word);
-            if (pinyinArray != null) {
-                convert += pinyinArray[0].charAt(0);
-            } else {
-                convert += word;
-            }     
+        char word = str.charAt(0);
+        String[] pinyinArray = PinyinHelper.toHanyuPinyinStringArray(word);
+        if (pinyinArray != null) {
+            convert += pinyinArray[0].charAt(0);
+        } else {
+            convert += word;
         }
-        convert=convert.toUpperCase();
+        convert = convert.toUpperCase();
         return convert;
     }
 

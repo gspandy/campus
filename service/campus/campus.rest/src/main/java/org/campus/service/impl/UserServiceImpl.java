@@ -228,6 +228,14 @@ public class UserServiceImpl implements UserService {
         return freshNewsMapper.findMySupportPosts(userId, pageable);
     }
 
+    @Override
+    public void uploadHeadPic(String headPic, String userId) {
+        User record = new User();
+        record.setUseruid(userId);
+        record.setHeadpic(headPic);
+        userMapper.updateByPrimaryKeySelective(record);
+    }
+
     private void notSupport(String sourceId, String userId, String userName) {
         NotSupport notSupport = new NotSupport();
         notSupport.setUid(ToolUtil.getUUid());

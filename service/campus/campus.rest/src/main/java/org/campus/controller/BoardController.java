@@ -164,11 +164,11 @@ public class BoardController {
     @RequestMapping(value = "/collect/{postsId}/cancel", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "取消收藏成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
-    public void cancelCollect(@ApiParam(name = "favoriteId", value = "收藏列表编号") @PathVariable String favoriteId,
+    public void cancelCollect(@ApiParam(name = "postsId", value = "收藏列表编号") @PathVariable String postsId,
             HttpSession session) {
         if (session.getAttribute(Constant.CAMPUS_SECURITY_SESSION) == null)
             throw new CampusException(100204, "请登录.");
-        topicSvc.deleteFavorite(favoriteId);
+        topicSvc.deleteFavorite(postsId);
     }
 
     @ApiOperation(value = "*收藏列表查询:1.0", notes = "收藏列表查询[API-Version=1.0]")
