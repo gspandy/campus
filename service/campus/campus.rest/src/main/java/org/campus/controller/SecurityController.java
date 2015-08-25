@@ -22,6 +22,7 @@ import org.campus.service.IntegralService;
 import org.campus.service.NickNameService;
 import org.campus.service.SecurityService;
 import org.campus.service.SendMessage;
+import org.campus.service.UserService;
 import org.campus.util.FirstLetterUtil;
 import org.campus.util.MD5Util;
 import org.campus.util.ToolUtil;
@@ -63,6 +64,9 @@ public class SecurityController {
 
     @Autowired
     private NickNameService nickNameService;
+
+    @Autowired
+    private UserService userService;
 
     @ApiOperation(value = "*登录:1.0", notes = "登录[API-Version=1.0]")
     @RequestMapping(value = "/login", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
@@ -417,4 +421,14 @@ public class SecurityController {
         return securitySvc.isNeedVerifyCode(loginName);
     }
 
+    @ApiOperation(value = "*头像上传:1.0", notes = "头像上传[API-Version=1.0]")
+    @RequestMapping(value = "/upload/headPic", headers = { "API-Version=1.0" }, method = RequestMethod.PUT)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "登出成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void uploadHeadPic(
+            @ApiParam(name = "headPic", value = "上传头像图片返回的picFullUrl") @RequestParam(value = "headPic", required = true) String headPic,
+            HttpSession session) {
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        userService.uploadHeadPic(headPic, vo.getUserId());
+    }
 }
