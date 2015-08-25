@@ -39,6 +39,8 @@ public class BoardVO {
 
     private int complainNum;
 
+    private String sourceUserId;
+    
     @ApiModelProperty(value = "发帖ID", required = true)
     public String getPostsId() {
         return postsId;
@@ -177,6 +179,16 @@ public class BoardVO {
     @ApiModelProperty(value = "投诉数", required = true)
     public void setComplainNum(int complainNum) {
         this.complainNum = complainNum;
+    }
+
+    @ApiModelProperty(value = "原发帖人", required = true)
+    public String getSourceUserId() {
+        return sourceUserId;
+    }
+
+    @ApiModelProperty(value = "原发帖人", required = true)
+    public void setSourceUserId(String sourceUserId) {
+        this.sourceUserId = sourceUserId;
     }
 
 }

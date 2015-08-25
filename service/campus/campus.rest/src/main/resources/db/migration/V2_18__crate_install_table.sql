@@ -6,3 +6,14 @@ create table ts_app_install
 );
 
 alter table ts_app_install comment '安卓用户装机记录';
+
+create table ts_app_transfer
+(
+   UID                  varchar(36) not null comment 'pk.固定信息',
+   UserId               varchar(36) comment '用户Id',
+   PostId               varchar(36) comment '帖子Id',
+   TransDate            datetime comment '转发时间',
+   primary key (UID)
+);
+
+alter table ts_app_transfer comment '转发';

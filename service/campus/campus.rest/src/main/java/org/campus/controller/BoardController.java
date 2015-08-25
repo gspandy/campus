@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.campus.annotation.NeedRoles;
@@ -94,9 +95,9 @@ public class BoardController {
         for (FreshNews topic : listTopic) {
             BoardVO vo = new BoardVO();
             vo.setPostsId(topic.getUid());
-            vo.setUserId(topic.getCreateby());
+            vo.setUserId(topic.getAdduseruid());
             vo.setNickName(topic.getAddnickname());
-            postUser = userService.findByUserId(topic.getCreateby());
+            postUser = userService.findByUserId(topic.getAdduseruid());
             vo.setHeadPic(postUser.getHeadpic());
             vo.setBrief(topic.getNewsbrief());
             vo.setContent(topic.getNewscontent());
@@ -109,6 +110,7 @@ public class BoardController {
             vo.setSupportNum(topic.getSupportnum());
             vo.setNotSupportNum(topic.getNotsupportnum());
             vo.setComplainNum(topic.getComplainnum());
+            vo.setSourceUserId(topic.getCreateby());
             boardVOs.add(vo);
         }
 
@@ -132,9 +134,9 @@ public class BoardController {
         for (FreshNews topic : listTopic) {
             BoardVO vo = new BoardVO();
             vo.setPostsId(topic.getUid());
-            vo.setUserId(topic.getCreateby());
+            vo.setUserId(topic.getAdduseruid());
             vo.setNickName(topic.getAddnickname());
-            postUser = userService.findByUserId(topic.getCreateby());
+            postUser = userService.findByUserId(topic.getAdduseruid());
             vo.setHeadPic(postUser.getHeadpic());
             vo.setBrief(topic.getNewsbrief());
             vo.setContent(topic.getNewscontent());
@@ -147,6 +149,7 @@ public class BoardController {
             vo.setSupportNum(topic.getSupportnum());
             vo.setNotSupportNum(topic.getNotsupportnum());
             vo.setComplainNum(topic.getComplainnum());
+            vo.setSourceUserId(topic.getCreateby());
             boardVOs.add(vo);
         }
 
@@ -329,8 +332,15 @@ public class BoardController {
             @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
             @ApiParam(name = "transferVO", value = "转发内容") @RequestBody TransferVO transferVO,
             @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
-            HttpSession session) {
-        return;
+            HttpSession session, HttpServletRequest request) {
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        DisplayModel model = DisplayModel.getDisplayModelByCode(environment);
+        if (model == null) {
+            throw new CampusException(100203, "显示模式错误.");
+        }
+        String nickName = nickNameSvc.findRandomNickName(model, session.getId());
+        nickName = nickName == null ? vo.getNickName() : nickName;
+        topicSvc.transfer(postsId, vo.getUserId(), nickName, transferVO, ToolUtil.getIpAddr(request));
     }
 
     @ApiOperation(value = "*开始审帖:1.0", notes = "开始审帖[API-Version=1.0]")
@@ -375,6 +385,7 @@ public class BoardController {
             vo.setSupportNum(topic.getSupportnum());
             vo.setNotSupportNum(topic.getNotsupportnum());
             vo.setComplainNum(topic.getComplainnum());
+            vo.setSourceUserId(topic.getCreateby());
             boardVOs.add(vo);
         }
 

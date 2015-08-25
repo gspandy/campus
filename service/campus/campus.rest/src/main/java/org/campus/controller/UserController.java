@@ -388,7 +388,7 @@ public class UserController {
         for (FreshNews freshNews : photos.getContent()) {
             userPhotosVO = new BoardVO();
             userPhotosVO.setPostsId(freshNews.getUid());
-            userPhotosVO.setUserId(freshNews.getCreateby());
+            userPhotosVO.setUserId(freshNews.getAdduseruid());
             userPhotosVO.setNickName(freshNews.getAddnickname());
             userPhotosVO.setHeadPic(headPic);
             userPhotosVO.setBrief(freshNews.getNewsbrief());
@@ -402,6 +402,7 @@ public class UserController {
             userPhotosVO.setSupportNum(freshNews.getSupportnum());
             userPhotosVO.setNotSupportNum(freshNews.getNotsupportnum());
             userPhotosVO.setComplainNum(freshNews.getComplainnum());
+            userPhotosVO.setSourceUserId(freshNews.getCreateby());
             photosVOs.add(userPhotosVO);
         }
         Page<BoardVO> page = new PageImpl<BoardVO>(photosVOs, pageable, photosVOs.size());

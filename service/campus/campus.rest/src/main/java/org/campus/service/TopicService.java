@@ -2,17 +2,24 @@ package org.campus.service;
 
 import java.util.Date;
 
+import org.campus.constant.Constant;
+import org.campus.model.Comment;
 import org.campus.model.FavoriteFreshNews;
 import org.campus.model.FreshNews;
 import org.campus.model.FreshNewsAudit;
+import org.campus.model.Transfer;
 import org.campus.model.UserFavorite;
+import org.campus.model.enums.ActiveType;
 import org.campus.model.enums.CheckType;
 import org.campus.model.enums.TopicType;
+import org.campus.repository.CommentMapper;
 import org.campus.repository.FreshNewsAuditMapper;
 import org.campus.repository.FreshNewsMapper;
 import org.campus.repository.SupportMapper;
+import org.campus.repository.TransferMapper;
 import org.campus.repository.UserFavoriteMapper;
 import org.campus.util.ToolUtil;
+import org.campus.vo.TransferVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +39,12 @@ public class TopicService {
 
     @Autowired
     private FreshNewsAuditMapper freshNewsAuditMapper;
+
+    @Autowired
+    private TransferMapper transferMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
 
     /**
      * 查询帖子列表
@@ -207,5 +220,39 @@ public class TopicService {
 
     public Page<FreshNews> search(String keyword, Pageable pageable) {
         return freshMapper.search(keyword, pageable);
+    }
+
+    public void transfer(String postsId, String userId, String nickName, TransferVO transferVO, String ipAddr) {
+        Transfer record = new Transfer();
+        record.setUid(ToolUtil.getUUid());
+        record.setUserid(userId);
+        record.setPostid(postsId);
+        record.setTransdate(new Date());
+        transferMapper.insert(record);
+
+        if (transferVO != null && transferVO.isComment()) {
+            Comment comment = new Comment();
+            comment.setUid(ToolUtil.getUUid());
+            comment.setSourceuid(postsId);
+            comment.setComuseruid(userId);
+            comment.setUsernickname(nickName);
+            comment.setCommentcontent(transferVO.getContent());
+            comment.setIsactive(ActiveType.ACTIVE);
+            comment.setCreateby(Constant.CREATE_BY);
+            comment.setCreatedate(new Date());
+            comment.setLastupdateby(Constant.CREATE_BY);
+            comment.setLastupdatedate(new Date());
+            comment.setIpaddress(ipAddr);
+            commentMapper.insert(comment);
+        }
+        FreshNews freshNews = freshMapper.selectByPrimaryKey(postsId);
+        freshNews.setCommentnum(freshNews.getCommentnum() == null ? 1 : freshNews.getCommentnum() + 1);
+        freshMapper.updateByPrimaryKey(freshNews);
+
+        freshNews.setUid(ToolUtil.getUUid());
+        freshNews.setAdduseruid(userId);
+        freshNews.setAddnickname(nickName);
+        freshNews.setCreatedate(new Date());
+        freshMapper.insert(freshNews);
     }
 }
