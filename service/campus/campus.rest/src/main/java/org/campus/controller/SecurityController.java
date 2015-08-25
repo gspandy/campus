@@ -19,6 +19,7 @@ import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.IntegralType;
 import org.campus.model.enums.SMSType;
 import org.campus.service.IntegralService;
+import org.campus.service.NickNameService;
 import org.campus.service.SecurityService;
 import org.campus.service.SendMessage;
 import org.campus.util.FirstLetterUtil;
@@ -59,6 +60,9 @@ public class SecurityController {
 
     @Autowired
     private RedisCache redisCache;
+
+    @Autowired
+    private NickNameService nickNameService;
 
     @ApiOperation(value = "*登录:1.0", notes = "登录[API-Version=1.0]")
     @RequestMapping(value = "/login", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
@@ -214,7 +218,8 @@ public class SecurityController {
         appUser.setIntegral(0L);
         appUser.setLogincount(0);
         // appUser.setNickname(registerVO.getNickName());
-        String nickName = String.valueOf(ToolUtil.getId());
+        // String nickName = String.valueOf(ToolUtil.getId());
+        String nickName = nickNameService.findRandomNickName(DisplayModel.MOON, session.getId());
         appUser.setNickFirstLetter(FirstLetterUtil.getPinYinHeadChar(nickName));
         this.securitySvc.registe(sysUser, appUser);
 
