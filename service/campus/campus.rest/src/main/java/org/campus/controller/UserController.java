@@ -235,6 +235,18 @@ public class UserController {
         return getFriendsVOs(users);
     }
 
+    @ApiOperation(value = "*查询指定用户好友列表:1.0", notes = "查询好友列表[API-Version=1.0]")
+    @RequestMapping(value = "/{userId}/friends", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询好友成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public List<FriendVO> getFriends(
+            @ApiParam(name = "userId", value = "用户ID") @PathVariable String userId,
+            @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+        List<User> users = userService.findMyFriends(userId, nickName);
+        return getFriendsVOs(users);
+    }
+
     @ApiOperation(value = "*查询粉丝列表:1.0", notes = "查询粉丝列表[API-Version=1.0]")
     @RequestMapping(value = "/fans", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询粉丝成功"), @ApiResponse(code = 500, message = "内部处理错误") })
@@ -245,6 +257,18 @@ public class UserController {
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         List<User> users = userService.findMyFans(responseVO.getUserId(), nickName);
+        return getFriendsVOs(users);
+    }
+
+    @ApiOperation(value = "*查询指定用户粉丝列表:1.0", notes = "查询粉丝列表[API-Version=1.0]")
+    @RequestMapping(value = "/{userId}/fans", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询粉丝成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public List<FriendVO> getFans(
+            @ApiParam(name = "userId", value = "用户ID") @PathVariable String userId,
+            @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+        List<User> users = userService.findMyFans(userId, nickName);
         return getFriendsVOs(users);
     }
 
