@@ -536,6 +536,7 @@
 			AND u.NickName like
 			CONCAT('%','${friendNickName}','%' )
 		</if>
+		ORDER BY u.NickFirstLetter
 	</select>
 	<select id="findMyFans" resultMap="BaseResultMap">
 		SELECT u.* from ts_app_user as u LEFT JOIN ts_app_attentionuser as a
@@ -545,6 +546,7 @@
 			AND u.NickName like
 			CONCAT('%','${friendNickName}','%' )
 		</if>
+		ORDER BY u.NickFirstLetter
 	</select>
 	<select id="selectNickNameByPrimaryKey" resultType="java.lang.String"
 		parameterType="java.lang.String">
