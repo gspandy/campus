@@ -134,6 +134,7 @@ public class UserController {
         CommentVO commentVO = null;
         for (Comment comment : comments.getContent()) {
             commentVO = new CommentVO();
+            commentVO.setCommentId(comment.getUid());
             commentVO.setUserId(comment.getComuseruid());
             commentVO.setNickName(comment.getUsernickname());
             commentVO.setObjUserId(comment.getObjuseruid());

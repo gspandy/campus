@@ -63,21 +63,33 @@ public interface FreshNewsMapper {
     Page<FreshNews> findMyCommentPosts(@Param("userId") String userId, Pageable pageable);
 
     Page<FreshNews> findMySupportPosts(@Param("userId") String userId, Pageable pageable);
-    
-    Page<FreshNews> selectByNewTypeAndShield(@Param("newsType")String newsType,@Param("isShield")int isShield,Pageable pageable);
+
+    Page<FreshNews> selectByNewTypeAndShield(@Param("newsType") String newsType, @Param("isShield") int isShield,
+            Pageable pageable);
 
     /**
      * 热门帖子
+     * 
      * @param pageable
      * @return
      */
     Page<FreshNews> selectHotPosts(Pageable pageable);
-    
+
     /**
      * 查询用户的关注帖子清单
+     * 
      * @param userid 登录用户ID
      * @param pageable
      * @return
      */
-    Page<FreshNews> selectAttentionPosts(@Param("userId") String userId,Pageable pageable);
+    Page<FreshNews> selectAttentionPosts(@Param("userId") String userId, Pageable pageable);
+
+    /**
+     * 审核列表
+     * 
+     * @param pageable
+     * @return
+     */
+    Page<FreshNews> getAuditPosts(@Param("userId") String userId, @Param("isShield") int isShield, Pageable pageable);
+
 }

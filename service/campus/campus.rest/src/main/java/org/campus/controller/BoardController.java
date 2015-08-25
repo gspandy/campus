@@ -12,8 +12,10 @@ import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.model.FavoriteFreshNews;
 import org.campus.model.FreshNews;
+import org.campus.model.User;
 import org.campus.model.UserFavorite;
 import org.campus.model.enums.AnonymousType;
+import org.campus.model.enums.CheckType;
 import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.TopicType;
 import org.campus.service.NickNameService;
@@ -88,12 +90,14 @@ public class BoardController {
 
         List<FreshNews> listTopic = freshNews.getContent();
         List<BoardVO> boardVOs = new ArrayList<BoardVO>();
+        User postUser = null;
         for (FreshNews topic : listTopic) {
             BoardVO vo = new BoardVO();
             vo.setPostsId(topic.getUid());
             vo.setUserId(topic.getCreateby());
             vo.setNickName(topic.getAddnickname());
-            vo.setHeadPic(user.getHeadPic());
+            postUser = userService.findByUserId(topic.getCreateby());
+            vo.setHeadPic(postUser.getHeadpic());
             vo.setBrief(topic.getNewsbrief());
             vo.setContent(topic.getNewscontent());
             vo.setPublishDate(topic.getCreatedate());
@@ -302,16 +306,55 @@ public class BoardController {
         userService.beginAudit(vo.getUserId());
     }
 
+    @ApiOperation(value = "*审核帖子列表查询:1.0", notes = "*审核帖子列表查询[API-Version=1.0]")
+    @RequestMapping(value = "/audit/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Page<BoardVO> auditPosts(
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            HttpSession session) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        Page<FreshNews> freshNews = topicSvc.getAuditPosts(responseVO.getUserId(), pageable);
+
+        List<FreshNews> listTopic = freshNews.getContent();
+        List<BoardVO> boardVOs = new ArrayList<BoardVO>();
+        User user = null;
+        for (FreshNews topic : listTopic) {
+            BoardVO vo = new BoardVO();
+            vo.setPostsId(topic.getUid());
+            vo.setUserId(topic.getCreateby());
+            vo.setNickName(topic.getAddnickname());
+            user = userService.findByUserId(topic.getCreateby());
+            vo.setHeadPic(user.getHeadpic());
+            vo.setBrief(topic.getNewsbrief());
+            vo.setContent(topic.getNewscontent());
+            vo.setPublishDate(topic.getCreatedate());
+            String[] picUrls = topic.getPictures().split(",");
+            vo.setPicUrls(Arrays.asList(picUrls));
+            vo.setSupported(topicSvc.isSupported(topic.getUid(), responseVO.getUserId()));
+            vo.setTransNum(topic.getTransnum());
+            vo.setCommentNum(topic.getCommentnum());
+            vo.setSupportNum(topic.getSupportnum());
+            vo.setNotSupportNum(topic.getNotsupportnum());
+            vo.setComplainNum(topic.getComplainnum());
+            boardVOs.add(vo);
+        }
+
+        Page<BoardVO> page = new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
+        return page;
+    }
+
     @ApiOperation(value = "*审核:1.0", notes = "审核[API-Version=1.0]")
     @RequestMapping(value = "/audit/{postsId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "审核成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
     public void audit(
             @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
-            @ApiParam(name = "transferVO", value = "转发内容") @RequestBody TransferVO transferVO,
+            @ApiParam(name = "type", value = "审核结果") @RequestBody CheckType type,
             @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
             HttpSession session) {
-        return;
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        topicSvc.audit(postsId, vo.getUserId(), type);
     }
 
 }

@@ -381,5 +381,14 @@
 		MyUserUID=#{userId,jdbcType=VARCHAR})
 		order by CreateDate desc
 	</select>
-
+	<select id="getAuditPosts" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from ts_app_freshnews
+		where isShield=1 AND IsActive=1
+		and UID not in
+		(SELECT PostId from ts_app_freshnews_audit where
+		UserId=#{userId,jdbcType=VARCHAR})
+		order by CreateDate desc
+	</select>
 </mapper>

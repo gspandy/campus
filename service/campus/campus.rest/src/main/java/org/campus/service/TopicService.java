@@ -1,12 +1,18 @@
 package org.campus.service;
 
+import java.util.Date;
+
 import org.campus.model.FavoriteFreshNews;
 import org.campus.model.FreshNews;
+import org.campus.model.FreshNewsAudit;
 import org.campus.model.UserFavorite;
+import org.campus.model.enums.CheckType;
 import org.campus.model.enums.TopicType;
+import org.campus.repository.FreshNewsAuditMapper;
 import org.campus.repository.FreshNewsMapper;
 import org.campus.repository.SupportMapper;
 import org.campus.repository.UserFavoriteMapper;
+import org.campus.util.ToolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +29,9 @@ public class TopicService {
 
     @Autowired
     private SupportMapper supportMapper;
+
+    @Autowired
+    private FreshNewsAuditMapper freshNewsAuditMapper;
 
     /**
      * 查询帖子列表
@@ -69,7 +78,22 @@ public class TopicService {
      * @return
      */
     public Page<FreshNews> getPostsForRegister(String userId, TopicType topicType, Pageable pageable) {
-        return this.getTopicByTypeAndShield(userId, topicType, FreshNews.VIEW_REGISTER, pageable);
+        return this.getTopicByTypeAndShield(userId, topicType, FreshNews.VIEW_ANONYMOUSE, pageable);
+    }
+
+    /**
+     * 
+     * 功能描述: <br>
+     * 审核帖子列表查询
+     *
+     * @param userId
+     * @param topicType
+     * @param pageable
+     * @return
+     *
+     */
+    public Page<FreshNews> getAuditPosts(String userId, Pageable pageable) {
+        return freshMapper.getAuditPosts(userId, FreshNews.VIEW_ANONYMOUSE, pageable);
     }
 
     /**
@@ -156,4 +180,28 @@ public class TopicService {
         return false;
     }
 
+    public void audit(String postsId, String userId, CheckType type) {
+        FreshNews freshNews = freshMapper.selectByPrimaryKey(postsId);
+        switch (type) {
+            case COMPLAIN:
+                freshNews.setComplainnum(freshNews.getComplainnum() + 1);
+                break;
+            case SUPPORT:
+                freshNews.setSupportnum(freshNews.getSupportnum() + 1);
+                break;
+            case NOT_SUPPORT:
+                freshNews.setNotsupportnum(freshNews.getNotsupportnum());
+                break;
+            default:
+                break;
+        }
+        freshMapper.updateByPrimaryKeySelective(freshNews);
+        FreshNewsAudit record = new FreshNewsAudit();
+        record.setUid(ToolUtil.getUUid());
+        record.setUserid(userId);
+        record.setPostid(postsId);
+        record.setAuditreust(type);
+        record.setAudittime(new Date());
+        freshNewsAuditMapper.insert(record);
+    }
 }
