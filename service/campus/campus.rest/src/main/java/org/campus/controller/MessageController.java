@@ -124,7 +124,7 @@ public class MessageController {
     @ApiOperation(value = "*获取会话id:1.0", notes = "根据会话对象获取会话id[API-Version=1.0]")
     @RequestMapping(value = "/getConId/{objUserId}", method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "读取成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-//    @NeedRoles
+    @NeedRoles
     public Map<String, String> getConversationId(@ApiParam(name = "objUserId", value = "会话对象用户ID") @PathVariable String objUserId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session){
