@@ -44,7 +44,7 @@ public class MessageController {
     private MessageService messageService;
 
     @ApiOperation(value = "*查询信息提示列表:1.0", notes = "查询信息提示列表[API-Version=1.0]")
-    @RequestMapping(value = "/lists", method = RequestMethod.GET)
+    @RequestMapping(value = "/lists", headers = { "API-Version=1.0" },method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
     public Page<MessageVO> getLoginUserInfo(
@@ -65,7 +65,7 @@ public class MessageController {
     }
 
     @ApiOperation(value = "*信息发送:1.0", notes = "信息发送[API-Version=1.0]")
-    @RequestMapping(value = "/send/{userId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/send/{userId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "发送成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
     public Map<String, String> send(
@@ -104,7 +104,7 @@ public class MessageController {
     }
 
     @ApiOperation(value = "*查询会话列表:1.0", notes = "查询会话列表[API-Version=1.0]")
-    @RequestMapping(value = "/conversation/{conversationId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/conversation/{conversationId}", headers = { "API-Version=1.0" },method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "读取成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
     public Page<ConversationDetailVO> getConversation(
@@ -122,7 +122,7 @@ public class MessageController {
     }
     
     @ApiOperation(value = "*获取会话id:1.0", notes = "根据会话对象获取会话id[API-Version=1.0]")
-    @RequestMapping(value = "/getConId/{objUserId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/getConId/{objUserId}", headers = { "API-Version=1.0" },method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "读取成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
     public Map<String, String> getConversationId(@ApiParam(name = "objUserId", value = "会话对象用户ID") @PathVariable String objUserId,
