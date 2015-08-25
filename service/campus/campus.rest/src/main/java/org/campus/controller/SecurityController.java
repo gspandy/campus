@@ -220,6 +220,7 @@ public class SecurityController {
         // appUser.setNickname(registerVO.getNickName());
         // String nickName = String.valueOf(ToolUtil.getId());
         String nickName = nickNameService.findRandomNickName(DisplayModel.MOON, session.getId());
+        appUser.setNickname(nickName);
         appUser.setNickFirstLetter(FirstLetterUtil.getPinYinHeadChar(nickName));
         this.securitySvc.registe(sysUser, appUser);
 
