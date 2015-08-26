@@ -443,4 +443,20 @@ public class SecurityController {
         securitySvc.andriodInstall(source);
     }
 
+    @ApiOperation(value = "*修改签名:1.0", notes = "*用户修改签名[API-Version=1.0]")
+    @RequestMapping(value = "/signName", headers = { "API-Version=1.0" }, method = RequestMethod.PUT)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "签名成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public LoginResponseVO modifySignName(@ApiParam(name = "signName", value = "签名") @RequestParam(value = "signName", required = true) String signName,
+            HttpSession session){
+    	LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+    	User user = new User();
+    	user.setUseruid(vo.getUserId());
+    	user.setSignName(signName);
+    	securitySvc.updateUser(user);
+    	
+    	vo.setSignName(signName);
+    	
+    	return vo;
+    }
 }

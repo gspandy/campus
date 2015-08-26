@@ -8,26 +8,22 @@ import javax.servlet.http.HttpSession;
 
 import org.campus.annotation.NeedRoles;
 import org.campus.constant.Constant;
-import org.campus.core.exception.CampusException;
 import org.campus.model.College;
 import org.campus.model.Profession;
 import org.campus.model.School;
 import org.campus.model.User;
 import org.campus.service.SchoolService;
 import org.campus.service.SecurityService;
-import org.campus.util.FirstLetterUtil;
 import org.campus.vo.CollegeVO;
 import org.campus.vo.LoginResponseVO;
 import org.campus.vo.ProfessionVO;
 import org.campus.vo.SchoolVO;
-import org.campus.vo.UserSchoolVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,13 +49,11 @@ public class SchoolController {
     @ApiOperation(value = "*修改用户学校信息:1.0", notes = "*修改用户学校信息 [API-Version=1.0]")
     @RequestMapping(value = "/user/modify", headers = { "API-Version=1.0" }, method = RequestMethod.PUT)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
     public LoginResponseVO getUserSchool(
             @ApiParam(name = "schoolName", value = "学校名称") @RequestParam(value = "schoolName", required = true) String schoolName,
             HttpSession session) {
-    	
     	LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        if (vo == null)
-            throw new CampusException(100007, "请登录.");
         
         User user = new User();
         user.setUseruid(vo.getUserId());
