@@ -33,6 +33,8 @@ public class LoginResponseVO {
     private long integral;
 
     private String auditFlag;
+    
+    private String signName;
 
     @ApiModelProperty(value = "调用业务接口所需唯一标识", required = true)
     public String getSignId() {
@@ -173,5 +175,15 @@ public class LoginResponseVO {
     public void setAuditFlag(String auditFlag) {
         this.auditFlag = auditFlag;
     }
+
+    @ApiModelProperty(value = "签名")
+	public String getSignName() {
+		return signName;
+	}
+
+    @ApiModelProperty(value = "签名")
+	public void setSignName(String signName) {
+		this.signName = signName;
+	}
 
 }

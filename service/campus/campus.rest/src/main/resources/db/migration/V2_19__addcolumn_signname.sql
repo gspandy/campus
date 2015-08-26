@@ -1,0 +1,1 @@
+alter table TS_APP_User add (SignName varchar(500) comment '签名');

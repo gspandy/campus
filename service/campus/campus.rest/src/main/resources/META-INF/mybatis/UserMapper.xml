@@ -45,6 +45,7 @@
 		<result column="NickFirstLetter" property="nickFirstLetter"
 			jdbcType="VARCHAR" />
 		<result column="AuditFlag" property="auditFlag" jdbcType="VARCHAR" />
+		<result column="SignName" property="signName" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UserUID, StudentID, RealName, NamePinYin, NameFirstLetter,
@@ -59,7 +60,7 @@
 		IsLocked, IsOpen, IsGraduate, CreateBy, CreateDate,
 		LastUpdateBy,
 		LastUpdateDate,
-		IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter,AuditFlag
+		IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter,AuditFlag,SignName
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -93,7 +94,7 @@
 		ProvinceName, IsValidated, IsLocked,
 		IsOpen, IsGraduate, CreateBy,
 		CreateDate, LastUpdateBy, LastUpdateDate,
-		IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter,AuditFlag)
+		IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter,AuditFlag,SignName)
 		values
 		(#{useruid,jdbcType=VARCHAR},
 		#{studentid,jdbcType=VARCHAR},
@@ -128,7 +129,7 @@
 		#{isactive,jdbcType=INTEGER},#{integral,jdbcType=INTEGER},#{logincount,jdbcType=INTEGER},
 		#{apiType,jdbcType=VARCHAR},
 		#{apiId,jdbcType=VARCHAR},#{nickFirstLetter,jdbcType=VARCHAR},
-		#{auditFlag,jdbcType=VARCHAR})
+		#{auditFlag,jdbcType=VARCHAR},#{signName,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.User">
 		insert into ts_app_user
@@ -244,6 +245,9 @@
 			<if test="auditFlag != null">
 				AuditFlag,
 			</if>
+			<if test="signName != null">
+				SignName,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="useruid != null">
@@ -356,6 +360,9 @@
 			</if>
 			<if test="auditFlag != null">
 				#{auditFlag,jdbcType=VARCHAR}
+			</if>
+			<if test="signName != null">
+				#{signName,jdbcType=VARCHAR}
 			</if>
 		</trim>
 	</insert>
@@ -470,6 +477,9 @@
 			<if test="auditFlag != null">
 				AuditFlag = #{auditFlag,jdbcType=VARCHAR},
 			</if>
+			<if test="signName != null">
+				SignName = #{signName,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where UserUID = #{useruid,jdbcType=VARCHAR}
 	</update>
@@ -537,7 +547,9 @@
 		NickFirstLetter =
 		#{nickFirstLetter,jdbcType=VARCHAR},
 		AuditFlag =
-		#{auditFlag,jdbcType=VARCHAR}
+		#{auditFlag,jdbcType=VARCHAR},
+		SignName =
+		#{signName,jdbcType=VARCHAR}
 		where
 		UserUID =
 		#{useruid,jdbcType=VARCHAR}
