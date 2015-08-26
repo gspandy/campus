@@ -40,7 +40,9 @@ public class BoardVO {
     private int complainNum;
 
     private String sourceUserId;
-    
+
+    private boolean isDeleted;
+
     @ApiModelProperty(value = "发帖ID", required = true)
     public String getPostsId() {
         return postsId;
@@ -189,6 +191,16 @@ public class BoardVO {
     @ApiModelProperty(value = "原发帖人", required = true)
     public void setSourceUserId(String sourceUserId) {
         this.sourceUserId = sourceUserId;
+    }
+
+    @ApiModelProperty(value = "原帖是否删除,true 已删", required = true)
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    @ApiModelProperty(value = "原帖是否删除,true 已删", required = true)
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
 }

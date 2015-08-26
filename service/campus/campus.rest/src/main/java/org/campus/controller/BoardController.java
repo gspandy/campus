@@ -99,11 +99,19 @@ public class BoardController {
             vo.setNickName(topic.getAddnickname());
             postUser = userService.findByUserId(topic.getAdduseruid());
             vo.setHeadPic(postUser.getHeadpic());
-            vo.setBrief(topic.getNewsbrief());
-            vo.setContent(topic.getNewscontent());
+            boolean delete = topicSvc.isDelete(vo.getPostsId());
+            if (delete) {
+                vo.setBrief("");
+                vo.setContent("");
+                vo.setPicUrls(new ArrayList<String>());
+            } else {
+                vo.setBrief(topic.getNewsbrief());
+                vo.setContent(topic.getNewscontent());
+                String[] picUrls = topic.getPictures().split(",");
+                vo.setPicUrls(Arrays.asList(picUrls));
+            }
+            vo.setDeleted(delete);
             vo.setPublishDate(topic.getCreatedate());
-            String[] picUrls = topic.getPictures().split(",");
-            vo.setPicUrls(Arrays.asList(picUrls));
             vo.setSupported(topicSvc.isSupported(topic.getUid(), user.getUserId()));
             vo.setTransNum(topic.getTransnum());
             vo.setCommentNum(topic.getCommentnum());
@@ -170,12 +178,17 @@ public class BoardController {
         if (topic != null) {
             boardVo = new BoardDetailVO();
             boardVo.setCommentNum(topic.getCommentnum());
-            boardVo.setContent(topic.getNewscontent());
             boardVo.setNickName(topic.getAddnickname());
-
-            String[] picUrls = topic.getPictures().split(",");
-            boardVo.setPicUrls(Arrays.asList(picUrls));
-
+            boolean delete = topicSvc.isDelete(postsId);
+            if (delete) {
+                boardVo.setPicUrls(new ArrayList<String>());
+                boardVo.setContent("");
+            } else {
+                String[] picUrls = topic.getPictures().split(",");
+                boardVo.setPicUrls(Arrays.asList(picUrls));
+                boardVo.setContent(topic.getNewscontent());
+            }
+            boardVo.setDeleted(delete);
             boardVo.setPostsId(postsId);
             boardVo.setPublishDate(topic.getCreatedate());
             boardVo.setSupportNum(topic.getSupportnum());
@@ -239,12 +252,16 @@ public class BoardController {
             favorite.setPostsId(data.getUid());
             favorite.setUserId(data.getCreateby());
             favorite.setNickName(data.getAddnickname());
-
-            String[] picUrls = data.getPictures().split(",");
-            favorite.setPicUrls(Arrays.asList(picUrls));
-
-            favorite.setContent(data.getNewscontent());
-
+            boolean delete = topicSvc.isDelete(data.getUid());
+            if (delete) {
+                favorite.setPicUrls(new ArrayList<String>());
+                favorite.setContent("");
+            } else {
+                String[] picUrls = data.getPictures().split(",");
+                favorite.setPicUrls(Arrays.asList(picUrls));
+                favorite.setContent(data.getNewscontent());
+            }
+            favorite.setDeleted(delete);
             favorite.setPublishDate(data.getCreatedate());
             boardVOs.add(favorite);
         }
@@ -403,7 +420,19 @@ public class BoardController {
             @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
             HttpSession session) {
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        topicSvc.audit(postsId, vo.getUserId(), type);
+        topicSvc.audit(postsId, vo.getUserId(), vo.getNickName(), type);
+    }
+
+    @ApiOperation(value = "*删帖:1.0", notes = "删帖[API-Version=1.0]")
+    @RequestMapping(value = "/{postsId}/delete", headers = { "API-Version=1.0" }, method = RequestMethod.DELETE)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "审核成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void delete(
+            @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
+            @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
+            HttpSession session) {
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        topicSvc.delete(postsId, vo.getUserId());
     }
 
 }

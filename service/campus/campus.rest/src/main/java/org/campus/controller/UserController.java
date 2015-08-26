@@ -391,11 +391,19 @@ public class UserController {
             userPhotosVO.setUserId(freshNews.getAdduseruid());
             userPhotosVO.setNickName(freshNews.getAddnickname());
             userPhotosVO.setHeadPic(headPic);
-            userPhotosVO.setBrief(freshNews.getNewsbrief());
-            userPhotosVO.setContent(freshNews.getNewscontent());
+            boolean delete = topicSvc.isDelete(freshNews.getUid());
+            if (delete) {
+                userPhotosVO.setBrief("");
+                userPhotosVO.setContent("");
+                userPhotosVO.setPicUrls(new ArrayList<String>());
+            } else {
+                userPhotosVO.setBrief(freshNews.getNewsbrief());
+                userPhotosVO.setContent(freshNews.getNewscontent());
+                String[] picUrls = freshNews.getPictures().split(",");
+                userPhotosVO.setPicUrls(Arrays.asList(picUrls));
+            }
+            userPhotosVO.setDeleted(delete);
             userPhotosVO.setPublishDate(freshNews.getCreatedate());
-            String[] picUrls = freshNews.getPictures().split(",");
-            userPhotosVO.setPicUrls(Arrays.asList(picUrls));
             userPhotosVO.setSupported(topicSvc.isSupported(freshNews.getUid(), userId));
             userPhotosVO.setTransNum(freshNews.getTransnum());
             userPhotosVO.setCommentNum(freshNews.getCommentnum());

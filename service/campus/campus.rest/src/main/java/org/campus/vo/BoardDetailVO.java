@@ -33,6 +33,8 @@ public class BoardDetailVO {
 
     private boolean isCollected;
 
+    private boolean isDeleted;
+
     @ApiModelProperty(value = "发帖ID", required = true)
     public String getPostsId() {
         return postsId;
@@ -141,6 +143,16 @@ public class BoardDetailVO {
     @ApiModelProperty(value = "是否收藏过", required = true)
     public void setCollected(boolean isCollected) {
         this.isCollected = isCollected;
+    }
+
+    @ApiModelProperty(value = "原帖是否删除,true 已删", required = true)
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    @ApiModelProperty(value = "原帖是否删除,true 已删", required = true)
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
 }
