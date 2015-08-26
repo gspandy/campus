@@ -24,6 +24,8 @@ public class UserVO {
 
     private boolean isAttention = false;
 
+    private long integral;
+
     @ApiModelProperty(value = "用户Id", required = true)
     public String getUserId() {
         return userId;
@@ -112,6 +114,16 @@ public class UserVO {
     @ApiModelProperty(value = "是否关注", required = true)
     public void setAttention(boolean isAttention) {
         this.isAttention = isAttention;
+    }
+
+    @ApiModelProperty(value = "积分")
+    public long getIntegral() {
+        return integral;
+    }
+
+    @ApiModelProperty(value = "积分")
+    public void setIntegral(long integral) {
+        this.integral = integral;
     }
 
 }

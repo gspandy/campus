@@ -353,6 +353,7 @@ public class UserController {
         userVO.setFansCount(userService.countFans(userId));
         userVO.setAttentionCount(userService.countAttention(userId));
         userVO.setHeadPic(user.getHeadpic());
+        userVO.setIntegral(user.getIntegral());
         return userVO;
     }
 
