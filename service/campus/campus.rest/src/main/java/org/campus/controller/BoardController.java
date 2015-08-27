@@ -13,6 +13,7 @@ import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.model.FavoriteFreshNews;
 import org.campus.model.FreshNews;
+import org.campus.model.Transfer;
 import org.campus.model.User;
 import org.campus.model.UserFavorite;
 import org.campus.model.enums.AnonymousType;
@@ -92,6 +93,7 @@ public class BoardController {
         List<FreshNews> listTopic = freshNews.getContent();
         List<BoardVO> boardVOs = new ArrayList<BoardVO>();
         User postUser = null;
+        Transfer tranfer = null;
         for (FreshNews topic : listTopic) {
             BoardVO vo = new BoardVO();
             vo.setPostsId(topic.getUid());
@@ -119,6 +121,10 @@ public class BoardController {
             vo.setNotSupportNum(topic.getNotsupportnum());
             vo.setComplainNum(topic.getComplainnum());
             vo.setSourceUserId(topic.getCreateby());
+            tranfer = topicSvc.findTransfer(topic.getUid());
+            if (tranfer != null) {
+                vo.setTransferComment(tranfer.getTransferComment());
+            }
             boardVOs.add(vo);
         }
 
@@ -139,6 +145,7 @@ public class BoardController {
         List<FreshNews> listTopic = freshNews.getContent();
         List<BoardVO> boardVOs = new ArrayList<BoardVO>();
         User postUser = null;
+        Transfer tranfer = null;
         for (FreshNews topic : listTopic) {
             BoardVO vo = new BoardVO();
             vo.setPostsId(topic.getUid());
@@ -158,6 +165,10 @@ public class BoardController {
             vo.setNotSupportNum(topic.getNotsupportnum());
             vo.setComplainNum(topic.getComplainnum());
             vo.setSourceUserId(topic.getCreateby());
+            tranfer = topicSvc.findTransfer(topic.getUid());
+            if (tranfer != null) {
+                vo.setTransferComment(tranfer.getTransferComment());
+            }
             boardVOs.add(vo);
         }
 
@@ -196,6 +207,10 @@ public class BoardController {
             boardVo.setUserId(topic.getCreateby());
             boardVo.setSupported(topicSvc.isSupported(postsId, user.getUserId()));
             boardVo.setCollected(topicSvc.isFavorited(postsId, user.getUserId()));
+            Transfer tranfer = topicSvc.findTransfer(topic.getUid());
+            if (tranfer != null) {
+                boardVo.setTransferComment(tranfer.getTransferComment());
+            }
         }
 
         return boardVo;

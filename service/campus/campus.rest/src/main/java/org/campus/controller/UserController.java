@@ -13,6 +13,7 @@ import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
+import org.campus.model.Transfer;
 import org.campus.model.User;
 import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.InteractType;
@@ -363,17 +364,18 @@ public class UserController {
         userService.reply(commentId, responseVO.getUserId(), userName, ToolUtil.getIpAddr(request), commentAddVO);
     }
 
-    @ApiOperation(value = "*取消赞:1.0", notes = "取消赞[API-Version=1.0]")
+    @ApiOperation(value = "*取消赞/踩:1.0", notes = "取消赞[API-Version=1.0]")
     @RequestMapping(value = "/cancel/{sourceId}/support", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
     public void cancelSupport(
             @ApiParam(name = "sourceId", value = "需取消赞的帖子Id或评论Id") @PathVariable String sourceId,
-            @ApiParam(name = "type", value = "1 帖子; 2 评论") @RequestParam(value = "type", required = true) String type,
+            @ApiParam(name = "type", value = "赞/踩(0:踩,1:赞)") @RequestParam(value = "type", required = true) InteractType type,
+            @ApiParam(name = "type", value = "1 帖子; 2 评论") @RequestParam(value = "type", required = true) String mod,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        userService.cancelSupport(sourceId, type, responseVO.getUserId());
+        userService.cancelSupport(sourceId, type, mod, responseVO.getUserId());
     }
 
     private UserVO findUserInfo(String userId) {
@@ -418,6 +420,7 @@ public class UserController {
             return new PageImpl<BoardVO>(photosVOs, pageable, photosVOs.size());
         }
         BoardVO userPhotosVO = null;
+        Transfer tranfer = null;
         for (FreshNews freshNews : photos.getContent()) {
             userPhotosVO = new BoardVO();
             userPhotosVO.setPostsId(freshNews.getUid());
@@ -444,6 +447,10 @@ public class UserController {
             userPhotosVO.setNotSupportNum(freshNews.getNotsupportnum());
             userPhotosVO.setComplainNum(freshNews.getComplainnum());
             userPhotosVO.setSourceUserId(freshNews.getCreateby());
+            tranfer = topicSvc.findTransfer(freshNews.getUid());
+            if (tranfer != null) {
+                userPhotosVO.setTransferComment(tranfer.getTransferComment());
+            }
             photosVOs.add(userPhotosVO);
         }
         Page<BoardVO> page = new PageImpl<BoardVO>(photosVOs, pageable, photosVOs.size());

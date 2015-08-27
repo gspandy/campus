@@ -35,6 +35,8 @@ public class BoardDetailVO {
 
     private boolean isDeleted;
 
+    private String transferComment;
+
     @ApiModelProperty(value = "发帖ID", required = true)
     public String getPostsId() {
         return postsId;
@@ -153,6 +155,16 @@ public class BoardDetailVO {
     @ApiModelProperty(value = "原帖是否删除,true 已删", required = true)
     public void setDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    @ApiModelProperty(value = "转发评论", required = true)
+    public String getTransferComment() {
+        return transferComment;
+    }
+
+    @ApiModelProperty(value = "转发评论", required = true)
+    public void setTransferComment(String transferComment) {
+        this.transferComment = transferComment;
     }
 
 }
