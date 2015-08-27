@@ -8,6 +8,10 @@ import org.campus.model.User;
 import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.InteractType;
 import org.campus.vo.CommentAddVO;
+import org.campus.vo.CommentMyCommentVO;
+import org.campus.vo.CommentPostsMsgVO;
+import org.campus.vo.SupportCommentMsgVO;
+import org.campus.vo.SupportMsgVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -265,5 +269,13 @@ public interface UserService {
     void reply(String sourceId, String userId, String userName, String ipaddress, CommentAddVO commentAddVO);
 
     boolean isSupport(String commentId, String userId);
+
+    Page<SupportMsgVO> findSupportPostMsgVO(String userId, Pageable pageable);
+
+    Page<SupportCommentMsgVO> findSupportCommentMsgVO(String userId, Pageable pageable);
+
+    Page<CommentPostsMsgVO> findCommentPostsMsgVO(String userId, Pageable pageable);
+
+    Page<CommentMyCommentVO> findCommentMyCommentMsgVO(String userId, Pageable pageable);
 
 }

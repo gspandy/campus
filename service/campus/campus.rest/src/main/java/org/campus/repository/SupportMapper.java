@@ -2,6 +2,8 @@ package org.campus.repository;
 
 import org.apache.ibatis.annotations.Param;
 import org.campus.model.Support;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -57,5 +59,9 @@ public interface SupportMapper {
     int isSupported(@Param("sourceId") String sourceId, @Param("userId") String userId);
 
     void delete(@Param("sourceId") String sourceId, @Param("userId") String userId);
+
+    Page<Support> findSupportPostsMsg(@Param("userId") String userId, Pageable pageable);
+
+    Page<Support> findSupportCommentMsgVO(@Param("userId") String userId, Pageable pageable);
 
 }

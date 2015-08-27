@@ -12,11 +12,16 @@ import org.campus.core.exception.CampusException;
 import org.campus.model.enums.IsNewSession;
 import org.campus.model.enums.SessionType;
 import org.campus.service.MessageService;
+import org.campus.service.UserService;
+import org.campus.vo.CommentMyCommentVO;
+import org.campus.vo.CommentPostsMsgVO;
 import org.campus.vo.ConversationDetailVO;
 import org.campus.vo.LoginResponseVO;
 import org.campus.vo.MessageAddVO;
 import org.campus.vo.MessageRequestVo;
 import org.campus.vo.MessageVO;
+import org.campus.vo.SupportCommentMsgVO;
+import org.campus.vo.SupportMsgVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -42,6 +47,9 @@ import com.wordnik.swagger.annotations.ApiResponses;
 public class MessageController {
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private UserService userService;
 
     @ApiOperation(value = "*查询信息提示列表:1.0", notes = "查询信息提示列表[API-Version=1.0]")
     @RequestMapping(value = "/lists", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
@@ -142,47 +150,48 @@ public class MessageController {
     @RequestMapping(value = "/support/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
-    public Page<ConversationDetailVO> getSupportPostMsg(
-            @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
+    public Page<SupportMsgVO> getSupportPostMsg(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
+        LoginResponseVO vo = checkLogin(session);
+        return userService.findSupportPostMsgVO(vo.getUserId(), pageable);
     }
 
     @ApiOperation(value = "*查询赞我的评论提示:1.0", notes = "查询赞我的评论提示[API-Version=1.0]")
     @RequestMapping(value = "/support/comments", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
-    public Page<ConversationDetailVO> getSupportPostMsg(
-            @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
+    public Page<SupportCommentMsgVO> getSupportCommentMsg(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-
+        LoginResponseVO vo = checkLogin(session);
+        return userService.findSupportCommentMsgVO(vo.getUserId(), pageable);
     }
 
     @ApiOperation(value = "*查询评论我的帖子提示:1.0", notes = "查询评论我的帖子提示[API-Version=1.0]")
     @RequestMapping(value = "/comment/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
-    public Page<ConversationDetailVO> getSupportPostMsg(
-            @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
+    public Page<CommentPostsMsgVO> getCommentPostMsg(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-
+        LoginResponseVO vo = checkLogin(session);
+        return userService.findCommentPostsMsgVO(vo.getUserId(), pageable);
     }
 
     @ApiOperation(value = "*查询评论我的评论提示:1.0", notes = "查询评论我的评论提示[API-Version=1.0]")
     @RequestMapping(value = "/comment/mycomment", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
-    public Page<ConversationDetailVO> getSupportPostMsg(
-            @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
+    public Page<CommentMyCommentVO> getCommentMyCommentMsg(
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
-
+        LoginResponseVO vo = checkLogin(session);
+        return userService.findCommentMyCommentMsgVO(vo.getUserId(), pageable);
     }
 
     private LoginResponseVO checkLogin(HttpSession session) {
