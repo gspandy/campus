@@ -314,6 +314,7 @@ public class TopicService {
         record.setPostid(postsId);
         record.setObjpostid(freshNews.getUid());
         record.setTransdate(new Date());
+        record.setDeleted("0");
         transferMapper.insert(record);
     }
 
