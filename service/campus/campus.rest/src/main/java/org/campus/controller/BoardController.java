@@ -296,6 +296,7 @@ public class BoardController {
         posts.setIsshield(1);
         posts.setIsanonymous(model == DisplayModel.MOON ? AnonymousType.ANONYMOUS : AnonymousType.NOT_ANONYMOUS);
         posts.setIshot("0");
+        posts.setDeleted("0");
         posts.setIsshield(FreshNews.VIEW_REGISTER);// 新帖必须屏蔽
         posts.setNewsbrief(boardPublishVO.getTitle());
         posts.setNewscontent(boardPublishVO.getContent());
