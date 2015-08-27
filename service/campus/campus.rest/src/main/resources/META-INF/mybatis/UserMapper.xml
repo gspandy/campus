@@ -590,7 +590,7 @@
 		where ApiId = #{apiId}
 	</select>
 	<select id="findByNickName" resultMap="BaseResultMap">
-		SELECT * from ts_app_user WHERE
+		SELECT * from ts_app_user WHERE 1=1
 		<if test="nickName != null and nickName != ''">
 			AND NickName like
 			CONCAT('%','${nickName}','%' )
