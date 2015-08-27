@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.campus.config.SystemConfig;
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.model.AttentionUser;
@@ -106,12 +107,19 @@ public class UserServiceImpl implements UserService {
         if (freshNews == null) {
             throw new CampusException(1100002, "查询不到数据");
         }
+        int hot = freshNews.getSupportnum();
         if (InteractType.SUPPORT.equals(type)) {
+            hot = hot + 1;
             freshNewsMapper.updateSupport(sourceId);
             support(sourceId, userId, userName);
         } else {
+            hot = hot - 1;
             freshNewsMapper.updateNotSupport(sourceId);
             notSupport(sourceId, userId, userName);
+        }
+        if (hot >= SystemConfig.getInt("HOT_POST_NUM")) {
+            freshNews.setIshot("1");
+            freshNewsMapper.updateByPrimaryKeySelective(freshNews);
         }
     }
 
@@ -255,13 +263,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void cancelSupport(String sourceId, String type, String userId) {
-        if ("1".equals(type)) {
+    public void cancelSupport(String sourceId, InteractType type, String mod, String userId) {
+        if ("1".equals(mod)) {
             FreshNews fresh = freshNewsMapper.selectByPrimaryKey(sourceId);
-            fresh.setSupportnum(fresh.getSupportnum() - 1);
-            supportMapper.delete(sourceId, userId);
-        } else if ("2".equals(type)) {
-            commentMapper.deleteByPrimaryKey(sourceId);
+            if (InteractType.SUPPORT.equals(type)) {
+                fresh.setSupportnum(fresh.getSupportnum() - 1);
+                freshNewsMapper.updateByPrimaryKeySelective(fresh);
+                supportMapper.delete(sourceId, userId);
+            } else {
+                fresh.setSupportnum(fresh.getNotsupportnum() - 1);
+                freshNewsMapper.updateByPrimaryKeySelective(fresh);
+                notSupportMapper.delete(sourceId, userId);
+            }
+        } else if ("2".equals(mod)) {
+            if (InteractType.SUPPORT.equals(type)) {
+                supportMapper.delete(sourceId, userId);
+            } else {
+                notSupportMapper.delete(sourceId, userId);
+            }
         }
     }
 

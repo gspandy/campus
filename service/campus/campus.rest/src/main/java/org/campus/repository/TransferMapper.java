@@ -46,4 +46,7 @@ public interface TransferMapper {
      * @mbggenerated Wed Aug 26 00:06:18 CST 2015
      */
     int updateByPrimaryKey(Transfer record);
+    
+    Transfer findTransferByObjPostId(String postId);
+    
 }
