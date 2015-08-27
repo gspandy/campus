@@ -1,6 +1,5 @@
 package org.campus.repository;
 
-import org.apache.ibatis.annotations.Param;
 import org.campus.model.NotSupport;
 import org.springframework.stereotype.Repository;
 
@@ -49,7 +48,5 @@ public interface NotSupportMapper {
     int updateByPrimaryKey(NotSupport record);
 
     void deleteAll();
-    
-    void delete(@Param("sourceId") String sourceId, @Param("userId") String userId);
 
 }

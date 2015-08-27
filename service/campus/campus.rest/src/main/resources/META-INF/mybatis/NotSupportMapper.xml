@@ -171,9 +171,4 @@
 	<delete id="deleteAll">
 		delete from ts_app_notsupport
 	</delete>
-	<delete id="delete">
-	   delete from ts_app_notsupport 
-	   where SourceUID = #{sourceId,jdbcType=VARCHAR} 
-	   and UserUID = #{userId,jdbcType=VARCHAR}
-	</delete>
 </mapper>

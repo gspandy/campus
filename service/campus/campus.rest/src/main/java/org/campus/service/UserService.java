@@ -264,7 +264,7 @@ public interface UserService {
 
     Page<User> findByNickName(String nickName);
 
-    void cancelSupport(String sourceId, InteractType type, String mod, String userId);
+    void cancelSupport(String sourceId, String type, String userId);
 
     void reply(String sourceId, String userId, String userName, String ipaddress, CommentAddVO commentAddVO);
 

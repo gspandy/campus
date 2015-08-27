@@ -43,8 +43,6 @@ public class BoardVO {
 
     private boolean isDeleted;
 
-    private String transferComment;
-
     @ApiModelProperty(value = "发帖ID", required = true)
     public String getPostsId() {
         return postsId;
@@ -125,12 +123,12 @@ public class BoardVO {
         this.content = content;
     }
 
-    @ApiModelProperty(value = "是否被赞过/踩过", required = false)
+    @ApiModelProperty(value = "是否被赞过", required = false)
     public boolean isSupported() {
         return isSupported;
     }
 
-    @ApiModelProperty(value = "是否被赞过/踩过", required = false)
+    @ApiModelProperty(value = "是否被赞过", required = false)
     public void setSupported(boolean isSupported) {
         this.isSupported = isSupported;
     }
@@ -203,16 +201,6 @@ public class BoardVO {
     @ApiModelProperty(value = "原帖是否删除,true 已删", required = true)
     public void setDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
-    }
-
-    @ApiModelProperty(value = "转发评论", required = true)
-    public String getTransferComment() {
-        return transferComment;
-    }
-
-    @ApiModelProperty(value = "转发评论", required = true)
-    public void setTransferComment(String transferComment) {
-        this.transferComment = transferComment;
     }
 
 }

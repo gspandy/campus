@@ -300,7 +300,6 @@ public class TopicService {
         freshNews.setUid(ToolUtil.getUUid());
         freshNews.setAdduseruid(userId);
         freshNews.setAddnickname(nickName);
-        freshNews.setNewstype(transferVO.getTopicType().getCode());
         freshNews.setCommentnum(0);
         freshNews.setComplainnum(0);
         freshNews.setNotsupportnum(0);
@@ -316,7 +315,6 @@ public class TopicService {
         record.setObjpostid(freshNews.getUid());
         record.setTransdate(new Date());
         record.setDeleted("0");
-        record.setTransferComment(transferVO.getContent());
         transferMapper.insert(record);
     }
 
@@ -337,10 +335,6 @@ public class TopicService {
             return true;
         }
         return false;
-    }
-
-    public Transfer findTransfer(String objPostId) {
-        return transferMapper.findTransferByObjPostId(objPostId);
     }
 
 }

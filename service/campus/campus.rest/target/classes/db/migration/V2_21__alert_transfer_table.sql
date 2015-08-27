@@ -1,1 +1,0 @@
-ALTER table ts_app_transfer add(TransferComment varchar(400) COMMENT '转发评论');
