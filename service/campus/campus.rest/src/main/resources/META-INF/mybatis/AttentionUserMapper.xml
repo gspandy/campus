@@ -150,6 +150,6 @@
 		where
 		MyUserUID=#{comUserId,jdbcType=VARCHAR} AND
 		AttenionUserUID =
-		#{userId,jdbcType=VARCHAR}
+		#{objUserId,jdbcType=VARCHAR}
 	</select>
 </mapper>
