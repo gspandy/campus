@@ -44,7 +44,7 @@ public class MessageController {
     private MessageService messageService;
 
     @ApiOperation(value = "*查询信息提示列表:1.0", notes = "查询信息提示列表[API-Version=1.0]")
-    @RequestMapping(value = "/lists", headers = { "API-Version=1.0" },method = RequestMethod.GET)
+    @RequestMapping(value = "/lists", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
     public Page<MessageVO> getLoginUserInfo(
@@ -104,7 +104,7 @@ public class MessageController {
     }
 
     @ApiOperation(value = "*查询会话列表:1.0", notes = "查询会话列表[API-Version=1.0]")
-    @RequestMapping(value = "/conversation/{conversationId}", headers = { "API-Version=1.0" },method = RequestMethod.GET)
+    @RequestMapping(value = "/conversation/{conversationId}", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "读取成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
     public Page<ConversationDetailVO> getConversation(
@@ -120,21 +120,69 @@ public class MessageController {
         Page<ConversationDetailVO> page = new PageImpl<ConversationDetailVO>(detailList, pageable, detailList.size());
         return page;
     }
-    
+
     @ApiOperation(value = "*获取会话id:1.0", notes = "根据会话对象获取会话id[API-Version=1.0]")
-    @RequestMapping(value = "/getConId/{objUserId}", headers = { "API-Version=1.0" },method = RequestMethod.GET)
+    @RequestMapping(value = "/getConId/{objUserId}", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "读取成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
-    public Map<String, String> getConversationId(@ApiParam(name = "objUserId", value = "会话对象用户ID") @PathVariable String objUserId,
+    public Map<String, String> getConversationId(
+            @ApiParam(name = "objUserId", value = "会话对象用户ID") @PathVariable String objUserId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
-            HttpSession session){
+            HttpSession session) {
         // 1.校验用户session信息
         LoginResponseVO vo = checkLogin(session);
         String conversationId = messageService.getConversationId(vo.getUserId(), objUserId);
-        
+
         Map<String, String> resultMap = new HashMap<String, String>(1);
         resultMap.put("conversationId", conversationId);
         return resultMap;
+    }
+
+    @ApiOperation(value = "*查询赞我的帖子提示:1.0", notes = "查询赞我的帖子提示[API-Version=1.0]")
+    @RequestMapping(value = "/support/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Page<ConversationDetailVO> getSupportPostMsg(
+            @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+    }
+
+    @ApiOperation(value = "*查询赞我的评论提示:1.0", notes = "查询赞我的评论提示[API-Version=1.0]")
+    @RequestMapping(value = "/support/comments", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Page<ConversationDetailVO> getSupportPostMsg(
+            @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+
+    }
+
+    @ApiOperation(value = "*查询评论我的帖子提示:1.0", notes = "查询评论我的帖子提示[API-Version=1.0]")
+    @RequestMapping(value = "/comment/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Page<ConversationDetailVO> getSupportPostMsg(
+            @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+
+    }
+
+    @ApiOperation(value = "*查询评论我的评论提示:1.0", notes = "查询评论我的评论提示[API-Version=1.0]")
+    @RequestMapping(value = "/comment/mycomment", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Page<ConversationDetailVO> getSupportPostMsg(
+            @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+
     }
 
     private LoginResponseVO checkLogin(HttpSession session) {

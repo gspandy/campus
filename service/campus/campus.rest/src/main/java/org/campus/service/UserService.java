@@ -260,4 +260,10 @@ public interface UserService {
 
     Page<User> findByNickName(String nickName);
 
+    void cancelSupport(String sourceId, String type, String userId);
+
+    void reply(String sourceId, String userId, String userName, String ipaddress, CommentAddVO commentAddVO);
+
+    boolean isSupport(String commentId, String userId);
+
 }

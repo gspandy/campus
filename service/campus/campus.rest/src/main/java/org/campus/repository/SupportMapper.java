@@ -56,4 +56,6 @@ public interface SupportMapper {
 
     int isSupported(@Param("sourceId") String sourceId, @Param("userId") String userId);
 
+    void delete(@Param("sourceId") String sourceId, @Param("userId") String userId);
+
 }

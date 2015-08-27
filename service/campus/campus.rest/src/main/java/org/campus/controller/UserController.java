@@ -125,7 +125,9 @@ public class UserController {
     public Page<CommentVO> getPhotoComments(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         Page<Comment> comments = userService.findComments(photoId, pageable);
         List<CommentVO> commentVOs = new ArrayList<CommentVO>();
         if (comments == null || comments.getContent().size() == 0) {
@@ -143,6 +145,7 @@ public class UserController {
             commentVO.setCommentContent(comment.getCommentcontent());
             int supportNum = userService.getUserCommentSupport(comment.getUid(), comment.getComuseruid());
             commentVO.setSupportNum(supportNum);
+            commentVO.setSupport(userService.isSupport(commentVO.getCommentId(), responseVO.getUserId()));
             commentVOs.add(commentVO);
         }
         Page<CommentVO> page = new PageImpl<CommentVO>(commentVOs, pageable, commentVOs.size());
@@ -342,6 +345,35 @@ public class UserController {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         Page<UserVO> user = findUserInfoByNickName(responseVO.getUserId(), nickName, pageable);
         return user;
+    }
+
+    @ApiOperation(value = "*回复评论:1.0", notes = "回复评论[API-Version=1.0]")
+    @RequestMapping(value = "/{commentId}/reply", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void reply(
+            @ApiParam(name = "commentId", value = "评论的ID") @PathVariable String commentId,
+            @ApiParam(name = "commentAddVO", value = "评论体信息") @RequestBody CommentAddVO commentAddVO,
+            @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session, HttpServletRequest request) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        String userName = nickNameService.findRandomNickName(model, session.getId());
+        userName = userName == null ? responseVO.getNickName() : userName;
+        userService.reply(commentId, responseVO.getUserId(), userName, ToolUtil.getIpAddr(request), commentAddVO);
+    }
+
+    @ApiOperation(value = "*取消赞:1.0", notes = "取消赞[API-Version=1.0]")
+    @RequestMapping(value = "/cancel/{sourceId}/support", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void cancelSupport(
+            @ApiParam(name = "sourceId", value = "需取消赞的帖子Id或评论Id") @PathVariable String sourceId,
+            @ApiParam(name = "type", value = "1 帖子; 2 评论") @RequestParam(value = "type", required = true) String type,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        userService.cancelSupport(sourceId, type, responseVO.getUserId());
     }
 
     private UserVO findUserInfo(String userId) {

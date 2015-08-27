@@ -246,6 +246,17 @@ public class UserServiceImpl implements UserService {
         userMapper.updateByPrimaryKeySelective(user);
     }
 
+    @Override
+    public void cancelSupport(String sourceId, String type, String userId) {
+        if ("1".equals(type)) {
+            FreshNews fresh = freshNewsMapper.selectByPrimaryKey(sourceId);
+            fresh.setSupportnum(fresh.getSupportnum() - 1);
+            supportMapper.delete(sourceId, userId);
+        } else if ("2".equals(type)) {
+            commentMapper.deleteByPrimaryKey(sourceId);
+        }
+    }
+
     private void notSupport(String sourceId, String userId, String userName) {
         NotSupport notSupport = new NotSupport();
         notSupport.setUid(ToolUtil.getUUid());
@@ -279,6 +290,40 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> findByNickName(String nickName) {
         return userMapper.findByNickName(nickName);
+    }
+
+    @Override
+    public void reply(String sourceId, String userId, String userName, String ipaddress, CommentAddVO commentAddVO) {
+        Comment commentData = commentMapper.selectByPrimaryKey(sourceId);
+        FreshNews freshNews = freshNewsMapper.selectByPrimaryKey(commentData.getSourceuid());
+        if (freshNews == null) {
+            throw new CampusException(1100002, "查询不到数据");
+        }
+        Comment comment = new Comment();
+        comment.setUid(ToolUtil.getUUid());
+        comment.setSourceuid(sourceId);
+        comment.setComuseruid(userId);
+        comment.setUsernickname(userName);
+        comment.setCommentcontent(commentAddVO.getContent());
+        comment.setIsactive(ActiveType.ACTIVE);
+        comment.setCreateby(Constant.CREATE_BY);
+        comment.setCreatedate(new Date());
+        comment.setLastupdateby(Constant.CREATE_BY);
+        comment.setLastupdatedate(new Date());
+        comment.setIpaddress(ipaddress);
+        commentMapper.insert(comment);
+
+        freshNews.setCommentnum(freshNews.getCommentnum() == null ? 1 : freshNews.getCommentnum() + 1);
+        freshNewsMapper.updateByPrimaryKey(freshNews);
+    }
+
+    @Override
+    public boolean isSupport(String commentId, String userId) {
+        int supported = supportMapper.isSupported(commentId, userId);
+        if (supported > 0) {
+            return true;
+        }
+        return false;
     }
 
 }

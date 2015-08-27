@@ -197,4 +197,11 @@
 		#{sourceId,jdbcType=VARCHAR} AND
 		SupportUserUID=#{userId,jdbcType=VARCHAR}
 	</select>
+	<delete id="delete">
+        delete from
+        ts_app_support 
+        where SourceUID =
+        #{sourceId,jdbcType=VARCHAR} AND
+        SupportUserUID=#{userId,jdbcType=VARCHAR}
+    </delete>
 </mapper>
