@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum TypeCode implements EnumCodeGetter, EnumDescriptionGetter {
 
-    ACTIVITY("0", "活动"), FRESH_NEWS("1", "新鲜事"), PHOTOS("2", "相册");
+    ACTIVITY("0", "活动"), FRESH_NEWS("1", "新鲜事");
 
     private String code;
 

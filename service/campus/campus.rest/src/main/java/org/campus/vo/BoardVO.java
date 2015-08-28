@@ -39,6 +39,12 @@ public class BoardVO {
 
     private int complainNum;
 
+    private String sourceUserId;
+
+    private boolean isDeleted;
+
+    private String transferComment;
+
     @ApiModelProperty(value = "发帖ID", required = true)
     public String getPostsId() {
         return postsId;
@@ -119,12 +125,12 @@ public class BoardVO {
         this.content = content;
     }
 
-    @ApiModelProperty(value = "是否被赞过", required = false)
+    @ApiModelProperty(value = "是否被赞过/踩过", required = false)
     public boolean isSupported() {
         return isSupported;
     }
 
-    @ApiModelProperty(value = "是否被赞过", required = false)
+    @ApiModelProperty(value = "是否被赞过/踩过", required = false)
     public void setSupported(boolean isSupported) {
         this.isSupported = isSupported;
     }
@@ -177,6 +183,36 @@ public class BoardVO {
     @ApiModelProperty(value = "投诉数", required = true)
     public void setComplainNum(int complainNum) {
         this.complainNum = complainNum;
+    }
+
+    @ApiModelProperty(value = "原发帖人", required = true)
+    public String getSourceUserId() {
+        return sourceUserId;
+    }
+
+    @ApiModelProperty(value = "原发帖人", required = true)
+    public void setSourceUserId(String sourceUserId) {
+        this.sourceUserId = sourceUserId;
+    }
+
+    @ApiModelProperty(value = "原帖是否删除,true 已删", required = true)
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    @ApiModelProperty(value = "原帖是否删除,true 已删", required = true)
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    @ApiModelProperty(value = "转发评论", required = true)
+    public String getTransferComment() {
+        return transferComment;
+    }
+
+    @ApiModelProperty(value = "转发评论", required = true)
+    public void setTransferComment(String transferComment) {
+        this.transferComment = transferComment;
     }
 
 }

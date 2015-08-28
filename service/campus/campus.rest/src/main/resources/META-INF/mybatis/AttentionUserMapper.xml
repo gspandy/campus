@@ -143,13 +143,13 @@
 		delete from ts_app_attentionuser where
 		MyUserUID=#{userId,jdbcType=VARCHAR}
 	</delete>
-	<select id="findAttention">
+	<select id="findAttention" resultMap="BaseResultMap">
 		select
 		*
 		from ts_app_attentionuser
 		where
 		MyUserUID=#{comUserId,jdbcType=VARCHAR} AND
 		AttenionUserUID =
-		#{userId,jdbcType=VARCHAR}
+		#{objUserId,jdbcType=VARCHAR}
 	</select>
 </mapper>

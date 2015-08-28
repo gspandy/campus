@@ -42,22 +42,25 @@
 		<result column="LoginCount" property="logincount" jdbcType="INTEGER" />
 		<result column="ApiType" property="apiType" jdbcType="VARCHAR" />
 		<result column="ApiId" property="apiId" jdbcType="VARCHAR" />
-		<result column="NickFirstLetter" property="nickFirstLetter" jdbcType="VARCHAR" />
+		<result column="NickFirstLetter" property="nickFirstLetter"
+			jdbcType="VARCHAR" />
+		<result column="AuditFlag" property="auditFlag" jdbcType="VARCHAR" />
+		<result column="SignName" property="signName" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
-	UserUID, StudentID, RealName, NamePinYin, NameFirstLetter,
-	NickName, SexType,
-	Email,
-	IDCard, HeadPic, BackGroundImg, SchoolUID,
-	SchoolName, CollegeUID,
-	CollegeName, ProfessionUID,
-	ProfessionName,
-	InSchoolYear, CityCode, CityName, ProvinceCode, ProvinceName,
-	IsValidated,
-	IsLocked, IsOpen, IsGraduate, CreateBy, CreateDate,
-	LastUpdateBy,
-	LastUpdateDate,
-	IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter
+		UserUID, StudentID, RealName, NamePinYin, NameFirstLetter,
+		NickName, SexType,
+		Email,
+		IDCard, HeadPic, BackGroundImg, SchoolUID,
+		SchoolName, CollegeUID,
+		CollegeName, ProfessionUID,
+		ProfessionName,
+		InSchoolYear, CityCode, CityName, ProvinceCode, ProvinceName,
+		IsValidated,
+		IsLocked, IsOpen, IsGraduate, CreateBy, CreateDate,
+		LastUpdateBy,
+		LastUpdateDate,
+		IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter,AuditFlag,SignName
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -91,7 +94,7 @@
 		ProvinceName, IsValidated, IsLocked,
 		IsOpen, IsGraduate, CreateBy,
 		CreateDate, LastUpdateBy, LastUpdateDate,
-		IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter)
+		IsActive,Integral,LoginCount,ApiType,ApiId,NickFirstLetter,AuditFlag,SignName)
 		values
 		(#{useruid,jdbcType=VARCHAR},
 		#{studentid,jdbcType=VARCHAR},
@@ -124,7 +127,9 @@
 		#{lastupdateby,jdbcType=VARCHAR},
 		#{lastupdatedate,jdbcType=TIMESTAMP},
 		#{isactive,jdbcType=INTEGER},#{integral,jdbcType=INTEGER},#{logincount,jdbcType=INTEGER},
-		#{apiType,jdbcType=VARCHAR}, #{apiId,jdbcType=VARCHAR},#{nickFirstLetter,jdbcType=VARCHAR})
+		#{apiType,jdbcType=VARCHAR},
+		#{apiId,jdbcType=VARCHAR},#{nickFirstLetter,jdbcType=VARCHAR},
+		#{auditFlag,jdbcType=VARCHAR},#{signName,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.User">
 		insert into ts_app_user
@@ -237,6 +242,12 @@
 			<if test="nickFirstLetter != null">
 				NickFirstLetter,
 			</if>
+			<if test="auditFlag != null">
+				AuditFlag,
+			</if>
+			<if test="signName != null">
+				SignName,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="useruid != null">
@@ -345,7 +356,13 @@
 				#{apiId,jdbcType=VARCHAR},
 			</if>
 			<if test="nickFirstLetter != null">
-			    #{nickFirstLetter,jdbcType=VARCHAR}
+				#{nickFirstLetter,jdbcType=VARCHAR}
+			</if>
+			<if test="auditFlag != null">
+				#{auditFlag,jdbcType=VARCHAR}
+			</if>
+			<if test="signName != null">
+				#{signName,jdbcType=VARCHAR}
 			</if>
 		</trim>
 	</insert>
@@ -455,7 +472,13 @@
 				ApiId = #{apiId,jdbcType=VARCHAR},
 			</if>
 			<if test="nickFirstLetter != null">
-			    NickFirstLetter = #{nickFirstLetter,jdbcType=VARCHAR},
+				NickFirstLetter = #{nickFirstLetter,jdbcType=VARCHAR},
+			</if>
+			<if test="auditFlag != null">
+				AuditFlag = #{auditFlag,jdbcType=VARCHAR},
+			</if>
+			<if test="signName != null">
+				SignName = #{signName,jdbcType=VARCHAR},
 			</if>
 		</set>
 		where UserUID = #{useruid,jdbcType=VARCHAR}
@@ -522,7 +545,11 @@
 		ApiId =
 		#{apiId,jdbcType=VARCHAR},
 		NickFirstLetter =
-		#{nickFirstLetter,jdbcType=VARCHAR}
+		#{nickFirstLetter,jdbcType=VARCHAR},
+		AuditFlag =
+		#{auditFlag,jdbcType=VARCHAR},
+		SignName =
+		#{signName,jdbcType=VARCHAR}
 		where
 		UserUID =
 		#{useruid,jdbcType=VARCHAR}
@@ -561,5 +588,13 @@
 		*
 		from ts_app_user
 		where ApiId = #{apiId}
+	</select>
+	<select id="findByNickName" resultMap="BaseResultMap">
+		SELECT * from ts_app_user WHERE 1=1
+		<if test="nickName != null and nickName != ''">
+			AND NickName like
+			CONCAT('%','${nickName}','%' )
+		</if>
+		ORDER BY NickFirstLetter
 	</select>
 </mapper>

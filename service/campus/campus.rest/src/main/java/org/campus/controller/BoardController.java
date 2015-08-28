@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.campus.annotation.NeedRoles;
@@ -12,8 +13,11 @@ import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.model.FavoriteFreshNews;
 import org.campus.model.FreshNews;
+import org.campus.model.Transfer;
+import org.campus.model.User;
 import org.campus.model.UserFavorite;
 import org.campus.model.enums.AnonymousType;
+import org.campus.model.enums.CheckType;
 import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.TopicType;
 import org.campus.service.NickNameService;
@@ -25,6 +29,7 @@ import org.campus.vo.BoardFavoriteVO;
 import org.campus.vo.BoardPublishVO;
 import org.campus.vo.BoardVO;
 import org.campus.vo.LoginResponseVO;
+import org.campus.vo.TransferVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -87,12 +92,67 @@ public class BoardController {
 
         List<FreshNews> listTopic = freshNews.getContent();
         List<BoardVO> boardVOs = new ArrayList<BoardVO>();
+        User postUser = null;
+        Transfer tranfer = null;
         for (FreshNews topic : listTopic) {
             BoardVO vo = new BoardVO();
             vo.setPostsId(topic.getUid());
-            vo.setUserId(topic.getCreateby());
+            vo.setUserId(topic.getAdduseruid());
             vo.setNickName(topic.getAddnickname());
-            vo.setHeadPic(user.getHeadPic());
+            postUser = userService.findByUserId(topic.getAdduseruid());
+            vo.setHeadPic(postUser.getHeadpic());
+            boolean delete = topicSvc.isDelete(vo.getPostsId());
+            if (delete) {
+                vo.setBrief("");
+                vo.setContent("");
+                vo.setPicUrls(new ArrayList<String>());
+            } else {
+                vo.setBrief(topic.getNewsbrief());
+                vo.setContent(topic.getNewscontent());
+                String[] picUrls = topic.getPictures().split(",");
+                vo.setPicUrls(Arrays.asList(picUrls));
+            }
+            vo.setDeleted(delete);
+            vo.setPublishDate(topic.getCreatedate());
+            vo.setSupported(topicSvc.isSupported(topic.getUid(), user.getUserId()));
+            vo.setTransNum(topic.getTransnum());
+            vo.setCommentNum(topic.getCommentnum());
+            vo.setSupportNum(topic.getSupportnum());
+            vo.setNotSupportNum(topic.getNotsupportnum());
+            vo.setComplainNum(topic.getComplainnum());
+            vo.setSourceUserId(topic.getCreateby());
+            tranfer = topicSvc.findTransfer(topic.getUid());
+            if (tranfer != null) {
+                vo.setTransferComment(tranfer.getTransferComment());
+            }
+            boardVOs.add(vo);
+        }
+
+        Page<BoardVO> page = new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
+        return page;
+    }
+
+    @ApiOperation(value = "*帖子搜索:1.0", notes = "*帖子搜索[API-Version=1.0]")
+    @RequestMapping(value = "/posts/search", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Page<BoardVO> search(
+            @ApiParam(name = "keyword", value = "关键字") @RequestParam(value = "keyword", required = true) String keyword,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            HttpSession session) {
+        Page<FreshNews> freshNews = topicSvc.search(keyword, pageable);
+        LoginResponseVO user = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        List<FreshNews> listTopic = freshNews.getContent();
+        List<BoardVO> boardVOs = new ArrayList<BoardVO>();
+        User postUser = null;
+        Transfer tranfer = null;
+        for (FreshNews topic : listTopic) {
+            BoardVO vo = new BoardVO();
+            vo.setPostsId(topic.getUid());
+            vo.setUserId(topic.getAdduseruid());
+            vo.setNickName(topic.getAddnickname());
+            postUser = userService.findByUserId(topic.getAdduseruid());
+            vo.setHeadPic(postUser.getHeadpic());
             vo.setBrief(topic.getNewsbrief());
             vo.setContent(topic.getNewscontent());
             vo.setPublishDate(topic.getCreatedate());
@@ -104,6 +164,11 @@ public class BoardController {
             vo.setSupportNum(topic.getSupportnum());
             vo.setNotSupportNum(topic.getNotsupportnum());
             vo.setComplainNum(topic.getComplainnum());
+            vo.setSourceUserId(topic.getCreateby());
+            tranfer = topicSvc.findTransfer(topic.getUid());
+            if (tranfer != null) {
+                vo.setTransferComment(tranfer.getTransferComment());
+            }
             boardVOs.add(vo);
         }
 
@@ -124,12 +189,17 @@ public class BoardController {
         if (topic != null) {
             boardVo = new BoardDetailVO();
             boardVo.setCommentNum(topic.getCommentnum());
-            boardVo.setContent(topic.getNewscontent());
             boardVo.setNickName(topic.getAddnickname());
-
-            String[] picUrls = topic.getPictures().split(",");
-            boardVo.setPicUrls(Arrays.asList(picUrls));
-
+            boolean delete = topicSvc.isDelete(postsId);
+            if (delete) {
+                boardVo.setPicUrls(new ArrayList<String>());
+                boardVo.setContent("");
+            } else {
+                String[] picUrls = topic.getPictures().split(",");
+                boardVo.setPicUrls(Arrays.asList(picUrls));
+                boardVo.setContent(topic.getNewscontent());
+            }
+            boardVo.setDeleted(delete);
             boardVo.setPostsId(postsId);
             boardVo.setPublishDate(topic.getCreatedate());
             boardVo.setSupportNum(topic.getSupportnum());
@@ -137,6 +207,10 @@ public class BoardController {
             boardVo.setUserId(topic.getCreateby());
             boardVo.setSupported(topicSvc.isSupported(postsId, user.getUserId()));
             boardVo.setCollected(topicSvc.isFavorited(postsId, user.getUserId()));
+            Transfer tranfer = topicSvc.findTransfer(topic.getUid());
+            if (tranfer != null) {
+                boardVo.setTransferComment(tranfer.getTransferComment());
+            }
         }
 
         return boardVo;
@@ -193,12 +267,16 @@ public class BoardController {
             favorite.setPostsId(data.getUid());
             favorite.setUserId(data.getCreateby());
             favorite.setNickName(data.getAddnickname());
-
-            String[] picUrls = data.getPictures().split(",");
-            favorite.setPicUrls(Arrays.asList(picUrls));
-
-            favorite.setContent(data.getNewscontent());
-
+            boolean delete = topicSvc.isDelete(data.getUid());
+            if (delete) {
+                favorite.setPicUrls(new ArrayList<String>());
+                favorite.setContent("");
+            } else {
+                String[] picUrls = data.getPictures().split(",");
+                favorite.setPicUrls(Arrays.asList(picUrls));
+                favorite.setContent(data.getNewscontent());
+            }
+            favorite.setDeleted(delete);
             favorite.setPublishDate(data.getCreatedate());
             boardVOs.add(favorite);
         }
@@ -230,8 +308,10 @@ public class BoardController {
         posts.setCreateby(vo.getUserId());
         posts.setCreatedate(Calendar.getInstance().getTime());
         posts.setIsactive(1);
+        posts.setIsshield(1);
         posts.setIsanonymous(model == DisplayModel.MOON ? AnonymousType.ANONYMOUS : AnonymousType.NOT_ANONYMOUS);
         posts.setIshot("0");
+        posts.setDeleted("0");
         posts.setIsshield(FreshNews.VIEW_REGISTER);// 新帖必须屏蔽
         posts.setNewsbrief(boardPublishVO.getTitle());
         posts.setNewscontent(boardPublishVO.getContent());
@@ -276,4 +356,99 @@ public class BoardController {
         }
         session.setAttribute(Constant.CAMPUS_DISPLAYMODEL, model);
     }
+
+    @ApiOperation(value = "*转发评论:1.0", notes = "转发评论[API-Version=1.0]")
+    @RequestMapping(value = "/transfer/{postsId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "发布成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void transfer(
+            @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
+            @ApiParam(name = "transferVO", value = "转发内容") @RequestBody TransferVO transferVO,
+            @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
+            HttpSession session, HttpServletRequest request) {
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        DisplayModel model = DisplayModel.getDisplayModelByCode(environment);
+        if (model == null) {
+            throw new CampusException(100203, "显示模式错误.");
+        }
+        String nickName = nickNameSvc.findRandomNickName(model, session.getId());
+        nickName = nickName == null ? vo.getNickName() : nickName;
+        topicSvc.transfer(postsId, vo.getUserId(), nickName, transferVO, ToolUtil.getIpAddr(request));
+    }
+
+    @ApiOperation(value = "*开始审帖:1.0", notes = "开始审帖[API-Version=1.0]")
+    @RequestMapping(value = "/audit", headers = { "API-Version=1.0" }, method = RequestMethod.PUT)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "审核成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void beginAudit(
+            @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
+            HttpSession session) {
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        userService.beginAudit(vo.getUserId());
+    }
+
+    @ApiOperation(value = "*审核帖子列表查询:1.0", notes = "*审核帖子列表查询[API-Version=1.0]")
+    @RequestMapping(value = "/audit/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Page<BoardVO> auditPosts(
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            HttpSession session) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        Page<FreshNews> freshNews = topicSvc.getAuditPosts(responseVO.getUserId(), pageable);
+
+        List<FreshNews> listTopic = freshNews.getContent();
+        List<BoardVO> boardVOs = new ArrayList<BoardVO>();
+        User user = null;
+        for (FreshNews topic : listTopic) {
+            BoardVO vo = new BoardVO();
+            vo.setPostsId(topic.getUid());
+            vo.setUserId(topic.getCreateby());
+            vo.setNickName(topic.getAddnickname());
+            user = userService.findByUserId(topic.getCreateby());
+            vo.setHeadPic(user.getHeadpic());
+            vo.setBrief(topic.getNewsbrief());
+            vo.setContent(topic.getNewscontent());
+            vo.setPublishDate(topic.getCreatedate());
+            String[] picUrls = topic.getPictures().split(",");
+            vo.setPicUrls(Arrays.asList(picUrls));
+            vo.setSupported(topicSvc.isSupported(topic.getUid(), responseVO.getUserId()));
+            vo.setTransNum(topic.getTransnum());
+            vo.setCommentNum(topic.getCommentnum());
+            vo.setSupportNum(topic.getSupportnum());
+            vo.setNotSupportNum(topic.getNotsupportnum());
+            vo.setComplainNum(topic.getComplainnum());
+            vo.setSourceUserId(topic.getCreateby());
+            boardVOs.add(vo);
+        }
+
+        Page<BoardVO> page = new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
+        return page;
+    }
+
+    @ApiOperation(value = "*审核:1.0", notes = "审核[API-Version=1.0]")
+    @RequestMapping(value = "/audit/{postsId}", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "审核成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void audit(
+            @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
+            @ApiParam(name = "type", value = "审核结果") @RequestBody CheckType type,
+            @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
+            HttpSession session) {
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        topicSvc.audit(postsId, vo.getUserId(), vo.getNickName(), type);
+    }
+
+    @ApiOperation(value = "*删帖:1.0", notes = "删帖[API-Version=1.0]")
+    @RequestMapping(value = "/{postsId}/delete", headers = { "API-Version=1.0" }, method = RequestMethod.DELETE)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "审核成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void delete(
+            @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
+            @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
+            HttpSession session) {
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        topicSvc.delete(postsId, vo.getUserId());
+    }
+
 }

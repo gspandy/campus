@@ -58,4 +58,8 @@ public interface CommentMapper {
 
     List<Comment> findMyComments(@Param("sourceId") String sourceId, @Param("userId") String userId);
 
+    Page<Comment> findCommentPostsMsgVO(@Param("userId") String userId, Pageable pageable);
+
+    Page<Comment> findCommentMyCommentMsgVO(@Param("userId") String userId, Pageable pageable);
+
 }

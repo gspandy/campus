@@ -197,4 +197,26 @@
 		#{sourceId,jdbcType=VARCHAR} AND
 		SupportUserUID=#{userId,jdbcType=VARCHAR}
 	</select>
+	<delete id="delete">
+		delete from
+		ts_app_support
+		where SourceUID =
+		#{sourceId,jdbcType=VARCHAR} AND
+		SupportUserUID=#{userId,jdbcType=VARCHAR}
+	</delete>
+	<select id="findSupportPostsMsg" resultMap="BaseResultMap">
+		SELECT s.* FROM
+		ts_app_support as s
+		LEFT JOIN ts_app_freshnews as f ON s.SourceUID =
+		f.UID
+		WHERE f.AddUserUID=#{userId,jdbcType=VARCHAR}
+		ORDER BY
+		s.CreateDate desc
+	</select>
+	<select id="findSupportCommentMsgVO" resultMap="BaseResultMap">
+		SELECT s.* FROM ts_app_support as s
+		LEFT JOIN ts_app_comment as c ON s.SourceUID = c.UID
+		WHERE c.ComUserUID=#{userId,jdbcType=VARCHAR}
+		ORDER BY s.CreateDate desc
+	</select>
 </mapper>

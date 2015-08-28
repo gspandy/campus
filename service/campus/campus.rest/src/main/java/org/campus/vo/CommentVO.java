@@ -26,6 +26,8 @@ public class CommentVO {
 
     private int supportNum;
 
+    private boolean isSupport;
+
     @ApiModelProperty(value = "评论ID", required = true)
     public String getCommentId() {
         return commentId;
@@ -104,6 +106,16 @@ public class CommentVO {
     @ApiModelProperty(value = "点赞数", required = true)
     public void setSupportNum(int supportNum) {
         this.supportNum = supportNum;
+    }
+
+    @ApiModelProperty(value = "是否赞过", required = true)
+    public boolean isSupport() {
+        return isSupport;
+    }
+
+    @ApiModelProperty(value = "是否赞过", required = true)
+    public void setSupport(boolean isSupport) {
+        this.isSupport = isSupport;
     }
 
 }

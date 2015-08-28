@@ -10,8 +10,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.campus.annotation.NeedRoles;
 import org.campus.constant.Constant;
+import org.campus.core.exception.CampusException;
 import org.campus.model.Comment;
 import org.campus.model.FreshNews;
+import org.campus.model.Transfer;
 import org.campus.model.User;
 import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.InteractType;
@@ -79,6 +81,9 @@ public class UserController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         UserVO user = findUserInfo(userId);
+        if (user == null) {
+            throw new CampusException(1000003, "用户不存在");
+        }
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         user.setAttention(userService.isAttention(responseVO.getUserId(), userId));
         return user;
@@ -107,6 +112,9 @@ public class UserController {
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
         User user = userService.findByUserId(userId);
+        if (user == null) {
+            throw new CampusException(1000003, "用户不存在");
+        }
         Page<BoardVO> page = findUserPhotos(pageable, userId, user.getNickname(), user.getHeadpic());
         return page;
     }
@@ -118,7 +126,9 @@ public class UserController {
     public Page<CommentVO> getPhotoComments(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         Page<Comment> comments = userService.findComments(photoId, pageable);
         List<CommentVO> commentVOs = new ArrayList<CommentVO>();
         if (comments == null || comments.getContent().size() == 0) {
@@ -127,6 +137,7 @@ public class UserController {
         CommentVO commentVO = null;
         for (Comment comment : comments.getContent()) {
             commentVO = new CommentVO();
+            commentVO.setCommentId(comment.getUid());
             commentVO.setUserId(comment.getComuseruid());
             commentVO.setNickName(comment.getUsernickname());
             commentVO.setObjUserId(comment.getObjuseruid());
@@ -135,6 +146,7 @@ public class UserController {
             commentVO.setCommentContent(comment.getCommentcontent());
             int supportNum = userService.getUserCommentSupport(comment.getUid(), comment.getComuseruid());
             commentVO.setSupportNum(supportNum);
+            commentVO.setSupport(userService.isSupport(commentVO.getCommentId(), responseVO.getUserId()));
             commentVOs.add(commentVO);
         }
         Page<CommentVO> page = new PageImpl<CommentVO>(commentVOs, pageable, commentVOs.size());
@@ -227,6 +239,18 @@ public class UserController {
         return getFriendsVOs(users);
     }
 
+    @ApiOperation(value = "*查询指定用户好友列表:1.0", notes = "查询好友列表[API-Version=1.0]")
+    @RequestMapping(value = "/{userId}/friends", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询好友成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public List<FriendVO> getFriends(
+            @ApiParam(name = "userId", value = "用户ID") @PathVariable String userId,
+            @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+        List<User> users = userService.findMyFriends(userId, nickName);
+        return getFriendsVOs(users);
+    }
+
     @ApiOperation(value = "*查询粉丝列表:1.0", notes = "查询粉丝列表[API-Version=1.0]")
     @RequestMapping(value = "/fans", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询粉丝成功"), @ApiResponse(code = 500, message = "内部处理错误") })
@@ -237,6 +261,18 @@ public class UserController {
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         List<User> users = userService.findMyFans(responseVO.getUserId(), nickName);
+        return getFriendsVOs(users);
+    }
+
+    @ApiOperation(value = "*查询指定用户粉丝列表:1.0", notes = "查询粉丝列表[API-Version=1.0]")
+    @RequestMapping(value = "/{userId}/fans", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询粉丝成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public List<FriendVO> getFans(
+            @ApiParam(name = "userId", value = "用户ID") @PathVariable String userId,
+            @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+        List<User> users = userService.findMyFans(userId, nickName);
         return getFriendsVOs(users);
     }
 
@@ -298,6 +334,50 @@ public class UserController {
         return new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
     }
 
+    @ApiOperation(value = "*用户搜索:1.0", notes = "用户搜索[API-Version=1.0]")
+    @RequestMapping(value = "/user/search", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Page<UserVO> searchUser(
+            @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        Page<UserVO> user = findUserInfoByNickName(responseVO.getUserId(), nickName, pageable);
+        return user;
+    }
+
+    @ApiOperation(value = "*回复评论:1.0", notes = "回复评论[API-Version=1.0]")
+    @RequestMapping(value = "/{commentId}/reply", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void reply(
+            @ApiParam(name = "commentId", value = "评论的ID") @PathVariable String commentId,
+            @ApiParam(name = "commentAddVO", value = "评论体信息") @RequestBody CommentAddVO commentAddVO,
+            @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session, HttpServletRequest request) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        String userName = nickNameService.findRandomNickName(model, session.getId());
+        userName = userName == null ? responseVO.getNickName() : userName;
+        userService.reply(commentId, responseVO.getUserId(), userName, ToolUtil.getIpAddr(request), commentAddVO);
+    }
+
+    @ApiOperation(value = "*取消赞/踩:1.0", notes = "取消赞[API-Version=1.0]")
+    @RequestMapping(value = "/cancel/{sourceId}/support", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void cancelSupport(
+            @ApiParam(name = "sourceId", value = "需取消赞的帖子Id或评论Id") @PathVariable String sourceId,
+            @ApiParam(name = "type", value = "赞/踩(0:踩,1:赞)") @RequestParam(value = "type", required = true) InteractType type,
+            @ApiParam(name = "type", value = "1 帖子; 2 评论") @RequestParam(value = "type", required = true) String mod,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        userService.cancelSupport(sourceId, type, mod, responseVO.getUserId());
+    }
+
     private UserVO findUserInfo(String userId) {
         User user = userService.findByUserId(userId);
         UserVO userVO = new UserVO();
@@ -307,7 +387,30 @@ public class UserController {
         userVO.setFansCount(userService.countFans(userId));
         userVO.setAttentionCount(userService.countAttention(userId));
         userVO.setHeadPic(user.getHeadpic());
+        userVO.setIntegral(user.getIntegral());
         return userVO;
+    }
+
+    private Page<UserVO> findUserInfoByNickName(String userId, String nickName, Pageable pageable) {
+        Page<User> users = userService.findByNickName(nickName, pageable);
+        List<UserVO> userVOs = new ArrayList<UserVO>();
+        if (users == null || CollectionUtils.isEmpty(users.getContent())) {
+            return new PageImpl<UserVO>(userVOs, pageable, userVOs.size());
+        }
+        UserVO userVO = null;
+        for (User user : users.getContent()) {
+            userVO = new UserVO();
+            userVO.setUserId(user.getUseruid());
+            userVO.setNickName(user.getNickname());
+            userVO.setPostCount(userService.countPost(user.getUseruid()));
+            userVO.setFansCount(userService.countFans(user.getUseruid()));
+            userVO.setAttentionCount(userService.countAttention(user.getUseruid()));
+            userVO.setHeadPic(user.getHeadpic());
+            userVO.setAttention(userService.isAttention(userId, user.getUseruid()));
+            userVOs.add(userVO);
+        }
+
+        return new PageImpl<UserVO>(userVOs, pageable, userVOs.size());
     }
 
     private Page<BoardVO> findUserPhotos(Pageable pageable, String userId, String nickName, String headPic) {
@@ -317,23 +420,37 @@ public class UserController {
             return new PageImpl<BoardVO>(photosVOs, pageable, photosVOs.size());
         }
         BoardVO userPhotosVO = null;
+        Transfer tranfer = null;
         for (FreshNews freshNews : photos.getContent()) {
             userPhotosVO = new BoardVO();
             userPhotosVO.setPostsId(freshNews.getUid());
-            userPhotosVO.setUserId(freshNews.getCreateby());
+            userPhotosVO.setUserId(freshNews.getAdduseruid());
             userPhotosVO.setNickName(freshNews.getAddnickname());
             userPhotosVO.setHeadPic(headPic);
-            userPhotosVO.setBrief(freshNews.getNewsbrief());
-            userPhotosVO.setContent(freshNews.getNewscontent());
+            boolean delete = topicSvc.isDelete(freshNews.getUid());
+            if (delete) {
+                userPhotosVO.setBrief("");
+                userPhotosVO.setContent("");
+                userPhotosVO.setPicUrls(new ArrayList<String>());
+            } else {
+                userPhotosVO.setBrief(freshNews.getNewsbrief());
+                userPhotosVO.setContent(freshNews.getNewscontent());
+                String[] picUrls = freshNews.getPictures().split(",");
+                userPhotosVO.setPicUrls(Arrays.asList(picUrls));
+            }
+            userPhotosVO.setDeleted(delete);
             userPhotosVO.setPublishDate(freshNews.getCreatedate());
-            String[] picUrls = freshNews.getPictures().split(",");
-            userPhotosVO.setPicUrls(Arrays.asList(picUrls));
             userPhotosVO.setSupported(topicSvc.isSupported(freshNews.getUid(), userId));
             userPhotosVO.setTransNum(freshNews.getTransnum());
             userPhotosVO.setCommentNum(freshNews.getCommentnum());
             userPhotosVO.setSupportNum(freshNews.getSupportnum());
             userPhotosVO.setNotSupportNum(freshNews.getNotsupportnum());
             userPhotosVO.setComplainNum(freshNews.getComplainnum());
+            userPhotosVO.setSourceUserId(freshNews.getCreateby());
+            tranfer = topicSvc.findTransfer(freshNews.getUid());
+            if (tranfer != null) {
+                userPhotosVO.setTransferComment(tranfer.getTransferComment());
+            }
             photosVOs.add(userPhotosVO);
         }
         Page<BoardVO> page = new PageImpl<BoardVO>(photosVOs, pageable, photosVOs.size());

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum CheckType implements EnumCodeGetter, EnumDescriptionGetter {
 
-    COMPLAIN("1", "踩"), SUPPORT("2", "赞"), NOT_SUPPORT("3", "踩");
+    COMPLAIN("1", "投诉"), SUPPORT("2", "赞"), NOT_SUPPORT("3", "踩");
 
     private String code;
 

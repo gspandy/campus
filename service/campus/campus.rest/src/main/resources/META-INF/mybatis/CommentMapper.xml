@@ -228,7 +228,7 @@
 		<include refid="Base_Column_List" />
 		from ts_app_comment
 		where SourceUID = #{sourceId,jdbcType=VARCHAR} AND
-		isActive=1
+		isActive=1 order by CreateDate desc
 	</select>
 	<delete id="deleteAll">
 		delete from ts_app_comment
@@ -239,6 +239,20 @@
 		from ts_app_comment
 		where SourceUID = #{sourceId,jdbcType=VARCHAR} AND
 		ComUserUID=#{userId,jdbcType=VARCHAR} AND
-		isActive=1
+		isActive=1 order by CreateDate desc
+	</select>
+	<select id="findCommentPostsMsgVO" resultMap="BaseResultMap">
+		select c.*
+		from
+		ts_app_comment as c LEFT JOIN ts_app_freshnews as f ON c.SourceUID =
+		f.UID
+		where f.AddUserUID = #{userId,jdbcType=VARCHAR} and c.isActive=1 order by c.CreateDate desc
+	</select>
+	<select id="findCommentMyCommentMsgVO" resultMap="BaseResultMap">
+		select * from
+		ts_app_comment
+		where ObjUserUID =
+		#{userId,jdbcType=VARCHAR} AND
+        isActive=1 order by CreateDate desc
 	</select>
 </mapper>

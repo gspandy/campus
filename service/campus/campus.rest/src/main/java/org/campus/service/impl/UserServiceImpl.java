@@ -1,8 +1,11 @@
 package org.campus.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.campus.config.SystemConfig;
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.model.AttentionUser;
@@ -27,10 +30,16 @@ import org.campus.repository.UserMapper;
 import org.campus.service.UserService;
 import org.campus.util.ToolUtil;
 import org.campus.vo.CommentAddVO;
+import org.campus.vo.CommentMyCommentVO;
+import org.campus.vo.CommentPostsMsgVO;
+import org.campus.vo.SupportCommentMsgVO;
+import org.campus.vo.SupportMsgVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -98,12 +107,19 @@ public class UserServiceImpl implements UserService {
         if (freshNews == null) {
             throw new CampusException(1100002, "查询不到数据");
         }
+        int hot = freshNews.getSupportnum();
         if (InteractType.SUPPORT.equals(type)) {
+            hot = hot + 1;
             freshNewsMapper.updateSupport(sourceId);
             support(sourceId, userId, userName);
         } else {
+            hot = hot - 1;
             freshNewsMapper.updateNotSupport(sourceId);
             notSupport(sourceId, userId, userName);
+        }
+        if (hot >= SystemConfig.getInt("HOT_POST_NUM")) {
+            freshNews.setIshot("1");
+            freshNewsMapper.updateByPrimaryKeySelective(freshNews);
         }
     }
 
@@ -140,6 +156,9 @@ public class UserServiceImpl implements UserService {
         comment.setLastupdatedate(new Date());
         comment.setIpaddress(ipaddress);
         commentMapper.insert(comment);
+
+        freshNews.setCommentnum(freshNews.getCommentnum() == null ? 1 : freshNews.getCommentnum() + 1);
+        freshNewsMapper.updateByPrimaryKey(freshNews);
 
         if (commentAddVO.isTrans()) {
             freshNews.setUid(ToolUtil.getUUid());
@@ -236,13 +255,42 @@ public class UserServiceImpl implements UserService {
         userMapper.updateByPrimaryKeySelective(record);
     }
 
+    @Override
+    public void beginAudit(String userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        user.setAuditFlag("1");
+        userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    @Override
+    public void cancelSupport(String sourceId, InteractType type, String mod, String userId) {
+        if ("1".equals(mod)) {
+            FreshNews fresh = freshNewsMapper.selectByPrimaryKey(sourceId);
+            if (InteractType.SUPPORT.equals(type)) {
+                fresh.setSupportnum(fresh.getSupportnum() - 1);
+                freshNewsMapper.updateByPrimaryKeySelective(fresh);
+                supportMapper.delete(sourceId, userId);
+            } else {
+                fresh.setSupportnum(fresh.getNotsupportnum() - 1);
+                freshNewsMapper.updateByPrimaryKeySelective(fresh);
+                notSupportMapper.delete(sourceId, userId);
+            }
+        } else if ("2".equals(mod)) {
+            if (InteractType.SUPPORT.equals(type)) {
+                supportMapper.delete(sourceId, userId);
+            } else {
+                notSupportMapper.delete(sourceId, userId);
+            }
+        }
+    }
+
     private void notSupport(String sourceId, String userId, String userName) {
         NotSupport notSupport = new NotSupport();
         notSupport.setUid(ToolUtil.getUUid());
         notSupport.setSourceuid(sourceId);
         notSupport.setUseruid(userId);
         notSupport.setUsernickname(userName);
-        notSupport.setTypecode(TypeCode.PHOTOS);
+        notSupport.setTypecode(TypeCode.FRESH_NEWS);
         notSupport.setIsactive(ActiveType.ACTIVE);
         notSupport.setCreateby(Constant.CREATE_BY);
         notSupport.setCreatedate(new Date());
@@ -257,13 +305,169 @@ public class UserServiceImpl implements UserService {
         support.setSourceuid(sourceId);
         support.setSupportuseruid(userId);
         support.setUsernickname(userName);
-        support.setTypecode(TypeCode.PHOTOS);
+        support.setTypecode(TypeCode.FRESH_NEWS);
         support.setIsactive(ActiveType.ACTIVE);
         support.setCreateby(Constant.CREATE_BY);
         support.setCreatedate(new Date());
         support.setLastupdateby(Constant.CREATE_BY);
         support.setLastupdatedate(new Date());
         supportMapper.insert(support);
+    }
+
+    @Override
+    public Page<User> findByNickName(String nickName, Pageable pageable) {
+        return userMapper.findByNickName(nickName, pageable);
+    }
+
+    @Override
+    public void reply(String sourceId, String userId, String userName, String ipaddress, CommentAddVO commentAddVO) {
+        Comment commentData = commentMapper.selectByPrimaryKey(sourceId);
+        FreshNews freshNews = freshNewsMapper.selectByPrimaryKey(commentData.getSourceuid());
+        if (freshNews == null) {
+            throw new CampusException(1100002, "查询不到数据");
+        }
+        Comment comment = new Comment();
+        comment.setUid(ToolUtil.getUUid());
+        comment.setSourceuid(sourceId);
+        comment.setComuseruid(userId);
+        comment.setUsernickname(userName);
+        comment.setCommentcontent(commentAddVO.getContent());
+        comment.setIsactive(ActiveType.ACTIVE);
+        comment.setCreateby(Constant.CREATE_BY);
+        comment.setCreatedate(new Date());
+        comment.setLastupdateby(Constant.CREATE_BY);
+        comment.setLastupdatedate(new Date());
+        comment.setIpaddress(ipaddress);
+        commentMapper.insert(comment);
+
+        freshNews.setCommentnum(freshNews.getCommentnum() == null ? 1 : freshNews.getCommentnum() + 1);
+        freshNewsMapper.updateByPrimaryKey(freshNews);
+    }
+
+    @Override
+    public boolean isSupport(String commentId, String userId) {
+        int supported = supportMapper.isSupported(commentId, userId);
+        if (supported > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Page<SupportMsgVO> findSupportPostMsgVO(String userId, Pageable pageable) {
+        Page<SupportMsgVO> page = null;
+        Page<Support> supportPage = supportMapper.findSupportPostsMsg(userId, pageable);
+        List<SupportMsgVO> commentVOs = new ArrayList<SupportMsgVO>();
+        if (supportPage != null && !CollectionUtils.isEmpty(supportPage.getContent())) {
+            FreshNews fresh = null;
+            SupportMsgVO msgVO = null;
+            for (Support support : supportPage.getContent()) {
+                msgVO = new SupportMsgVO();
+                fresh = freshNewsMapper.selectByPrimaryKey(support.getSourceuid());
+                msgVO.setSupportUserId(support.getSupportuseruid());
+                msgVO.setSupportNickName(support.getUsernickname());
+                msgVO.setPostsId(fresh.getUid());
+                msgVO.setBrief(fresh.getNewsbrief());
+                msgVO.setContent(fresh.getNewscontent());
+                msgVO.setPicUrls(dealPics(fresh));
+                commentVOs.add(msgVO);
+            }
+            page = new PageImpl<SupportMsgVO>(commentVOs, pageable, commentVOs.size());
+        } else {
+            page = new PageImpl<SupportMsgVO>(commentVOs, pageable, commentVOs.size());
+        }
+        return page;
+    }
+
+    @Override
+    public Page<SupportCommentMsgVO> findSupportCommentMsgVO(String userId, Pageable pageable) {
+        Page<SupportCommentMsgVO> page = null;
+        Page<Support> supportPage = supportMapper.findSupportCommentMsgVO(userId, pageable);
+        List<SupportCommentMsgVO> commentMsgVOs = new ArrayList<SupportCommentMsgVO>();
+        if (supportPage != null && !CollectionUtils.isEmpty(supportPage.getContent())) {
+            Comment comment = null;
+            SupportCommentMsgVO msgVO = null;
+            for (Support support : supportPage.getContent()) {
+                msgVO = new SupportCommentMsgVO();
+                comment = commentMapper.selectByPrimaryKey(support.getSourceuid());
+                msgVO.setSupportUserId(support.getSupportuseruid());
+                msgVO.setSupportNickName(support.getUsernickname());
+                msgVO.setCommentId(support.getSourceuid());
+                msgVO.setContent(comment.getCommentcontent());
+                commentMsgVOs.add(msgVO);
+            }
+            page = new PageImpl<SupportCommentMsgVO>(commentMsgVOs, pageable, commentMsgVOs.size());
+        } else {
+            page = new PageImpl<SupportCommentMsgVO>(commentMsgVOs, pageable, commentMsgVOs.size());
+        }
+        return page;
+    }
+
+    @Override
+    public Page<CommentPostsMsgVO> findCommentPostsMsgVO(String userId, Pageable pageable) {
+        Page<CommentPostsMsgVO> page = null;
+        Page<Comment> supportPage = commentMapper.findCommentPostsMsgVO(userId, pageable);
+        List<CommentPostsMsgVO> commentMsgVOs = new ArrayList<CommentPostsMsgVO>();
+        if (supportPage != null && !CollectionUtils.isEmpty(supportPage.getContent())) {
+            FreshNews fresh = null;
+            CommentPostsMsgVO msgVO = null;
+            for (Comment comment : supportPage.getContent()) {
+                msgVO = new CommentPostsMsgVO();
+                fresh = freshNewsMapper.selectByPrimaryKey(comment.getSourceuid());
+                msgVO.setCommentId(fresh.getUid());
+                msgVO.setCommentUserId(comment.getComuseruid());
+                msgVO.setCommentNickName(comment.getUsernickname());
+                msgVO.setCommentContent(comment.getCommentcontent());
+                msgVO.setPostId(fresh.getUid());
+                msgVO.setBrief(fresh.getNewsbrief());
+                msgVO.setContent(fresh.getNewscontent());
+                msgVO.setPicUrls(dealPics(fresh));
+                commentMsgVOs.add(msgVO);
+            }
+            page = new PageImpl<CommentPostsMsgVO>(commentMsgVOs, pageable, commentMsgVOs.size());
+        } else {
+            page = new PageImpl<CommentPostsMsgVO>(commentMsgVOs, pageable, commentMsgVOs.size());
+        }
+        return page;
+    }
+
+    @Override
+    public Page<CommentMyCommentVO> findCommentMyCommentMsgVO(String userId, Pageable pageable) {
+        Page<CommentMyCommentVO> page = null;
+        Page<Comment> supportPage = commentMapper.findCommentMyCommentMsgVO(userId, pageable);
+        List<CommentMyCommentVO> commentMsgVOs = new ArrayList<CommentMyCommentVO>();
+        if (supportPage != null && !CollectionUtils.isEmpty(supportPage.getContent())) {
+            Comment myComment = null;
+            CommentMyCommentVO msgVO = null;
+            for (Comment comment : supportPage.getContent()) {
+                msgVO = new CommentMyCommentVO();
+                myComment = commentMapper.selectByPrimaryKey(comment.getSourceuid());
+                msgVO.setCommentId(comment.getUid());
+                msgVO.setCommentUserId(comment.getComuseruid());
+                msgVO.setCommentNickName(comment.getUsernickname());
+                msgVO.setCommentContent(comment.getCommentcontent());
+                msgVO.setMyCommentId(myComment.getUid());
+                msgVO.setContent(myComment.getCommentcontent());
+                commentMsgVOs.add(msgVO);
+            }
+            page = new PageImpl<CommentMyCommentVO>(commentMsgVOs, pageable, commentMsgVOs.size());
+        } else {
+            page = new PageImpl<CommentMyCommentVO>(commentMsgVOs, pageable, commentMsgVOs.size());
+        }
+        return page;
+    }
+
+    private List<String> dealPics(FreshNews freshNews) {
+        String pictures = freshNews.getPictures();
+        List<String> picList = null;
+        if (StringUtils.isNotBlank(pictures)) {
+            picList = new ArrayList<String>();
+            String[] picArr = pictures.split(",");
+            for (int i = 0; i < picArr.length; i++) {
+                picList.add(picArr[i]);
+            }
+        }
+        return picList;
     }
 
 }

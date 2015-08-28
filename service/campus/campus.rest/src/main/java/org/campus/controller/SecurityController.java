@@ -98,16 +98,12 @@ public class SecurityController {
         responseVO.setUserAccount(sysUser.getUseraccount());
 
         User user = securitySvc.getAppUserInfo(sysUser.getUid());
-        // responseVO.setCollegeId(user.getCollegeuid());
-        // responseVO.setCollegeName(user.getCollegename());
         responseVO.setHeadPic(user.getHeadpic());
-        // responseVO.setInSchoolYear(user.getInschoolyear());
         responseVO.setNickName(user.getNickname());
-        // responseVO.setProfessionId(user.getProfessionuid());
-        // responseVO.setProfessionName(user.getProfessionname());
-        // responseVO.setSchoolId(user.getSchooluid());
-        // responseVO.setSchoolName(user.getSchoolname());
-
+        responseVO.setIntegral(user.getIntegral());
+        responseVO.setAuditFlag(user.getAuditFlag());
+        responseVO.setSignName(user.getSignName());
+        responseVO.setSchoolName(user.getSchoolname());
         session.setAttribute(Constant.CAMPUS_SECURITY_SESSION, responseVO);
 
         // 默认设置为白天模式:
@@ -140,6 +136,8 @@ public class SecurityController {
         responseVO.setUserId(user.getUseruid());
         responseVO.setHeadPic(user.getHeadpic());
         responseVO.setNickName(user.getNickname());
+        responseVO.setSignName(user.getSignName());
+        responseVO.setSchoolName(user.getSchoolname());
         session.setAttribute(Constant.CAMPUS_SECURITY_SESSION, responseVO);
         session.setAttribute(Constant.CAMPUS_DISPLAYMODEL, DisplayModel.SUN);
         SysUser udpUser = new SysUser();
@@ -173,10 +171,6 @@ public class SecurityController {
         if (!registerVO.getPassword().equals(registerVO.getSecPassword())) {
             throw new CampusException(100003, "请输入正确的密码.");
         }
-        // Assert.notNull(registerVO.getSchoolId(),"请选择学校.");
-        // Assert.notNull(registerVO.getCollegeId(),"请选择院系.");
-        // Assert.notNull(registerVO.getProfessionId(),"请选择专业.");
-        // Assert.notNull(registerVO.getInSchoolYear(),"请选择入学年份.");
         Assert.hasLength(registerVO.getMobileCheckCode(), "请输入短信验证码");
 
         // SMS验证码检查
@@ -185,44 +179,24 @@ public class SecurityController {
             throw new CampusException(100003, "短信验证码错误.");
         }
 
-        // //昵称唯一验证
-        // if(StringUtils.hasText(registerVO.getNickName()) && securitySvc.nickNameExsit(registerVO.getNickName())){
-        // throw new CampusException(100003,"昵称不可用.");
-        // }
-
         SysUser sysUser = new SysUser();
         sysUser.setUseraccount(registerVO.getLoginName());
         sysUser.setUid(ToolUtil.getUUid());
         sysUser.setUserpwd(MD5Util.encrypt(registerVO.getPassword()));
         sysUser.setIscheck(1);
-        // sysUser.setSignid(ToolUtil.getUUid());
         sysUser.setCreatedate(Calendar.getInstance().getTime());
         sysUser.setIsactive(1);
 
         User appUser = new User();
         appUser.setUseruid(sysUser.getUid());
-        // appUser.setCitycode(registerVO.getCityCode());
-        // appUser.setCityname(registerVO.getCityName());
-        // appUser.setCollegeuid(registerVO.getCollegeId());
-        // appUser.setCollegename(registerVO.getCollegeName());
         appUser.setCreatedate(sysUser.getCreatedate());
-        // appUser.setInschoolyear(registerVO.getInSchoolYear());
         appUser.setIsactive(1);
-        // appUser.setSextype(registerVO.getSex());
-        // appUser.setSchooluid(registerVO.getSchoolId());
-        // appUser.setSchoolname(registerVO.getSchoolName());
-        // appUser.setProfessionuid(registerVO.getProfessionId());
-        // appUser.setProfessionname(registerVO.getProfessionName());
-        // appUser.setProvincecode(registerVO.getProvinceCode());
-        // appUser.setProvincename(registerVO.getProvinceName());
         appUser.setIsgraduate(0);
         appUser.setIslocked(0);
         appUser.setIsopen(1);
         appUser.setIsvalidated(0);
         appUser.setIntegral(0L);
         appUser.setLogincount(0);
-        // appUser.setNickname(registerVO.getNickName());
-        // String nickName = String.valueOf(ToolUtil.getId());
         String nickName = nickNameService.findRandomNickName(DisplayModel.MOON, session.getId());
         appUser.setNickname(nickName);
         appUser.setNickFirstLetter(FirstLetterUtil.getPinYinHeadChar(nickName));
@@ -430,5 +404,31 @@ public class SecurityController {
             HttpSession session) {
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         userService.uploadHeadPic(headPic, vo.getUserId());
+    }
+
+    @ApiOperation(value = "*安卓用户安装记录:1.0", notes = "安卓用户安装记录，第一次启动时调用[API-Version=1.0]")
+    @RequestMapping(value = "/andriod/install", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "记录成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public void andriodInstall(
+            @ApiParam(name = "source", value = "下载来源") @RequestParam(value = "source", required = true) String source,
+            HttpSession session) {
+        securitySvc.andriodInstall(source);
+    }
+
+    @ApiOperation(value = "*修改签名:1.0", notes = "*用户修改签名[API-Version=1.0]")
+    @RequestMapping(value = "/signName", headers = { "API-Version=1.0" }, method = RequestMethod.PUT)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "签名成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public LoginResponseVO modifySignName(@ApiParam(name = "signName", value = "签名") @RequestParam(value = "signName", required = true) String signName,
+            HttpSession session){
+    	LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+    	User user = new User();
+    	user.setUseruid(vo.getUserId());
+    	user.setSignName(signName);
+    	securitySvc.updateUser(user);
+    	
+    	vo.setSignName(signName);
+    	
+    	return vo;
     }
 }
