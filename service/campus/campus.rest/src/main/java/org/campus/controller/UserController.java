@@ -371,7 +371,7 @@ public class UserController {
     public void cancelSupport(
             @ApiParam(name = "sourceId", value = "需取消赞的帖子Id或评论Id") @PathVariable String sourceId,
             @ApiParam(name = "type", value = "赞/踩(0:踩,1:赞)") @RequestParam(value = "type", required = true) InteractType type,
-            @ApiParam(name = "type", value = "1 帖子; 2 评论") @RequestParam(value = "type", required = true) String mod,
+            @ApiParam(name = "mod", value = "1 帖子; 2 评论") @RequestParam(value = "mod", required = true) String mod,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
