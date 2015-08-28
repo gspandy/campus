@@ -262,7 +262,7 @@ public interface UserService {
      */
     void beginAudit(String userId);
 
-    Page<User> findByNickName(String nickName);
+    Page<User> findByNickName(String nickName, Pageable pageable);
 
     void cancelSupport(String sourceId, InteractType type, String mod, String userId);
 

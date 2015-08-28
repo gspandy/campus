@@ -349,7 +349,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "*回复评论:1.0", notes = "回复评论[API-Version=1.0]")
-    @RequestMapping(value = "/{commentId}/reply", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @RequestMapping(value = "/{commentId}/reply", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
     public void reply(
@@ -392,7 +392,7 @@ public class UserController {
     }
 
     private Page<UserVO> findUserInfoByNickName(String userId, String nickName, Pageable pageable) {
-        Page<User> users = userService.findByNickName(nickName);
+        Page<User> users = userService.findByNickName(nickName, pageable);
         List<UserVO> userVOs = new ArrayList<UserVO>();
         if (users == null || CollectionUtils.isEmpty(users.getContent())) {
             return new PageImpl<UserVO>(userVOs, pageable, userVOs.size());

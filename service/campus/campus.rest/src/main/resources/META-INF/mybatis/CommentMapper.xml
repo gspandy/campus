@@ -246,7 +246,7 @@
 		from
 		ts_app_comment as c LEFT JOIN ts_app_freshnews as f ON c.SourceUID =
 		f.UID
-		where f.AddUserUID = #{userId,jdbcType=VARCHAR} and isActive=1 order by c.CreateDate desc
+		where f.AddUserUID = #{userId,jdbcType=VARCHAR} and c.isActive=1 order by c.CreateDate desc
 	</select>
 	<select id="findCommentMyCommentMsgVO" resultMap="BaseResultMap">
 		select * from

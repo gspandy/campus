@@ -315,8 +315,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> findByNickName(String nickName) {
-        return userMapper.findByNickName(nickName);
+    public Page<User> findByNickName(String nickName, Pageable pageable) {
+        return userMapper.findByNickName(nickName, pageable);
     }
 
     @Override
