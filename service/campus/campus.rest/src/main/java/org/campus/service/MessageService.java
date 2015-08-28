@@ -28,12 +28,15 @@ import org.campus.vo.MessageAddVO;
 import org.campus.vo.MessageListVO;
 import org.campus.vo.MessageRequestVo;
 import org.campus.vo.MessageVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MessageService {
 
+    private final static Logger logger = LoggerFactory.getLogger(MessageService.class);
     @Autowired
     private SendMessageMapper sendMessageMapper;
 
@@ -110,10 +113,12 @@ public class MessageService {
     }
     
     public String getConversationId(String userId,String objUserId){
+        logger.info("###getConversationId###,userId:"+userId+",objUserId:"+objUserId);
         String conversationId = sessionMapper.selectBySessionUserId(userId, objUserId);
         if(StringUtils.isEmpty(conversationId)){
             return "";
         }
+        logger.info("conversationId:"+conversationId);
         return conversationId;
     }
 
