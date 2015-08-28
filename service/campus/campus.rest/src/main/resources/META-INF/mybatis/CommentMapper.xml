@@ -242,7 +242,7 @@
 		isActive=1 order by CreateDate desc
 	</select>
 	<select id="findCommentPostsMsgVO" resultMap="BaseResultMap">
-		select *
+		select c.*
 		from
 		ts_app_comment as c LEFT JOIN ts_app_freshnews as f ON c.SourceUID =
 		f.UID
