@@ -392,7 +392,7 @@ public class UserServiceImpl implements UserService {
                 comment = commentMapper.selectByPrimaryKey(support.getSourceuid());
                 msgVO.setSupportUserId(support.getSupportuseruid());
                 msgVO.setSupportNickName(support.getUsernickname());
-                msgVO.setCommentId(comment.getUid());
+                msgVO.setCommentId(support.getSourceuid());
                 msgVO.setContent(comment.getCommentcontent());
                 commentMsgVOs.add(msgVO);
             }
@@ -414,10 +414,11 @@ public class UserServiceImpl implements UserService {
             for (Comment comment : supportPage.getContent()) {
                 msgVO = new CommentPostsMsgVO();
                 fresh = freshNewsMapper.selectByPrimaryKey(comment.getSourceuid());
-                msgVO.setCommentId(comment.getUid());
+                msgVO.setCommentId(fresh.getUid());
                 msgVO.setCommentUserId(comment.getComuseruid());
                 msgVO.setCommentNickName(comment.getUsernickname());
                 msgVO.setCommentContent(comment.getCommentcontent());
+                msgVO.setPostId(fresh.getUid());
                 msgVO.setBrief(fresh.getNewsbrief());
                 msgVO.setContent(fresh.getNewscontent());
                 msgVO.setPicUrls(dealPics(fresh));
