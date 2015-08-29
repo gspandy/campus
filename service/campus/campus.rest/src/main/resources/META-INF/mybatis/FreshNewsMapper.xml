@@ -373,6 +373,7 @@
 		where newsType = #{newsType,jdbcType=VARCHAR} and
 		isShield=#{isShield,jdbcType=INTEGER} AND IsActive=1
 		and deleted='0'
+		and UID not in(select ObjPostId from ts_app_transfer where deleted=0)
 		order by
 		CreateDate desc
 	</select>
