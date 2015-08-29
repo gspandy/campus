@@ -362,7 +362,7 @@ public class BoardController {
                         int[] y = { ImageUtils.newHeight };
                         String img = fastdfsClient.uploadImgWithCompress(attachment, x, y);
                         sb.append(img).append(",");
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         logger.error(e.getMessage());
                     }
                 }

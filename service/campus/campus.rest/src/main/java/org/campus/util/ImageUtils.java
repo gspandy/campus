@@ -31,7 +31,7 @@ public class ImageUtils {
         Attachment attachment = new Attachment();
         attachment.setContent(data);
         attachment.setOriginalFilename(fileId + "_" + newWidth + "_" + newHeight);
-        attachment.setContentType("multipart/form-data");
+        attachment.setContentType("image/png");
         return attachment;
     }
 
