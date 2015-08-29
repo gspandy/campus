@@ -382,8 +382,8 @@ public class BoardController {
         String img = fastdfsClient.uploadImgWithCompress(attachment, x, y);
         String prefix = img.substring(0, img.lastIndexOf("."));
         String ext = img.substring(img.lastIndexOf(".") + 1);
-        sb.append(prefix).append("_").append(ImageUtils.newWidth).append("_").append(ImageUtils.newHeight).append(ext)
-                .append(",");
+        sb.append(prefix).append("_").append(ImageUtils.newWidth).append("_").append(ImageUtils.newHeight).append(".")
+                .append(ext).append(",");
     }
 
     @ApiOperation(value = "*切换显示模式:1.0", notes = "切换显示模式[API-Version=1.0]")

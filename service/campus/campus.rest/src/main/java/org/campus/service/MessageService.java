@@ -89,36 +89,36 @@ public class MessageService {
         }
         return resultList;
     }
-    
-    private void processMessage(List<MessageVO> resultList, String conversationId,MessageListVO messageListVO){
-       boolean flag = true;
-        for (MessageVO messageVO : resultList) {
-            if(messageVO.getConversationId().equals(conversationId)){
-                flag = false;
-                resultList.remove(messageVO);
-                messageVO.getMessageList().add(messageListVO);
-                resultList.add(messageVO);
-                break;
-            }
-        }
-        
-        if(flag){
-            MessageVO messageVO = new MessageVO();
-            messageVO.setConversationId(conversationId);
-            List<MessageListVO> messageList = new ArrayList<MessageListVO>();
-            messageList.add(messageListVO);
-            messageVO.setMessageList(messageList);
-            resultList.add(messageVO);
-        }
+
+    private void processMessage(List<MessageVO> resultList, String conversationId, MessageListVO messageListVO) {
+        // boolean flag = true;
+        // for (MessageVO messageVO : resultList) {
+        // if(messageVO.getConversationId().equals(conversationId)){
+        // flag = false;
+        // resultList.remove(messageVO);
+        // messageVO.getMessageList().add(messageListVO);
+        // resultList.add(messageVO);
+        // break;
+        // }
+        // }
+
+        // if(flag){
+        MessageVO messageVO = new MessageVO();
+        messageVO.setConversationId(conversationId);
+        List<MessageListVO> messageList = new ArrayList<MessageListVO>();
+        messageList.add(messageListVO);
+        messageVO.setMessageList(messageList);
+        resultList.add(messageVO);
+        // }
     }
-    
-    public String getConversationId(String userId,String objUserId){
-        logger.info("###getConversationId###,userId:"+userId+",objUserId:"+objUserId);
+
+    public String getConversationId(String userId, String objUserId) {
+        logger.info("###getConversationId###,userId:" + userId + ",objUserId:" + objUserId);
         String conversationId = sessionMapper.selectBySessionUserId(userId, objUserId);
-        if(StringUtils.isEmpty(conversationId)){
+        if (StringUtils.isEmpty(conversationId)) {
             return "";
         }
-        logger.info("conversationId:"+conversationId);
+        logger.info("conversationId:" + conversationId);
         return conversationId;
     }
 
@@ -146,7 +146,7 @@ public class MessageService {
      */
     public String createSession(String sendUserId, String recieveUserId, String typeCode, String msg) {
         String conversationId = sessionMapper.selectBySessionUserId(sendUserId, recieveUserId);
-        if(StringUtils.isNotEmpty(conversationId)){
+        if (StringUtils.isNotEmpty(conversationId)) {
             return conversationId;
         }
         Session record = new Session();
@@ -201,7 +201,7 @@ public class MessageService {
         if (SessionType.SINGLE_CHANNEL.getCode().equals(String.valueOf(session.getTypecode()))) {
             // 单聊
             String objUserId = session.getObjuseruid();
-            if(objUserId.equals(holdUserId)){
+            if (objUserId.equals(holdUserId)) {
                 objUserId = session.getUseruid();
             }
             setSingleMessages(resultList, objUserId, holdUserId);
