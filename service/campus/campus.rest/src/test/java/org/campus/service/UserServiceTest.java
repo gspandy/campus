@@ -103,7 +103,7 @@ public class UserServiceTest extends BaseTest {
     @DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/dataset/support/save.xml")
     @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/dataset/support/save.xml")
     public void testGetUserCommentSupport() {
-        int supportNum = userService.getUserCommentSupport("123", "345");
+        int supportNum = userService.getUserCommentSupport("123");
         Assert.assertTrue(supportNum == 3);
     }
 
