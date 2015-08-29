@@ -97,8 +97,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int getUserCommentSupport(String sourceId, String userId) {
-        return supportMapper.getSupportNum(sourceId, userId);
+    public int getUserCommentSupport(String sourceId) {
+        return supportMapper.getSupportNum(sourceId);
     }
 
     @Override

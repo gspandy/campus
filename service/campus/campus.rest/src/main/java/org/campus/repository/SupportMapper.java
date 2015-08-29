@@ -50,7 +50,7 @@ public interface SupportMapper {
      */
     int updateByPrimaryKey(Support record);
 
-    int getSupportNum(@Param("sourceId") String sourceId, @Param("userId") String userId);
+    int getSupportNum(@Param("sourceId") String sourceId);
 
     void deleteAll();
 

@@ -93,7 +93,7 @@ public interface UserService {
      * @return
      *
      */
-    int getUserCommentSupport(String sourceId, String userId);
+    int getUserCommentSupport(String sourceId);
 
     /**
      * 

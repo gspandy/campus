@@ -261,12 +261,15 @@ public class BoardController {
         Page<FavoriteFreshNews> srcData = topicSvc.getUserFavorite(vo.getUserId(), pageable);
         List<FavoriteFreshNews> lstData = srcData.getContent();
 
+        User user = null;
         List<BoardFavoriteVO> boardVOs = new ArrayList<BoardFavoriteVO>();
         for (FavoriteFreshNews data : lstData) {
             BoardFavoriteVO favorite = new BoardFavoriteVO();
             favorite.setPostsId(data.getUid());
             favorite.setUserId(data.getCreateby());
             favorite.setNickName(data.getAddnickname());
+            user = userService.findByUserId(data.getCreateby());
+            favorite.setHeadPic(user.getHeadpic());
             boolean delete = topicSvc.isDelete(data.getUid());
             if (delete) {
                 favorite.setPicUrls(new ArrayList<String>());
@@ -432,7 +435,7 @@ public class BoardController {
     @NeedRoles
     public void audit(
             @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
-            @ApiParam(name = "type", value = "审核结果") @RequestBody CheckType type,
+            @ApiParam(name = "type", value = "审核结果") @RequestParam(value = "type", required = true) CheckType type,
             @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
             HttpSession session) {
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
