@@ -1,16 +1,22 @@
 package org.campus.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.campus.annotation.NeedRoles;
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
+import org.campus.core.web.Attachment;
+import org.campus.fastdfs.FastdfsClient;
 import org.campus.fastdfs.FastdfsClientFactory;
 import org.campus.model.FavoriteFreshNews;
 import org.campus.model.FreshNews;
@@ -24,6 +30,7 @@ import org.campus.model.enums.TopicType;
 import org.campus.service.NickNameService;
 import org.campus.service.TopicService;
 import org.campus.service.UserService;
+import org.campus.util.ImageUtils;
 import org.campus.util.ToolUtil;
 import org.campus.vo.BoardDetailVO;
 import org.campus.vo.BoardFavoriteVO;
@@ -31,6 +38,8 @@ import org.campus.vo.BoardPublishVO;
 import org.campus.vo.BoardVO;
 import org.campus.vo.LoginResponseVO;
 import org.campus.vo.TransferVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -55,6 +64,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "BoardController", description = "板块相关操作")
 public class BoardController {
 
+    private final static Logger logger = LoggerFactory.getLogger(BoardController.class);
+
     @Autowired
     TopicService topicSvc;
 
@@ -63,7 +74,7 @@ public class BoardController {
 
     @Autowired
     UserService userService;
-    
+
     @Autowired
     private FastdfsClientFactory fastdfsClientFactory;
 
@@ -339,10 +350,24 @@ public class BoardController {
             int i = 0;
             for (String s : pics) {
                 if (i == 0) {
-
+                    try {
+                        FastdfsClient fastdfsClient = fastdfsClientFactory.getFastdfsClient();
+                        byte[] data = fastdfsClient.downLoad(s);
+                        ByteArrayInputStream in = new ByteArrayInputStream(data); // 将b作为输入流；
+                        BufferedImage image;
+                        image = ImageIO.read(in);
+                        Attachment attachment = ImageUtils.getAttachment(s, data);
+                        ImageUtils.incision(image.getWidth(), image.getHeight());
+                        int[] x = { ImageUtils.newWidth };
+                        int[] y = { ImageUtils.newHeight };
+                        String img = fastdfsClient.uploadImgWithCompress(attachment, x, y);
+                        sb.append(img).append(",");
+                    } catch (IOException e) {
+                        logger.error(e.getMessage());
+                    }
                 }
-                i++;
                 sb.append(s).append(",");
+                i++;
             }
             String urls = sb.toString().substring(0, sb.length() - 1);
             posts.setPictures(urls);
