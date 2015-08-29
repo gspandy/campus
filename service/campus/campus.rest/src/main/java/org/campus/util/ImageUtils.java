@@ -30,7 +30,7 @@ public class ImageUtils {
     public static Attachment getAttachment(String fileId, byte[] data) {
         Attachment attachment = new Attachment();
         attachment.setContent(data);
-        attachment.setOriginalFilename(fileId + "_" + newWidth + "_" + newHeight);
+        attachment.setOriginalFilename(fileId);
         attachment.setContentType("image/png");
         return attachment;
     }

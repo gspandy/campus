@@ -321,11 +321,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void reply(String sourceId, String userId, String userName, String ipaddress, CommentAddVO commentAddVO) {
-        Comment commentData = commentMapper.selectByPrimaryKey(sourceId);
-        FreshNews freshNews = freshNewsMapper.selectByPrimaryKey(commentData.getSourceuid());
-        if (freshNews == null) {
-            throw new CampusException(1100002, "查询不到数据");
-        }
         Comment comment = new Comment();
         comment.setUid(ToolUtil.getUUid());
         comment.setSourceuid(sourceId);
@@ -343,8 +338,12 @@ public class UserServiceImpl implements UserService {
         comment.setIpaddress(ipaddress);
         commentMapper.insert(comment);
 
-        freshNews.setCommentnum(freshNews.getCommentnum() == null ? 1 : freshNews.getCommentnum() + 1);
-        freshNewsMapper.updateByPrimaryKey(freshNews);
+        Comment commentData = commentMapper.selectByPrimaryKey(sourceId);
+        FreshNews freshNews = freshNewsMapper.selectByPrimaryKey(commentData.getSourceuid());
+        if (freshNews != null) {
+            freshNews.setCommentnum(freshNews.getCommentnum() == null ? 1 : freshNews.getCommentnum() + 1);
+            freshNewsMapper.updateByPrimaryKey(freshNews);
+        }
     }
 
     @Override

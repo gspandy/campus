@@ -26,6 +26,20 @@ public class UserVO {
 
     private long integral;
 
+    private String schoolId;
+
+    private String schoolName;
+
+    private String collegeId;
+
+    private String collegeName;
+
+    private String professionId;
+
+    private String professionName;
+
+    private int inSchollYear;
+
     @ApiModelProperty(value = "用户Id", required = true)
     public String getUserId() {
         return userId;
@@ -124,6 +138,76 @@ public class UserVO {
     @ApiModelProperty(value = "积分")
     public void setIntegral(long integral) {
         this.integral = integral;
+    }
+
+    @ApiModelProperty(value = "学校ID")
+    public String getSchoolId() {
+        return schoolId;
+    }
+
+    @ApiModelProperty(value = "学校ID")
+    public void setSchoolId(String schoolId) {
+        this.schoolId = schoolId;
+    }
+
+    @ApiModelProperty(value = "学校名称")
+    public String getSchoolName() {
+        return schoolName;
+    }
+
+    @ApiModelProperty(value = "学校名称")
+    public void setSchoolName(String schoolName) {
+        this.schoolName = schoolName;
+    }
+
+    @ApiModelProperty(value = "院系ID")
+    public String getCollegeId() {
+        return collegeId;
+    }
+
+    @ApiModelProperty(value = "院系ID")
+    public void setCollegeId(String collegeId) {
+        this.collegeId = collegeId;
+    }
+
+    @ApiModelProperty(value = "院系名称")
+    public String getCollegeName() {
+        return collegeName;
+    }
+
+    @ApiModelProperty(value = "院系名称")
+    public void setCollegeName(String collegeName) {
+        this.collegeName = collegeName;
+    }
+
+    @ApiModelProperty(value = "专业ID")
+    public String getProfessionId() {
+        return professionId;
+    }
+
+    @ApiModelProperty(value = "专业ID")
+    public void setProfessionId(String professionId) {
+        this.professionId = professionId;
+    }
+
+    @ApiModelProperty(value = "专业名称")
+    public String getProfessionName() {
+        return professionName;
+    }
+
+    @ApiModelProperty(value = "专业名称")
+    public void setProfessionName(String professionName) {
+        this.professionName = professionName;
+    }
+
+    @ApiModelProperty(value = "入学年份")
+    public int getInSchollYear() {
+        return inSchollYear;
+    }
+
+    @ApiModelProperty(value = "入学年份")
+    public void setInSchollYear(int inSchollYear) {
+        this.inSchollYear = inSchollYear;
     }
 
 }

@@ -389,6 +389,12 @@ public class UserController {
         userVO.setAttentionCount(userService.countAttention(userId));
         userVO.setHeadPic(user.getHeadpic());
         userVO.setIntegral(user.getIntegral());
+        userVO.setSchoolId(user.getSchooluid());
+        userVO.setSchoolName(user.getSchoolname());
+        userVO.setCollegeId(user.getCollegeuid());
+        userVO.setCollegeName(user.getCollegename());
+        userVO.setProfessionId(user.getProfessionuid());
+        userVO.setProfessionName(user.getProfessionname());
         return userVO;
     }
 
