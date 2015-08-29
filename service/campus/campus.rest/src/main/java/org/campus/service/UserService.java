@@ -119,7 +119,7 @@ public interface UserService {
      * @param type
      *
      */
-    void commentSupport(String sourceId, String userId, String userName, InteractType type);
+    void commentSupport(String sourceId, String postId, String userId, String userName, InteractType type);
 
     /**
      * 
@@ -264,7 +264,7 @@ public interface UserService {
 
     Page<User> findByNickName(String nickName, Pageable pageable);
 
-    void cancelSupport(String sourceId, InteractType type, String mod, String userId);
+    void cancelSupport(String sourceId, String postId, InteractType type, String mod, String userId);
 
     void reply(String sourceId, String userId, String userName, String ipaddress, CommentAddVO commentAddVO);
 

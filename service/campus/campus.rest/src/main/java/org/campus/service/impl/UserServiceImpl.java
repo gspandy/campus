@@ -124,15 +124,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void commentSupport(String sourceId, String userId, String userName, InteractType type) {
+    public void commentSupport(String sourceId, String postId, String userId, String userName, InteractType type) {
         Comment comment = commentMapper.selectByPrimaryKey(sourceId);
         if (comment == null) {
             throw new CampusException(1100002, "查询不到数据");
         }
+        FreshNews fresh = null;
+        if (postId != null && postId.length() != 0) {
+            fresh = freshNewsMapper.selectByPrimaryKey(postId);
+        }
         if (InteractType.SUPPORT.equals(type)) {
             support(sourceId, userId, userName);
+            if (fresh != null) {
+                fresh.setSupportnum(fresh.getSupportnum() + 1);
+            }
         } else {
             notSupport(sourceId, userId, userName);
+            if (fresh != null) {
+                fresh.setNotsupportnum(fresh.getNotsupportnum() + 1);
+            }
+        }
+        if (fresh != null) {
+            freshNewsMapper.updateByPrimaryKeySelective(fresh);
         }
     }
 
@@ -263,24 +276,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void cancelSupport(String sourceId, InteractType type, String mod, String userId) {
+    public void cancelSupport(String sourceId, String postId, InteractType type, String mod, String userId) {
         if ("1".equals(mod)) {
             FreshNews fresh = freshNewsMapper.selectByPrimaryKey(sourceId);
             if (InteractType.SUPPORT.equals(type)) {
                 fresh.setSupportnum(fresh.getSupportnum() - 1);
-                freshNewsMapper.updateByPrimaryKeySelective(fresh);
                 supportMapper.delete(sourceId, userId);
             } else {
-                fresh.setSupportnum(fresh.getNotsupportnum() - 1);
-                freshNewsMapper.updateByPrimaryKeySelective(fresh);
+                fresh.setNotsupportnum(fresh.getNotsupportnum() - 1);
                 notSupportMapper.delete(sourceId, userId);
             }
+            freshNewsMapper.updateByPrimaryKeySelective(fresh);
         } else if ("2".equals(mod)) {
+            if (postId == null || postId.length() == 0) {
+                throw new CampusException(1100005, "取消评论赞需传入帖子ID");
+            }
+            FreshNews fresh = freshNewsMapper.selectByPrimaryKey(postId);
             if (InteractType.SUPPORT.equals(type)) {
+                fresh.setSupportnum(fresh.getSupportnum() - 1);
                 supportMapper.delete(sourceId, userId);
             } else {
+                fresh.setNotsupportnum(fresh.getNotsupportnum() - 1);
                 notSupportMapper.delete(sourceId, userId);
             }
+            freshNewsMapper.updateByPrimaryKeySelective(fresh);
         }
     }
 

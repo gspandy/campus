@@ -176,6 +176,7 @@ public class UserController {
     @NeedRoles
     public void commentSupport(
             @ApiParam(name = "commentId", value = "帖子评论的ID") @PathVariable String commentId,
+            @ApiParam(name = "postId", value = "帖子ID") @RequestParam(value = "postId", required = false) String postId,
             @ApiParam(name = "type", value = "赞/踩(0:踩,1:赞)") @RequestParam(value = "type", required = true) InteractType type,
             @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -183,7 +184,7 @@ public class UserController {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         String userName = nickNameService.findRandomNickName(model, session.getId());
         userName = userName == null ? responseVO.getNickName() : userName;
-        userService.commentSupport(commentId, responseVO.getUserId(), userName, type);
+        userService.commentSupport(commentId, postId, responseVO.getUserId(), userName, type);
     }
 
     @ApiOperation(value = "*相册评论:1.0", notes = "相册评论[API-Version=1.0]")
@@ -371,12 +372,13 @@ public class UserController {
     @NeedRoles
     public void cancelSupport(
             @ApiParam(name = "sourceId", value = "需取消赞的帖子Id或评论Id") @PathVariable String sourceId,
+            @ApiParam(name = "postId", value = "当取消评论赞或踩时，需传入帖子Id") @RequestParam(value = "postId", required = false) String postId,
             @ApiParam(name = "type", value = "赞/踩(0:踩,1:赞)") @RequestParam(value = "type", required = true) InteractType type,
             @ApiParam(name = "mod", value = "1 帖子; 2 评论") @RequestParam(value = "mod", required = true) String mod,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        userService.cancelSupport(sourceId, type, mod, responseVO.getUserId());
+        userService.cancelSupport(sourceId, postId, type, mod, responseVO.getUserId());
     }
 
     private UserVO findUserInfo(String userId) {
