@@ -331,6 +331,9 @@ public class UserServiceImpl implements UserService {
         comment.setSourceuid(sourceId);
         comment.setComuseruid(userId);
         comment.setUsernickname(userName);
+        comment.setObjuseruid(commentAddVO.getObjUserId());
+        comment.setObjusernickname(commentAddVO.getObjNickName());
+        comment.setObjComment(commentAddVO.getObjComment());
         comment.setCommentcontent(commentAddVO.getContent());
         comment.setIsactive(ActiveType.ACTIVE);
         comment.setCreateby(Constant.CREATE_BY);

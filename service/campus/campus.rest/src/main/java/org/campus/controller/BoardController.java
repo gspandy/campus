@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.campus.annotation.NeedRoles;
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
+import org.campus.fastdfs.FastdfsClientFactory;
 import org.campus.model.FavoriteFreshNews;
 import org.campus.model.FreshNews;
 import org.campus.model.Transfer;
@@ -62,6 +63,9 @@ public class BoardController {
 
     @Autowired
     UserService userService;
+    
+    @Autowired
+    private FastdfsClientFactory fastdfsClientFactory;
 
     @ApiOperation(value = "*帖子列表查询:1.0", notes = "*帖子列表查询[API-Version=1.0]")
     @RequestMapping(value = "/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
@@ -332,7 +336,12 @@ public class BoardController {
             posts.setPictures("");
         else {
             StringBuilder sb = new StringBuilder();
+            int i = 0;
             for (String s : pics) {
+                if (i == 0) {
+
+                }
+                i++;
                 sb.append(s).append(",");
             }
             String urls = sb.toString().substring(0, sb.length() - 1);

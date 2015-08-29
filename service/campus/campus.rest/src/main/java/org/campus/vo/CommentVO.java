@@ -28,6 +28,8 @@ public class CommentVO {
 
     private boolean isSupport;
 
+    private String objComment;
+
     @ApiModelProperty(value = "评论ID", required = true)
     public String getCommentId() {
         return commentId;
@@ -116,6 +118,16 @@ public class CommentVO {
     @ApiModelProperty(value = "是否赞过", required = true)
     public void setSupport(boolean isSupport) {
         this.isSupport = isSupport;
+    }
+
+    @ApiModelProperty(value = "被评论的评论", required = false)
+    public String getObjComment() {
+        return objComment;
+    }
+
+    @ApiModelProperty(value = "被评论的评论", required = false)
+    public void setObjComment(String objComment) {
+        this.objComment = objComment;
     }
 
 }

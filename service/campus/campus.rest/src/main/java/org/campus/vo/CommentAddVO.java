@@ -20,6 +20,12 @@ public class CommentAddVO {
 
     private TypeCode commentType;
 
+    private String objUserId;
+
+    private String objNickName;
+
+    private String objComment;
+
     @ApiModelProperty(value = "评论内容", required = true)
     public String getContent() {
         return content;
@@ -68,6 +74,36 @@ public class CommentAddVO {
     @ApiModelProperty(value = "评论类型", required = true)
     public void setCommentType(TypeCode commentType) {
         this.commentType = commentType;
+    }
+
+    @ApiModelProperty(value = "被评论人Id", required = false)
+    public String getObjUserId() {
+        return objUserId;
+    }
+
+    @ApiModelProperty(value = "被评论人Id", required = false)
+    public void setObjUserId(String objUserId) {
+        this.objUserId = objUserId;
+    }
+
+    @ApiModelProperty(value = "被评论人昵称", required = false)
+    public String getObjNickName() {
+        return objNickName;
+    }
+
+    @ApiModelProperty(value = "被评论人昵称", required = false)
+    public void setObjNickName(String objNickName) {
+        this.objNickName = objNickName;
+    }
+
+    @ApiModelProperty(value = "被评论人评论", required = false)
+    public String getObjComment() {
+        return objComment;
+    }
+
+    @ApiModelProperty(value = "被评论人评论", required = false)
+    public void setObjComment(String objComment) {
+        this.objComment = objComment;
     }
 
 }

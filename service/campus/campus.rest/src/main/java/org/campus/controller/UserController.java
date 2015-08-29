@@ -142,6 +142,7 @@ public class UserController {
             commentVO.setNickName(comment.getUsernickname());
             commentVO.setObjUserId(comment.getObjuseruid());
             commentVO.setObjNickName(comment.getObjusernickname());
+            commentVO.setObjComment(comment.getObjComment());
             commentVO.setCommentDate(comment.getCreatedate());
             commentVO.setCommentContent(comment.getCommentcontent());
             int supportNum = userService.getUserCommentSupport(comment.getUid());

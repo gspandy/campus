@@ -1,0 +1,1 @@
+ALTER table ts_app_comment add(ObjComment varchar(400) COMMENT '被评论的评论');

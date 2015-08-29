@@ -19,13 +19,14 @@
 		<result column="LastUpdateDate" property="lastupdatedate"
 			jdbcType="TIMESTAMP" />
 		<result column="IpAddress" property="ipaddress" jdbcType="VARCHAR" />
+		<result column="ObjComment" property="objComment" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UID, SourceUID, ComUserUID, UserNickName, ObjUserUID,
 		ObjUserNickName,
 		CommentContent,
 		TypeCode, isActive, CreateBy,
-		CreateDate, LastUpdateBy, LastUpdateDate,IpAddress
+		CreateDate, LastUpdateBy, LastUpdateDate,IpAddress,ObjComment
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -45,7 +46,7 @@
 		UserNickName, ObjUserUID, ObjUserNickName,
 		CommentContent, TypeCode, isActive,
 		CreateBy, CreateDate, LastUpdateBy,
-		LastUpdateDate,IpAddress)
+		LastUpdateDate,IpAddress, ObjComment)
 		values (#{uid,jdbcType=VARCHAR},
 		#{sourceuid,jdbcType=VARCHAR},
 		#{comuseruid,jdbcType=VARCHAR},
@@ -56,7 +57,7 @@
 		#{createby,jdbcType=VARCHAR},
 		#{createdate,jdbcType=TIMESTAMP}, #{lastupdateby,jdbcType=VARCHAR},
 		#{lastupdatedate,jdbcType=TIMESTAMP},
-		#{ipaddress,jdbcType=VARCHAR})
+		#{ipaddress,jdbcType=VARCHAR},#{objComment,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.Comment">
 		insert into ts_app_comment
@@ -103,6 +104,9 @@
 			<if test="ipaddress != null">
 				IpAddress,
 			</if>
+			<if test="objComment != null">
+                ObjComment,
+            </if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uid != null">
@@ -147,6 +151,9 @@
 			<if test="ipaddress != null">
 				#{ipaddress,jdbcType=VARCHAR},
 			</if>
+			<if test="objComment != null">
+                #{objComment,jdbcType=VARCHAR},
+            </if>
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="org.campus.model.Comment">
@@ -191,6 +198,9 @@
 			<if test="ipaddress != null">
 				IpAddress = #{ipaddress,jdbcType=VARCHAR},
 			</if>
+			<if test="objComment != null">
+                ObjComment = #{objComment,jdbcType=VARCHAR},
+            </if>
 		</set>
 		where UID = #{uid,jdbcType=VARCHAR}
 	</update>
@@ -218,7 +228,9 @@
 		LastUpdateDate =
 		#{lastupdatedate,jdbcType=TIMESTAMP},
 		IpAddress =
-		#{ipaddress,jdbcType=VARCHAR}
+		#{ipaddress,jdbcType=VARCHAR},
+		ObjComment =
+        #{objComment,jdbcType=VARCHAR}
 		where UID =
 		#{uid,jdbcType=VARCHAR}
 	</update>
