@@ -475,7 +475,7 @@ public class UserController {
             friendVO = new FriendVO();
             friendVO.setUserId(user.getUseruid());
             friendVO.setNickName(user.getNickname());
-            friendVO.setInitial(user.getNamefirstletter());
+            friendVO.setInitial(user.getNickFirstLetter());
             friendVO.setHeadUrl(user.getHeadpic());
             friendVOs.add(friendVO);
         }
