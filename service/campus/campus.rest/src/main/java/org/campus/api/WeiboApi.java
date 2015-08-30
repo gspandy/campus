@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.util.EncodingUtil;
+import org.apache.commons.lang.StringUtils;
 import org.campus.api.domain.WeiboAccessToken;
 import org.campus.api.domain.WeiboUid;
 import org.campus.api.domain.WeiboUserInfo;
@@ -68,8 +69,8 @@ public class WeiboApi {
             map.put("code", code);
             String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("WEIBO_TOKEN_URL")));
             accessToken = JsonUtil.getInstance().toJavaBean(response, WeiboAccessToken.class);
-            if (accessToken == null) {
-                throw new CampusException("获取access_token失败");
+            if (accessToken == null || StringUtils.isEmpty(accessToken.getAccess_token())) {
+                throw new CampusException("获取access_token失败"); 
             }
         } catch (Exception e) {
             throw new CampusException("获取access_token失败");

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.util.EncodingUtil;
+import org.apache.commons.lang.StringUtils;
 import org.campus.api.domain.SnsapiUserinfo;
 import org.campus.api.domain.WebAccessToken;
 import org.campus.config.SystemConfig;
@@ -68,7 +69,7 @@ public class WeixinApi {
             // String response =
             // "{\"access_token\":\"OezXcEiiBSKSxW0eoylIeER7_sKq7Sx0WTHC7OAeLZ6lHYlew_kdo6lorrOWV-axvZm5BNJyvGLPaKiyfijLN9Vl-5eC1L5oYReNqERhzLJvSucRJwU448ao1u48IoiXeLZpjUmh3DAfzGC84q0QLg\",\"expires_in\":7200,\"refresh_token\":\"OezXcEiiBSKSxW0eoylIeER7_sKq7Sx0WTHC7OAeLZ6lHYlew_kdo6lorrOWV-axgGIqlMjziV6MpwGwowY8dvRMOTnwo0fUVKlTqRkq3rXTuICrnJudscYXqhwG-TZd-2mRuwaANpjpqNBY4iSPBw\",\"openid\":\"ot6Sit9XxNopf832fOVn1wq7fhG4\",\"scope\":\"snsapi_userinfo\",\"unionid\":\"obShouAI4nzDrA4GkvjhnIUMtpns\"}";
             accessToken = JsonUtil.getInstance().toJavaBean(response, WebAccessToken.class);
-            if (accessToken == null) {
+            if (accessToken == null || StringUtils.isEmpty(accessToken.getAccess_token())) {
                 throw new CampusException("获取access_token失败");
             }
         } catch (Exception e) {
