@@ -30,7 +30,7 @@ public class TencentApi {
         String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("QQ_USERINFO_URL")));
         try {
             qqUserinfo = JsonUtil.getInstance().toJavaBean(response, QqUserinfo.class);
-            if (qqUserinfo == null) {
+            if (qqUserinfo == null || StringUtils.isEmpty(qqUserinfo.getNickname())) {
                 throw new CampusException("获取用户信息失败");
             }
             qqUserinfo.setOpenId(openId);

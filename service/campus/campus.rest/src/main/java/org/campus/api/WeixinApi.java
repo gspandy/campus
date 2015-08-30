@@ -32,6 +32,9 @@ public class WeixinApi {
             // "{\"openid\":\"OPENID\",\"nickname\":\"NICKNAME\",\"sex\":\"1\",\"province\":\"PROVINCE\",\"city\":\"CITY\",\"country\":\"COUNTRY\",\"headimgurl\":\"http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46\",\"privilege\":[\"12\",\"3\"],\"unionid\":\"o6_bmasdasdsad6_2sgVt7hMZOPfL\"}";
             try {
                 snsapiUserinfo = JsonUtil.getInstance().toJavaBean(response, SnsapiUserinfo.class);
+                if (snsapiUserinfo == null || StringUtils.isEmpty(snsapiUserinfo.getOpenid())) {
+                    throw new CampusException("获取用户信息失败");
+                }
             } catch (Exception e) {
                 throw new CampusException("获取用户信息失败");
             }

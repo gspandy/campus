@@ -31,7 +31,7 @@ public class WeiboApi {
         String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("WEIBO_USERINFO_URL")));
         try {
             weiboUserInfo = JsonUtil.getInstance().toJavaBean(response, WeiboUserInfo.class);
-            if (weiboUserInfo == null) {
+            if (weiboUserInfo == null || weiboUserInfo.getId() == 0) {
                 throw new CampusException("获取用户信息失败");
             }
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class WeiboApi {
             String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("WEIBO_TOKEN_URL")));
             accessToken = JsonUtil.getInstance().toJavaBean(response, WeiboAccessToken.class);
             if (accessToken == null || StringUtils.isEmpty(accessToken.getAccess_token())) {
-                throw new CampusException("获取access_token失败"); 
+                throw new CampusException("获取access_token失败");
             }
         } catch (Exception e) {
             throw new CampusException("获取access_token失败");
