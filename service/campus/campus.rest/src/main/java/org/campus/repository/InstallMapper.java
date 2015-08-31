@@ -18,4 +18,9 @@ public interface InstallMapper {
      * @mbggenerated Tue Aug 25 23:41:54 CST 2015
      */
     int insertSelective(Install record);
+
+    Install findBySource(String source);
+
+    int updateCount(Install record);
+
 }

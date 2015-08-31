@@ -209,12 +209,20 @@ public class SecurityService {
         return flag;
     }
 
-    public void andriodInstall(String source) {
-        Install record = new Install();
-        record.setUid(ToolUtil.getUUid());
-        record.setSource(source);
-        record.setCreatedate(new Date());
-        installMapper.insert(record);
+    public void andriodInstall(String source, String sourceName) {
+        Install install = installMapper.findBySource(source);
+        if (install != null) {
+            install.setCount(install.getCount() + 1);
+            installMapper.updateCount(install);
+        } else {
+            Install record = new Install();
+            record.setUid(ToolUtil.getUUid());
+            record.setSource(source);
+            record.setSourceName(sourceName);
+            record.setCount(1);
+            record.setCreatedate(new Date());
+            installMapper.insert(record);
+        }
     }
 
     public Version getVersion(Integer type) {

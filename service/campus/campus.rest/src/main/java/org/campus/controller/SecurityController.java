@@ -412,9 +412,10 @@ public class SecurityController {
     @RequestMapping(value = "/andriod/install", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "记录成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public void andriodInstall(
-            @ApiParam(name = "source", value = "下载来源") @RequestParam(value = "source", required = true) String source,
+            @ApiParam(name = "source", value = "下载来源编码") @RequestParam(value = "source", required = true) String source,
+            @ApiParam(name = "sourceName", value = "下载来源名称") @RequestParam(value = "sourceName", required = true) String sourceName,
             HttpSession session) {
-        securitySvc.andriodInstall(source);
+        securitySvc.andriodInstall(source, sourceName);
     }
 
     @ApiOperation(value = "*修改签名:1.0", notes = "*用户修改签名[API-Version=1.0]")
