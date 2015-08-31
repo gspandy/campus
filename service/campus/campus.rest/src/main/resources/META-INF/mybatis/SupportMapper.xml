@@ -14,12 +14,13 @@
 		<result column="LastUpdateBy" property="lastupdateby" jdbcType="VARCHAR" />
 		<result column="LastUpdateDate" property="lastupdatedate"
 			jdbcType="TIMESTAMP" />
+		<result column="SrcPostId" property="srcPostId" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UID, SourceUID, SupportUserUID, UserNickName, TypeCode,
 		isActive,
 		CreateBy, CreateDate,
-		LastUpdateBy, LastUpdateDate
+		LastUpdateBy, LastUpdateDate, SrcPostId
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -38,7 +39,7 @@
 		(UID, SourceUID, SupportUserUID,
 		UserNickName, TypeCode, isActive,
 		CreateBy, CreateDate, LastUpdateBy,
-		LastUpdateDate)
+		LastUpdateDate, SrcPostId)
 		values
 		(#{uid,jdbcType=VARCHAR}, #{sourceuid,jdbcType=VARCHAR},
 		#{supportuseruid,jdbcType=VARCHAR},
@@ -46,7 +47,7 @@
 		#{typecode,jdbcType=INTEGER}, #{isactive,jdbcType=INTEGER},
 		#{createby,jdbcType=VARCHAR}, #{createdate,jdbcType=TIMESTAMP},
 		#{lastupdateby,jdbcType=VARCHAR},
-		#{lastupdatedate,jdbcType=TIMESTAMP})
+		#{lastupdatedate,jdbcType=TIMESTAMP},#{srcPostId,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.Support">
 		insert into ts_app_support
@@ -81,6 +82,9 @@
 			<if test="lastupdatedate != null">
 				LastUpdateDate,
 			</if>
+			<if test="srcPostId != null">
+                SrcPostId,
+            </if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uid != null">
@@ -113,6 +117,9 @@
 			<if test="lastupdatedate != null">
 				#{lastupdatedate,jdbcType=TIMESTAMP},
 			</if>
+			<if test="srcPostId != null">
+                #{srcPostId,jdbcType=VARCHAR},
+            </if>
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="org.campus.model.Support">
@@ -145,6 +152,9 @@
 			<if test="lastupdatedate != null">
 				LastUpdateDate = #{lastupdatedate,jdbcType=TIMESTAMP},
 			</if>
+			<if test="srcPostId != null">
+                SrcPostId = #{srcPostId,jdbcType=VARCHAR},
+            </if>
 		</set>
 		where UID = #{uid,jdbcType=VARCHAR}
 	</update>
@@ -164,7 +174,9 @@
 		LastUpdateBy =
 		#{lastupdateby,jdbcType=VARCHAR},
 		LastUpdateDate =
-		#{lastupdatedate,jdbcType=TIMESTAMP}
+		#{lastupdatedate,jdbcType=TIMESTAMP},
+		SrcPostId =
+        #{srcPostId,jdbcType=VARCHAR}
 		where UID =
 		#{uid,jdbcType=VARCHAR}
 	</update>
@@ -212,9 +224,12 @@
 		s.CreateDate desc
 	</select>
 	<select id="findSupportCommentMsgVO" resultMap="BaseResultMap">
-		SELECT s.* FROM ts_app_support as s
-		LEFT JOIN ts_app_comment as c ON s.SourceUID = c.UID
+		SELECT s.* FROM
+		ts_app_support as s
+		LEFT JOIN ts_app_comment as c ON s.SourceUID =
+		c.UID
 		WHERE c.ComUserUID=#{userId,jdbcType=VARCHAR}
-		ORDER BY s.CreateDate desc
+		ORDER BY
+		s.CreateDate desc
 	</select>
 </mapper>

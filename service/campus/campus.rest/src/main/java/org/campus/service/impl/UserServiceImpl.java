@@ -111,11 +111,11 @@ public class UserServiceImpl implements UserService {
         if (InteractType.SUPPORT.equals(type)) {
             hot = hot + 1;
             freshNewsMapper.updateSupport(sourceId);
-            support(sourceId, userId, userName);
+            support(sourceId, sourceId, userId, userName);
         } else {
             hot = hot - 1;
             freshNewsMapper.updateNotSupport(sourceId);
-            notSupport(sourceId, userId, userName);
+            notSupport(sourceId, sourceId, userId, userName);
         }
         if (hot >= SystemConfig.getInt("HOT_POST_NUM")) {
             freshNews.setIshot("1");
@@ -134,12 +134,12 @@ public class UserServiceImpl implements UserService {
             fresh = freshNewsMapper.selectByPrimaryKey(postId);
         }
         if (InteractType.SUPPORT.equals(type)) {
-            support(sourceId, userId, userName);
+            support(sourceId, postId, userId, userName);
             if (fresh != null) {
                 fresh.setSupportnum(fresh.getSupportnum() + 1);
             }
         } else {
-            notSupport(sourceId, userId, userName);
+            notSupport(sourceId, postId, userId, userName);
             if (fresh != null) {
                 fresh.setNotsupportnum(fresh.getNotsupportnum() + 1);
             }
@@ -168,6 +168,7 @@ public class UserServiceImpl implements UserService {
         comment.setLastupdateby(Constant.CREATE_BY);
         comment.setLastupdatedate(new Date());
         comment.setIpaddress(ipaddress);
+        comment.setSrcPostId(sourceId);
         commentMapper.insert(comment);
 
         freshNews.setCommentnum(freshNews.getCommentnum() == null ? 1 : freshNews.getCommentnum() + 1);
@@ -303,7 +304,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void notSupport(String sourceId, String userId, String userName) {
+    private void notSupport(String sourceId, String postId, String userId, String userName) {
         NotSupport notSupport = new NotSupport();
         notSupport.setUid(ToolUtil.getUUid());
         notSupport.setSourceuid(sourceId);
@@ -315,10 +316,11 @@ public class UserServiceImpl implements UserService {
         notSupport.setCreatedate(new Date());
         notSupport.setLastupdateby(Constant.CREATE_BY);
         notSupport.setLastupdatedate(new Date());
+        notSupport.setSrcPostId(postId);
         notSupportMapper.insert(notSupport);
     }
 
-    private void support(String sourceId, String userId, String userName) {
+    private void support(String sourceId, String postId, String userId, String userName) {
         Support support = new Support();
         support.setUid(ToolUtil.getUUid());
         support.setSourceuid(sourceId);
@@ -330,6 +332,7 @@ public class UserServiceImpl implements UserService {
         support.setCreatedate(new Date());
         support.setLastupdateby(Constant.CREATE_BY);
         support.setLastupdatedate(new Date());
+        support.setSrcPostId(postId);
         supportMapper.insert(support);
     }
 
@@ -339,7 +342,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void reply(String sourceId, String userId, String userName, String ipaddress, CommentAddVO commentAddVO) {
+    public void reply(String sourceId, String postId, String userId, String userName, String ipaddress,
+            CommentAddVO commentAddVO) {
         Comment comment = new Comment();
         comment.setUid(ToolUtil.getUUid());
         comment.setSourceuid(sourceId);
@@ -355,7 +359,28 @@ public class UserServiceImpl implements UserService {
         comment.setLastupdateby(Constant.CREATE_BY);
         comment.setLastupdatedate(new Date());
         comment.setIpaddress(ipaddress);
+        comment.setSrcPostId(postId);
         commentMapper.insert(comment);
+
+        if (!StringUtils.isEmpty(postId)) {
+            Comment postComment = new Comment();
+            postComment.setUid(ToolUtil.getUUid());
+            postComment.setSourceuid(postId);
+            postComment.setComuseruid(userId);
+            postComment.setUsernickname(userName);
+            postComment.setObjuseruid(commentAddVO.getObjUserId());
+            postComment.setObjusernickname(commentAddVO.getObjNickName());
+            postComment.setObjComment(commentAddVO.getObjComment());
+            postComment.setCommentcontent(commentAddVO.getContent());
+            postComment.setIsactive(ActiveType.ACTIVE);
+            postComment.setCreateby(Constant.CREATE_BY);
+            postComment.setCreatedate(new Date());
+            postComment.setLastupdateby(Constant.CREATE_BY);
+            postComment.setLastupdatedate(new Date());
+            postComment.setIpaddress(ipaddress);
+            postComment.setSrcPostId(postId);
+            commentMapper.insert(postComment);
+        }
 
         Comment commentData = commentMapper.selectByPrimaryKey(sourceId);
         FreshNews freshNews = freshNewsMapper.selectByPrimaryKey(commentData.getSourceuid());
@@ -407,6 +432,7 @@ public class UserServiceImpl implements UserService {
         List<SupportCommentMsgVO> commentMsgVOs = new ArrayList<SupportCommentMsgVO>();
         if (supportPage != null && !CollectionUtils.isEmpty(supportPage.getContent())) {
             Comment comment = null;
+            FreshNews fresh = null;
             SupportCommentMsgVO msgVO = null;
             for (Support support : supportPage.getContent()) {
                 msgVO = new SupportCommentMsgVO();
@@ -415,6 +441,11 @@ public class UserServiceImpl implements UserService {
                 msgVO.setSupportNickName(support.getUsernickname());
                 msgVO.setCommentId(support.getSourceuid());
                 msgVO.setContent(comment.getCommentcontent());
+                fresh = freshNewsMapper.selectByPrimaryKey(support.getSrcPostId());
+                msgVO.setPostId(fresh.getUid());
+                msgVO.setBrief(fresh.getNewsbrief());
+                msgVO.setPostContent(fresh.getNewscontent());
+                msgVO.setPicUrls(dealPics(fresh));
                 commentMsgVOs.add(msgVO);
             }
             page = new PageImpl<SupportCommentMsgVO>(commentMsgVOs, pageable, commentMsgVOs.size());
@@ -459,6 +490,7 @@ public class UserServiceImpl implements UserService {
         List<CommentMyCommentVO> commentMsgVOs = new ArrayList<CommentMyCommentVO>();
         if (supportPage != null && !CollectionUtils.isEmpty(supportPage.getContent())) {
             Comment myComment = null;
+            FreshNews fresh = null;
             CommentMyCommentVO msgVO = null;
             for (Comment comment : supportPage.getContent()) {
                 msgVO = new CommentMyCommentVO();
@@ -469,6 +501,11 @@ public class UserServiceImpl implements UserService {
                 msgVO.setCommentContent(comment.getCommentcontent());
                 msgVO.setMyCommentId(myComment.getUid());
                 msgVO.setContent(myComment.getCommentcontent());
+                fresh = freshNewsMapper.selectByPrimaryKey(comment.getSrcPostId());
+                msgVO.setPostId(fresh.getUid());
+                msgVO.setBrief(fresh.getNewsbrief());
+                msgVO.setPostContent(fresh.getNewscontent());
+                msgVO.setPicUrls(dealPics(fresh));
                 commentMsgVOs.add(msgVO);
             }
             page = new PageImpl<CommentMyCommentVO>(commentMsgVOs, pageable, commentMsgVOs.size());

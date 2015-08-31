@@ -176,7 +176,7 @@ public class UserController {
     @NeedRoles
     public void commentSupport(
             @ApiParam(name = "commentId", value = "帖子评论的ID") @PathVariable String commentId,
-            @ApiParam(name = "postId", value = "帖子ID") @RequestParam(value = "postId", required = false) String postId,
+            @ApiParam(name = "postId", value = "帖子ID") @RequestParam(value = "postId", required = true) String postId,
             @ApiParam(name = "type", value = "赞/踩(0:踩,1:赞)") @RequestParam(value = "type", required = true) InteractType type,
             @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -356,6 +356,7 @@ public class UserController {
     @NeedRoles
     public void reply(
             @ApiParam(name = "commentId", value = "评论的ID") @PathVariable String commentId,
+            @ApiParam(name = "postId", value = "帖子Id") @RequestParam(value = "postId", required = true) String postId,
             @ApiParam(name = "commentAddVO", value = "评论体信息") @RequestBody CommentAddVO commentAddVO,
             @ApiParam(name = "model", value = "显示模式(0:月亮模式;1:太阳模式)") @RequestParam(value = "model", required = true) DisplayModel model,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -363,7 +364,8 @@ public class UserController {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         String userName = nickNameService.findRandomNickName(model, session.getId());
         userName = userName == null ? responseVO.getNickName() : userName;
-        userService.reply(commentId, responseVO.getUserId(), userName, ToolUtil.getIpAddr(request), commentAddVO);
+        userService.reply(commentId, postId, responseVO.getUserId(), userName, ToolUtil.getIpAddr(request),
+                commentAddVO);
     }
 
     @ApiOperation(value = "*取消赞/踩:1.0", notes = "取消赞[API-Version=1.0]")
