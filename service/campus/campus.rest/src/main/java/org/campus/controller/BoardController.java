@@ -1,6 +1,5 @@
 package org.campus.controller;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpSession;
 import org.campus.annotation.NeedRoles;
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
-import org.campus.core.web.Attachment;
 import org.campus.fastdfs.FastdfsClient;
 import org.campus.fastdfs.FastdfsClientFactory;
 import org.campus.model.FavoriteFreshNews;

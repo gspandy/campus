@@ -68,7 +68,7 @@ public class ImageUtils {
                 0, 0, null);
         g.dispose();
         String fileName = new StringBuffer().append(SystemConfig.getString("CUT_PIC_TEM_DIR")).append(File.separator)
-                .append(ToolUtil.getId()).append(format).toString();
+                .append(ToolUtil.getId()).append(".").append(format).toString();
         File destFile = new File(fileName);
         ImageIO.write(subImage, format, destFile);
         return destFile;
