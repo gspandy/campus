@@ -11,7 +11,9 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 public class ConversationDetailVO {
 
     private String nickName;
-    
+
+    private String headPic;
+
     private String message;
 
     private String picUrl;
@@ -20,11 +22,11 @@ public class ConversationDetailVO {
 
     @JsonFormat(pattern = "yyyy/MM/dd HH/mm/ss")
     private Date sendDate;
-    
+
     private String soundUrl;
 
     private boolean holdFlag = false;
-    
+
     @ApiModelProperty(value = "昵称", required = false)
     public String getNickName() {
         return nickName;
@@ -33,6 +35,16 @@ public class ConversationDetailVO {
     @ApiModelProperty(value = "昵称", required = false)
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    @ApiModelProperty(value = "头像", required = false)
+    public String getHeadPic() {
+        return headPic;
+    }
+
+    @ApiModelProperty(value = "头像", required = false)
+    public void setHeadPic(String headPic) {
+        this.headPic = headPic;
     }
 
     @ApiModelProperty(value = "消息", required = false)
@@ -84,12 +96,12 @@ public class ConversationDetailVO {
     public void setSendDate(Date sendDate) {
         this.sendDate = sendDate;
     }
-    
+
     @ApiModelProperty(value = "语言路径", required = false)
     public String getSoundUrl() {
         return soundUrl;
     }
-    
+
     @ApiModelProperty(value = "语言路径", required = false)
     public void setSoundUrl(String soundUrl) {
         this.soundUrl = soundUrl;

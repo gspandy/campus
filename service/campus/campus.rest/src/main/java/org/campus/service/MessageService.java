@@ -13,6 +13,7 @@ import org.campus.model.GroupUsers;
 import org.campus.model.ReceiveMessage;
 import org.campus.model.SendMessage;
 import org.campus.model.Session;
+import org.campus.model.User;
 import org.campus.model.enums.IsReadType;
 import org.campus.model.enums.SessionType;
 import org.campus.repository.GroupUsersMapper;
@@ -21,7 +22,6 @@ import org.campus.repository.ReceiveMessageMapper;
 import org.campus.repository.SendMessageMapper;
 import org.campus.repository.SessionMapper;
 import org.campus.repository.UserMapper;
-import org.campus.service.MessageService;
 import org.campus.util.ToolUtil;
 import org.campus.vo.ConversationDetailVO;
 import org.campus.vo.MessageAddVO;
@@ -73,8 +73,9 @@ public class MessageService {
             messageListVO.setMessageId(sendMessage.getUid());
             messageListVO.setPicUrl(sendMessage.getPicturepath());
             messageListVO.setSendUserId(sendMessage.getSenduseruid());
-            String nickName = userMapper.selectNickNameByPrimaryKey(sendMessage.getSenduseruid());
-            messageListVO.setSendNickName(nickName);
+            User user = userMapper.selectByPrimaryKey(sendMessage.getSenduseruid());
+            messageListVO.setSendNickName(user.getNickname());
+            messageListVO.setHeadPic(user.getHeadpic());
             String objUseruid = receiveMessage.getReceiveuseruid();
 
             // 判断是否为群组消息
@@ -222,9 +223,10 @@ public class MessageService {
             detail.setPicUrl(conversationDetail.getPicturepath());
             detail.setSendDate(conversationDetail.getSendtime());
             detail.setSoundUrl(conversationDetail.getSoundpath());
-            String nickName = userMapper.selectNickNameByPrimaryKey(conversationDetail.getSenduseruid());
-            nickName = StringUtils.isEmpty(nickName) ? "未知用户" : nickName;
+            User user = userMapper.selectByPrimaryKey(conversationDetail.getSenduseruid());
+            String nickName = StringUtils.isEmpty(user.getNickname()) ? "未知用户" : user.getNickname();
             detail.setNickName(nickName);
+            detail.setHeadPic(user.getHeadpic());
             resultList.add(detail);
         }
     }

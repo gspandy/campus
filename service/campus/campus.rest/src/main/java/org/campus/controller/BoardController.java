@@ -1,7 +1,9 @@
 package org.campus.controller;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -351,7 +353,7 @@ public class BoardController {
             for (String s : pics) {
                 if (i == 0) {
                     try {
-                        copyImage(sb, s);
+                        cutImage(sb, s);
                     } catch (Exception e) {
                         logger.error(e.getMessage());
                     }
@@ -369,21 +371,15 @@ public class BoardController {
         topicSvc.publishPosts(posts);
     }
 
-    private void copyImage(StringBuilder sb, String s) throws IOException {
+    private void cutImage(StringBuilder sb, String s) throws IOException {
         FastdfsClient fastdfsClient = fastdfsClientFactory.getFastdfsClient();
         byte[] data = fastdfsClient.downLoad(s);
         ByteArrayInputStream in = new ByteArrayInputStream(data); // 将b作为输入流；
-        BufferedImage image;
-        image = ImageIO.read(in);
-        ImageUtils.incision(image.getWidth(), image.getHeight());
-        Attachment attachment = ImageUtils.getAttachment(s, data);
-        int[] x = { ImageUtils.newWidth };
-        int[] y = { ImageUtils.newHeight };
-        String img = fastdfsClient.uploadImgWithCompress(attachment, x, y);
-        String prefix = img.substring(0, img.lastIndexOf("."));
-        String ext = img.substring(img.lastIndexOf(".") + 1);
-        sb.append(prefix).append("_").append(ImageUtils.newWidth).append("_").append(ImageUtils.newHeight).append(".")
-                .append(ext).append(",");
+        BufferedImage image = ImageIO.read(in);
+        String ext = s.substring(s.lastIndexOf(".") + 1);
+        File file = ImageUtils.cut(image, ext, image.getWidth(), image.getHeight());
+        String img = fastdfsClient.upload(file);
+        sb.append(img).append(",");
     }
 
     @ApiOperation(value = "*切换显示模式:1.0", notes = "切换显示模式[API-Version=1.0]")

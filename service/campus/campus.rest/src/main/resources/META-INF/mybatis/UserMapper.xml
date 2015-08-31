@@ -597,4 +597,7 @@
 		</if>
 		ORDER BY NickFirstLetter
 	</select>
+	<select id="findSyncUser">
+	   
+	</select>
 </mapper>

@@ -7,7 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-public class MessageListVO implements Serializable{
+public class MessageListVO implements Serializable {
 
     private static final long serialVersionUID = -8534128791786774565L;
 
@@ -23,6 +23,8 @@ public class MessageListVO implements Serializable{
 
     private String sendNickName;
 
+    private String headPic;
+
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date sendDate;
 
@@ -30,7 +32,7 @@ public class MessageListVO implements Serializable{
 
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date readDate;
-    
+
     private String groupName;
 
     @ApiModelProperty(value = "消息ID", required = true)
@@ -81,6 +83,16 @@ public class MessageListVO implements Serializable{
     @ApiModelProperty(value = "发送者昵称", required = true)
     public void setSendNickName(String sendNickName) {
         this.sendNickName = sendNickName;
+    }
+
+    @ApiModelProperty(value = "头像", required = false)
+    public String getHeadPic() {
+        return headPic;
+    }
+
+    @ApiModelProperty(value = "头像", required = false)
+    public void setHeadPic(String headPic) {
+        this.headPic = headPic;
     }
 
     @ApiModelProperty(value = "发送者时间", required = true)
