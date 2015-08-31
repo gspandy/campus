@@ -15,10 +15,12 @@ import org.campus.core.exception.CampusException;
 import org.campus.model.Install;
 import org.campus.model.SysUser;
 import org.campus.model.User;
+import org.campus.model.Version;
 import org.campus.model.enums.ApiType;
 import org.campus.repository.InstallMapper;
 import org.campus.repository.SysUserMapper;
 import org.campus.repository.UserMapper;
+import org.campus.repository.VersionMapper;
 import org.campus.util.MD5Util;
 import org.campus.util.ToolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,9 @@ public class SecurityService {
 
     @Autowired
     private InstallMapper installMapper;
+
+    @Autowired
+    private VersionMapper versionMapper;
 
     /**
      * 用户注册
@@ -210,6 +215,10 @@ public class SecurityService {
         record.setSource(source);
         record.setCreatedate(new Date());
         installMapper.insert(record);
+    }
+
+    public Version getVersion(Integer type) {
+        return versionMapper.findByTypeCode(type);
     }
 
     private User apiRegist(String apiId, String nickName, String headImgUrl) {

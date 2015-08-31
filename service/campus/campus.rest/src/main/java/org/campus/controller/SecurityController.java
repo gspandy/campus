@@ -15,6 +15,7 @@ import org.campus.constant.ErrorCode;
 import org.campus.core.exception.CampusException;
 import org.campus.model.SysUser;
 import org.campus.model.User;
+import org.campus.model.Version;
 import org.campus.model.enums.DisplayModel;
 import org.campus.model.enums.IntegralType;
 import org.campus.model.enums.SMSType;
@@ -31,6 +32,7 @@ import org.campus.vo.ApiLoginRequestVO;
 import org.campus.vo.LoginRequestVO;
 import org.campus.vo.LoginResponseVO;
 import org.campus.vo.RegisterVO;
+import org.campus.vo.VersionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -419,16 +421,29 @@ public class SecurityController {
     @RequestMapping(value = "/signName", headers = { "API-Version=1.0" }, method = RequestMethod.PUT)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "签名成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
-    public LoginResponseVO modifySignName(@ApiParam(name = "signName", value = "签名") @RequestParam(value = "signName", required = true) String signName,
-            HttpSession session){
-    	LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-    	User user = new User();
-    	user.setUseruid(vo.getUserId());
-    	user.setSignName(signName);
-    	securitySvc.updateUser(user);
-    	
-    	vo.setSignName(signName);
-    	
-    	return vo;
+    public LoginResponseVO modifySignName(
+            @ApiParam(name = "signName", value = "签名") @RequestParam(value = "signName", required = true) String signName,
+            HttpSession session) {
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        User user = new User();
+        user.setUseruid(vo.getUserId());
+        user.setSignName(signName);
+        securitySvc.updateUser(user);
+        vo.setSignName(signName);
+        return vo;
     }
+
+    @ApiOperation(value = "*查询APP版本:1.0", notes = "*查询APP版本[API-Version=1.0]")
+    @RequestMapping(value = "/version", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "签名成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public VersionVO version(
+            @ApiParam(name = "typeCode", value = "1:Andriod;2:IOS") @RequestParam(value = "typeCode", required = true) Integer typeCode) {
+        Version version = securitySvc.getVersion(typeCode);
+        VersionVO versionVO = new VersionVO();
+        versionVO.setTypecode(version.getTypecode());
+        versionVO.setUrl(version.getUrl());
+        versionVO.setVersionnum(version.getVersionnum());
+        return versionVO;
+    }
+
 }
