@@ -515,6 +515,11 @@ public class UserServiceImpl implements UserService {
         return page;
     }
 
+    @Override
+    public void delete(String commentId, String userId) {
+        commentMapper.deleteByPrimaryKey(commentId);
+    }
+
     private List<String> dealPics(FreshNews freshNews) {
         String pictures = freshNews.getPictures();
         List<String> picList = null;

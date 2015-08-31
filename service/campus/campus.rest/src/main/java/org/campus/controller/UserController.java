@@ -383,6 +383,19 @@ public class UserController {
         userService.cancelSupport(sourceId, postId, type, mod, responseVO.getUserId());
     }
 
+    @ApiOperation(value = "*删评论:1.0", notes = "删评论[API-Version=1.0]")
+    @RequestMapping(value = "/{commentId}/delete", headers = { "API-Version=1.0" }, method = RequestMethod.DELETE)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "审核成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void delete(
+            @ApiParam(name = "commentId", value = "帖子ID") @PathVariable String commentId,
+            @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        userService.delete(commentId, vo.getUserId());
+    }
+
     private UserVO findUserInfo(String userId) {
         User user = userService.findByUserId(userId);
         UserVO userVO = new UserVO();

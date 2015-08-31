@@ -279,4 +279,6 @@ public interface UserService {
 
     Page<CommentMyCommentVO> findCommentMyCommentMsgVO(String userId, Pageable pageable);
 
+    void delete(String commentId, String userId);
+
 }
