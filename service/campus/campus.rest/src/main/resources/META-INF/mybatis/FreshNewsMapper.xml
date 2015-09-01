@@ -337,7 +337,7 @@
 		<include refid="Base_Column_List" />
 		from ts_app_freshnews
 		where AddUserUID = #{userId,jdbcType=VARCHAR} AND
-		IsAnonymous=0 and deleted='0'
+		IsAnonymous=0 and deleted='0' order by CreateDate desc
 	</select>
 	<update id="updateSupport" parameterType="java.lang.String">
 		update
@@ -358,13 +358,13 @@
 		SELECT f.* from
 		ts_app_freshnews as f LEFT JOIN ts_app_comment as c on
 		f.UID=c.SourceUID WHERE c.ComUserUID=#{userId,jdbcType=VARCHAR} and f.deleted='0' GROUP
-		BY f.UID
+		BY f.UID order by f.CreateDate desc
 	</select>
 	<select id="findMySupportPosts" resultMap="BaseResultMap">
 		SELECT f.* from
 		ts_app_freshnews as f LEFT JOIN ts_app_support as s on
 		f.UID=s.SourceUID WHERE s.SupportUserUID=#{userId,jdbcType=VARCHAR} and f.deleted='0'
-		GROUP BY f.UID
+		GROUP BY f.UID order by f.CreateDate desc
 	</select>
 	<select id="selectByNewTypeAndShield" resultMap="BaseResultMap">
 		select
