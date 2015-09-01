@@ -149,36 +149,36 @@ public class SecurityService {
         userMapper.updateByPrimaryKeySelective(user);
     }
 
-    public User apiLogin(String code, String redirectUrl, ApiType apiType) {
+    public User apiLogin(String accessToken, String openId, ApiType apiType) {
         User user = null;
         switch (apiType) {
             case QQ:
                 QqUserinfo qqUserinfo = null;
                 try {
-                    qqUserinfo = tencentApi.getQqUserinfo(code, redirectUrl);
+                    qqUserinfo = tencentApi.getQqUserinfo(accessToken, openId);
                     user = apiRegist(qqUserinfo.getOpenId(), qqUserinfo.getNickname(), qqUserinfo.getFigureurl_qq_2());
                 } catch (Exception e) {
-                    throw new CampusException(1000002, "认证失败");
+                    throw new CampusException(1000002, "登录失败", e);
                 }
                 break;
             case WEIBO:
                 WeiboUserInfo weiboUserinfo = null;
                 try {
-                    weiboUserinfo = weiboApi.getWeiboUserinfo(code, redirectUrl);
+                    weiboUserinfo = weiboApi.getWeiboUserinfo(accessToken, openId);
                     user = apiRegist(String.valueOf(weiboUserinfo.getId()), weiboUserinfo.getScreen_name(),
                             weiboUserinfo.getProfile_image_url());
                 } catch (Exception e) {
-                    throw new CampusException(1000002, "认证失败");
+                    throw new CampusException(1000002, "登录失败", e);
                 }
                 break;
             case WEIXIN:
                 SnsapiUserinfo snsapiUserInfo = null;
                 try {
-                    snsapiUserInfo = weixinApi.getSnsapiUserinfo(code);
+                    snsapiUserInfo = weixinApi.getSnsapiUserinfo(accessToken, openId);
                     user = apiRegist(snsapiUserInfo.getOpenid(), snsapiUserInfo.getNickname(),
                             snsapiUserInfo.getHeadimgurl());
                 } catch (Exception e) {
-                    throw new CampusException(1000002, "认证失败");
+                    throw new CampusException(1000002, "登录失败", e);
                 }
                 break;
             default:

@@ -9,7 +9,6 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.util.EncodingUtil;
 import org.apache.commons.lang.StringUtils;
 import org.campus.api.domain.SnsapiUserinfo;
-import org.campus.api.domain.WebAccessToken;
 import org.campus.config.SystemConfig;
 import org.campus.core.exception.CampusException;
 import org.campus.util.HttpClientUtil;
@@ -19,25 +18,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class WeixinApi {
 
-    public SnsapiUserinfo getSnsapiUserinfo(String code) {
-        WebAccessToken webAccessToken = getWebAccessToken(code);
+    public SnsapiUserinfo getSnsapiUserinfo(String accessToken, String openId) {
+        // WebAccessToken webAccessToken = getWebAccessToken(accessToken,String openId);
         SnsapiUserinfo snsapiUserinfo = null;
-        if (webAccessToken != null) {
-            Map<String, String> map = new HashMap<String, String>();
-            map.put("access_token", webAccessToken.getAccess_token());
-            map.put("openid", webAccessToken.getOpenid());
-            map.put("lang", "zh_CN");
-            String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("WEIXIN_USERINFO_URL")));
-            // String response =
-            // "{\"openid\":\"OPENID\",\"nickname\":\"NICKNAME\",\"sex\":\"1\",\"province\":\"PROVINCE\",\"city\":\"CITY\",\"country\":\"COUNTRY\",\"headimgurl\":\"http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46\",\"privilege\":[\"12\",\"3\"],\"unionid\":\"o6_bmasdasdsad6_2sgVt7hMZOPfL\"}";
-            try {
-                snsapiUserinfo = JsonUtil.getInstance().toJavaBean(response, SnsapiUserinfo.class);
-                if (snsapiUserinfo == null || StringUtils.isEmpty(snsapiUserinfo.getOpenid())) {
-                    throw new CampusException("获取用户信息失败");
-                }
-            } catch (Exception e) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("access_token", accessToken);
+        map.put("openid", openId);
+        map.put("lang", "zh_CN");
+        String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("WEIXIN_USERINFO_URL")));
+        // String response =
+        // "{\"openid\":\"OPENID\",\"nickname\":\"NICKNAME\",\"sex\":\"1\",\"province\":\"PROVINCE\",\"city\":\"CITY\",\"country\":\"COUNTRY\",\"headimgurl\":\"http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46\",\"privilege\":[\"12\",\"3\"],\"unionid\":\"o6_bmasdasdsad6_2sgVt7hMZOPfL\"}";
+        try {
+            snsapiUserinfo = JsonUtil.getInstance().toJavaBean(response, SnsapiUserinfo.class);
+            if (snsapiUserinfo == null || StringUtils.isEmpty(snsapiUserinfo.getOpenid())) {
                 throw new CampusException("获取用户信息失败");
             }
+        } catch (Exception e) {
+            throw new CampusException("获取用户信息失败");
         }
         return snsapiUserinfo;
     }
@@ -60,25 +57,26 @@ public class WeixinApi {
         return urlAddress + "?" + request;
     }
 
-    private WebAccessToken getWebAccessToken(String code) {
-        WebAccessToken accessToken = null;
-        Map<String, String> map = new HashMap<String, String>();
-        try {
-            map.put("appid", SystemConfig.getString("WEIXIN_APPID"));
-            map.put("secret", SystemConfig.getString("WEIXIN_SECRET"));
-            map.put("code", code);
-            map.put("grant_type", "authorization_code");
-            String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("WEIXIN_TOKEN_URL")));
-            // String response =
-            // "{\"access_token\":\"OezXcEiiBSKSxW0eoylIeER7_sKq7Sx0WTHC7OAeLZ6lHYlew_kdo6lorrOWV-axvZm5BNJyvGLPaKiyfijLN9Vl-5eC1L5oYReNqERhzLJvSucRJwU448ao1u48IoiXeLZpjUmh3DAfzGC84q0QLg\",\"expires_in\":7200,\"refresh_token\":\"OezXcEiiBSKSxW0eoylIeER7_sKq7Sx0WTHC7OAeLZ6lHYlew_kdo6lorrOWV-axgGIqlMjziV6MpwGwowY8dvRMOTnwo0fUVKlTqRkq3rXTuICrnJudscYXqhwG-TZd-2mRuwaANpjpqNBY4iSPBw\",\"openid\":\"ot6Sit9XxNopf832fOVn1wq7fhG4\",\"scope\":\"snsapi_userinfo\",\"unionid\":\"obShouAI4nzDrA4GkvjhnIUMtpns\"}";
-            accessToken = JsonUtil.getInstance().toJavaBean(response, WebAccessToken.class);
-            if (accessToken == null || StringUtils.isEmpty(accessToken.getAccess_token())) {
-                throw new CampusException("获取access_token失败");
-            }
-        } catch (Exception e) {
-            throw new CampusException("获取access_token失败");
-        }
-        return accessToken;
-    }
+    // private WebAccessToken getWebAccessToken(String code) {
+    // WebAccessToken accessToken = null;
+    // Map<String, String> map = new HashMap<String, String>();
+    // try {
+    // map.put("appid", SystemConfig.getString("WEIXIN_APPID"));
+    // map.put("secret", SystemConfig.getString("WEIXIN_SECRET"));
+    // map.put("code", code);
+    // map.put("grant_type", "authorization_code");
+    // String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("WEIXIN_TOKEN_URL")));
+    // // String response =
+    // //
+    // "{\"access_token\":\"OezXcEiiBSKSxW0eoylIeER7_sKq7Sx0WTHC7OAeLZ6lHYlew_kdo6lorrOWV-axvZm5BNJyvGLPaKiyfijLN9Vl-5eC1L5oYReNqERhzLJvSucRJwU448ao1u48IoiXeLZpjUmh3DAfzGC84q0QLg\",\"expires_in\":7200,\"refresh_token\":\"OezXcEiiBSKSxW0eoylIeER7_sKq7Sx0WTHC7OAeLZ6lHYlew_kdo6lorrOWV-axgGIqlMjziV6MpwGwowY8dvRMOTnwo0fUVKlTqRkq3rXTuICrnJudscYXqhwG-TZd-2mRuwaANpjpqNBY4iSPBw\",\"openid\":\"ot6Sit9XxNopf832fOVn1wq7fhG4\",\"scope\":\"snsapi_userinfo\",\"unionid\":\"obShouAI4nzDrA4GkvjhnIUMtpns\"}";
+    // accessToken = JsonUtil.getInstance().toJavaBean(response, WebAccessToken.class);
+    // if (accessToken == null || StringUtils.isEmpty(accessToken.getAccess_token())) {
+    // throw new CampusException("获取access_token失败");
+    // }
+    // } catch (Exception e) {
+    // throw new CampusException("获取access_token失败");
+    // }
+    // return accessToken;
+    // }
 
 }

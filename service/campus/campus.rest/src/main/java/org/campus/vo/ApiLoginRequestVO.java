@@ -8,30 +8,30 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "ApiLoginRequestVO", description = "第三方登录信息")
 public class ApiLoginRequestVO {
 
-    private String code;
+    private String accessToken;
 
-    private String redirectUrl;
+    private String openId;
 
     private ApiType apiType;
 
-    @ApiModelProperty(value = "qq、微博、微信授权返回的code", required = true)
-    public String getCode() {
-        return code;
+    @ApiModelProperty(value = "第三方AccessToken", required = true)
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    @ApiModelProperty(value = "qq、微博、微信授权返回的code", required = true)
-    public void setCode(String code) {
-        this.code = code;
+    @ApiModelProperty(value = "第三方AccessToken", required = true)
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
-    @ApiModelProperty(value = "回调地址，微博、qq认证需传递", required = false)
-    public String getRedirectUrl() {
-        return redirectUrl;
+    @ApiModelProperty(value = "第三方OpenId", required = true)
+    public String getOpenId() {
+        return openId;
     }
 
-    @ApiModelProperty(value = "回调地址，微博、qq认证需传递", required = false)
-    public void setRedirectUrl(String redirectUrl) {
-        this.redirectUrl = redirectUrl;
+    @ApiModelProperty(value = "第三方OpenId", required = true)
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 
     @ApiModelProperty(value = "第三方类型", required = true)

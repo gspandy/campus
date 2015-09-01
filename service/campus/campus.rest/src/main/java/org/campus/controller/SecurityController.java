@@ -130,7 +130,7 @@ public class SecurityController {
     public LoginResponseVO apiLogin(
             @ApiParam(name = "apiLoginRequestVO", value = "第三方登录信息体") @RequestBody ApiLoginRequestVO apiLoginRequestVO,
             HttpSession session) {
-        User user = securitySvc.apiLogin(apiLoginRequestVO.getCode(), apiLoginRequestVO.getRedirectUrl(),
+        User user = securitySvc.apiLogin(apiLoginRequestVO.getAccessToken(), apiLoginRequestVO.getOpenId(),
                 apiLoginRequestVO.getApiType());
         LoginResponseVO responseVO = new LoginResponseVO();
         String signId = ToolUtil.getUUid();
