@@ -26,8 +26,8 @@ public class TencentApi {
         map.put("access_token", accessToken);
         map.put("oauth_consumer_key", SystemConfig.getString("QQ_CLIENT_ID"));
         map.put("openid", openId);
-        String response = HttpClientUtil.httpGet(getURL(map, SystemConfig.getString("QQ_USERINFO_URL")));
         try {
+            String response = HttpClientUtil.httpGet(getURL(map, SystemConfig.getString("QQ_USERINFO_URL")));
             qqUserinfo = JsonUtil.getInstance().toJavaBean(response, QqUserinfo.class);
             if (qqUserinfo == null || StringUtils.isEmpty(qqUserinfo.getNickname())) {
                 throw new CampusException("获取用户信息失败");

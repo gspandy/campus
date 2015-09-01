@@ -25,8 +25,8 @@ public class WeiboApi {
         map.put("source", SystemConfig.getString("WEIBO_CLIENT_ID"));
         map.put("access_token", accessToken);
         map.put("uid", openId);
-        String response = HttpClientUtil.httpGet(getURL(map, SystemConfig.getString("WEIBO_USERINFO_URL")));
         try {
+            String response = HttpClientUtil.httpGet(getURL(map, SystemConfig.getString("WEIBO_USERINFO_URL")));
             weiboUserInfo = JsonUtil.getInstance().toJavaBean(response, WeiboUserInfo.class);
             if (weiboUserInfo == null || weiboUserInfo.getId() == 0) {
                 throw new CampusException("获取用户信息失败");
