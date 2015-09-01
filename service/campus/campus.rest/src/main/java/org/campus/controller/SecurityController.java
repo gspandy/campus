@@ -199,9 +199,9 @@ public class SecurityController {
         appUser.setIsvalidated(0);
         appUser.setIntegral(0L);
         appUser.setLogincount(0);
-        String nickName = nickNameService.findRandomNickName(DisplayModel.MOON, session.getId());
-        appUser.setNickname(nickName);
-        appUser.setNickFirstLetter(FirstLetterUtil.getPinYinHeadChar(nickName));
+        // String nickName = nickNameService.findRandomNickName(DisplayModel.MOON, session.getId());
+        appUser.setNickname(registerVO.getLoginName());
+        appUser.setNickFirstLetter(FirstLetterUtil.getPinYinHeadChar(registerVO.getLoginName()));
         this.securitySvc.registe(sysUser, appUser);
 
     }
@@ -331,6 +331,8 @@ public class SecurityController {
         User user = new User();
         user.setUseruid(vo.getUserId());
         user.setNickname(nickName);
+        vo.setNickName(nickName);
+        session.setAttribute(Constant.CAMPUS_SECURITY_SESSION, vo);
         user.setNickFirstLetter(FirstLetterUtil.getPinYinHeadChar(nickName));
         securitySvc.updateUser(user);
     }

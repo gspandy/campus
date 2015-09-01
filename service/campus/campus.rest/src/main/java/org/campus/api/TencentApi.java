@@ -26,7 +26,7 @@ public class TencentApi {
         map.put("access_token", accessToken);
         map.put("oauth_consumer_key", SystemConfig.getString("QQ_CLIENT_ID"));
         map.put("openid", openId);
-        String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("QQ_USERINFO_URL")));
+        String response = HttpClientUtil.httpGet(getURL(map, SystemConfig.getString("QQ_USERINFO_URL")));
         try {
             qqUserinfo = JsonUtil.getInstance().toJavaBean(response, QqUserinfo.class);
             if (qqUserinfo == null || StringUtils.isEmpty(qqUserinfo.getNickname())) {
@@ -34,7 +34,7 @@ public class TencentApi {
             }
             qqUserinfo.setOpenId(openId);
         } catch (Exception e) {
-            throw new CampusException("获取用户信息失败");
+            throw new CampusException("获取用户信息失败", e);
         }
         return qqUserinfo;
     }
@@ -55,6 +55,11 @@ public class TencentApi {
         NameValuePair[] pairs = (NameValuePair[]) nameValuePairs.toArray(new NameValuePair[size]);
         String request = EncodingUtil.formUrlEncode(pairs, "GBK");
         return urlAddress + "?" + request;
+    }
+
+    public static void main(String[] args) {
+        TencentApi api = new TencentApi();
+        api.getQqUserinfo("DC0AC372C4D56D5B58691D842ADA8CA7", "F6AE3A03FFADD6E56171D380C89F9982");
     }
 
     // private Map<String, String> getQQAccessToken(String code, String redirectUrl) {

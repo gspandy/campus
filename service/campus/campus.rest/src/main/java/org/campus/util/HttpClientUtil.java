@@ -24,9 +24,12 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequest;
@@ -53,6 +56,7 @@ import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.campus.config.SystemConfig;
+import org.campus.core.exception.CampusException;
 import org.springframework.util.StringUtils;
 
 public class HttpClientUtil {
@@ -102,6 +106,30 @@ public class HttpClientUtil {
 
     public static String get(String url, String charset) {
         return get(url, null, charset);
+    }
+
+    public static String httpGet(String url) {
+
+        HttpClient client = new HttpClient();
+        client.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+
+        // 使用 GET 方法 ，如果服务器需要通过 HTTPS 连接，那只需要将下面 URL 中的 http 换成 https
+        HttpMethod method = new GetMethod(url);
+        try {
+            int responseCode = client.executeMethod(method);
+            String responseBodyAsString = null;
+            if (responseCode == HttpStatus.SC_OK) {
+                responseBodyAsString = method.getResponseBodyAsString();
+            }
+
+            return responseBodyAsString;
+
+        } catch (IOException e) {
+            throw new CampusException("HTTP GET请求发生异常", e);
+        } finally {
+            // 释放连接
+            method.releaseConnection();
+        }
     }
 
     @SuppressWarnings("deprecation")

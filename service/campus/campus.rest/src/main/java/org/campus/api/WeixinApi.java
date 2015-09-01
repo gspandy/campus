@@ -25,7 +25,7 @@ public class WeixinApi {
         map.put("access_token", accessToken);
         map.put("openid", openId);
         map.put("lang", "zh_CN");
-        String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("WEIXIN_USERINFO_URL")));
+        String response = HttpClientUtil.httpGet(getURL(map, SystemConfig.getString("WEIXIN_USERINFO_URL")));
         // String response =
         // "{\"openid\":\"OPENID\",\"nickname\":\"NICKNAME\",\"sex\":\"1\",\"province\":\"PROVINCE\",\"city\":\"CITY\",\"country\":\"COUNTRY\",\"headimgurl\":\"http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46\",\"privilege\":[\"12\",\"3\"],\"unionid\":\"o6_bmasdasdsad6_2sgVt7hMZOPfL\"}";
         try {
@@ -34,7 +34,7 @@ public class WeixinApi {
                 throw new CampusException("获取用户信息失败");
             }
         } catch (Exception e) {
-            throw new CampusException("获取用户信息失败");
+            throw new CampusException("获取用户信息失败", e);
         }
         return snsapiUserinfo;
     }
@@ -53,8 +53,15 @@ public class WeixinApi {
             nameValuePairs.add(pair);
         }
         NameValuePair[] pairs = (NameValuePair[]) nameValuePairs.toArray(new NameValuePair[size]);
-        String request = EncodingUtil.formUrlEncode(pairs, "GBK");
+        String request = EncodingUtil.formUrlEncode(pairs, "UTF-8");
         return urlAddress + "?" + request;
+    }
+
+    public static void main(String[] args) {
+        WeixinApi api = new WeixinApi();
+        api.getSnsapiUserinfo(
+                "OezXcEiiBSKSxW0eoylIePqq3Qfw8J-SmYJO_OvsvrcUtt0uAfGz7fyiUsApjwlGdSQBmGOqe80RjMoGWMO7-5mR3F8woVgRu-Zgscei5ICtBUUm2mdKCjPN6sIDGGYbCl0_GTU5W_wo8X37p-HACA",
+                "ovT2lwKk9e2ytT6O4tUCR0HGBVGo");
     }
 
     // private WebAccessToken getWebAccessToken(String code) {

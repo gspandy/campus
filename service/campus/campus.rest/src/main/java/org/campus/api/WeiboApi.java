@@ -25,14 +25,14 @@ public class WeiboApi {
         map.put("source", SystemConfig.getString("WEIBO_CLIENT_ID"));
         map.put("access_token", accessToken);
         map.put("uid", openId);
-        String response = HttpClientUtil.get(getURL(map, SystemConfig.getString("WEIBO_USERINFO_URL")));
+        String response = HttpClientUtil.httpGet(getURL(map, SystemConfig.getString("WEIBO_USERINFO_URL")));
         try {
             weiboUserInfo = JsonUtil.getInstance().toJavaBean(response, WeiboUserInfo.class);
             if (weiboUserInfo == null || weiboUserInfo.getId() == 0) {
                 throw new CampusException("获取用户信息失败");
             }
         } catch (Exception e) {
-            throw new CampusException("获取用户信息失败");
+            throw new CampusException("获取用户信息失败", e);
         }
         return weiboUserInfo;
     }

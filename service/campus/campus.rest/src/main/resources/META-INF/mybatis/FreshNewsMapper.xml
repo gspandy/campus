@@ -329,7 +329,7 @@
 		count(1)
 		from ts_app_freshnews
 		where AddUserUID =
-		#{userId,jdbcType=VARCHAR} AND IsShield=0 AND IsActive=1 and deleted='0'
+		#{userId,jdbcType=VARCHAR} AND IsActive=1 and deleted='0'
 	</select>
 	<select id="findByUserId" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
