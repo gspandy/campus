@@ -31,6 +31,7 @@ import org.campus.service.NickNameService;
 import org.campus.service.TopicService;
 import org.campus.service.UserService;
 import org.campus.util.ImageUtils;
+import org.campus.util.JsonUtil;
 import org.campus.util.ToolUtil;
 import org.campus.vo.BoardDetailVO;
 import org.campus.vo.BoardFavoriteVO;
@@ -310,6 +311,7 @@ public class BoardController {
     @NeedRoles
     public void publish(@ApiParam(name = "BoardPublishVO", value = "发布内容体") @RequestBody BoardPublishVO boardPublishVO,
             HttpSession session) {
+        logger.debug(JsonUtil.getInstance().toJsonString(boardPublishVO));
         // 验证用户有无登录
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         if (vo == null)
