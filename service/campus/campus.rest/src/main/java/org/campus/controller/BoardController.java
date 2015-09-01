@@ -115,7 +115,9 @@ public class BoardController {
             vo.setUserId(topic.getAdduseruid());
             vo.setNickName(topic.getAddnickname());
             postUser = userService.findByUserId(topic.getAdduseruid());
-            vo.setHeadPic(postUser.getHeadpic());
+            if (postUser != null) {
+                vo.setHeadPic(postUser.getHeadpic());
+            }
             boolean delete = topicSvc.isDelete(vo.getPostsId());
             if (delete) {
                 vo.setBrief("");
@@ -169,7 +171,9 @@ public class BoardController {
             vo.setUserId(topic.getAdduseruid());
             vo.setNickName(topic.getAddnickname());
             postUser = userService.findByUserId(topic.getAdduseruid());
-            vo.setHeadPic(postUser.getHeadpic());
+            if (postUser != null) {
+                vo.setHeadPic(postUser.getHeadpic());
+            }
             vo.setBrief(topic.getNewsbrief());
             vo.setContent(topic.getNewscontent());
             vo.setPublishDate(topic.getCreatedate());
@@ -286,7 +290,9 @@ public class BoardController {
             favorite.setUserId(data.getCreateby());
             favorite.setNickName(data.getAddnickname());
             user = userService.findByUserId(data.getCreateby());
-            favorite.setHeadPic(user.getHeadpic());
+            if (user != null) {
+                favorite.setHeadPic(user.getHeadpic());
+            }
             boolean delete = topicSvc.isDelete(data.getUid());
             if (delete) {
                 favorite.setPicUrls(new ArrayList<String>());
@@ -447,7 +453,9 @@ public class BoardController {
             vo.setUserId(topic.getCreateby());
             vo.setNickName(topic.getAddnickname());
             user = userService.findByUserId(topic.getCreateby());
-            vo.setHeadPic(user.getHeadpic());
+            if (user != null) {
+                vo.setHeadPic(user.getHeadpic());
+            }
             vo.setBrief(topic.getNewsbrief());
             vo.setContent(topic.getNewscontent());
             vo.setPublishDate(topic.getCreatedate());
