@@ -81,7 +81,6 @@ public class BoardController {
     @ApiOperation(value = "*帖子列表查询:1.0", notes = "*帖子列表查询[API-Version=1.0]")
     @RequestMapping(value = "/posts", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    @NeedRoles
     public Page<BoardVO> findBoard(
             @ApiParam(name = "type", value = "1:休闲;2:新鲜;3:秘密;4:言论;5:热门;6:关注") @RequestParam(value = "type", required = true) String type,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
@@ -129,7 +128,9 @@ public class BoardController {
             }
             vo.setDeleted(delete);
             vo.setPublishDate(topic.getCreatedate());
-            vo.setSupported(topicSvc.isSupported(topic.getUid(), user.getUserId()));
+            if (user != null) {
+                vo.setSupported(topicSvc.isSupported(topic.getUid(), user.getUserId()));
+            }
             vo.setTransNum(topic.getTransnum());
             vo.setCommentNum(topic.getCommentnum());
             vo.setSupportNum(topic.getSupportnum());
