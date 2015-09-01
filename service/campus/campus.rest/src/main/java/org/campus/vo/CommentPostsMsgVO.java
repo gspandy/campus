@@ -1,7 +1,9 @@
 package org.campus.vo;
 
+import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -13,6 +15,11 @@ public class CommentPostsMsgVO {
     private String commentUserId;
 
     private String commentNickName;
+
+    private String commentHeadPic;
+
+    @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+    private Date commentDate;
 
     private String commentContent;
 
@@ -52,6 +59,26 @@ public class CommentPostsMsgVO {
     @ApiModelProperty(value = "评论人昵称", required = true)
     public void setCommentNickName(String commentNickName) {
         this.commentNickName = commentNickName;
+    }
+
+    @ApiModelProperty(value = "评论人头像", required = true)
+    public String getCommentHeadPic() {
+        return commentHeadPic;
+    }
+
+    @ApiModelProperty(value = "评论人头像", required = true)
+    public void setCommentHeadPic(String commentHeadPic) {
+        this.commentHeadPic = commentHeadPic;
+    }
+
+    @ApiModelProperty(value = "评论时间", required = true)
+    public Date getCommentDate() {
+        return commentDate;
+    }
+
+    @ApiModelProperty(value = "评论时间", required = true)
+    public void setCommentDate(Date commentDate) {
+        this.commentDate = commentDate;
     }
 
     @ApiModelProperty(value = "评论内容", required = true)

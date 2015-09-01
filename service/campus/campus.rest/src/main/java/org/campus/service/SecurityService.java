@@ -156,7 +156,8 @@ public class SecurityService {
                 QqUserinfo qqUserinfo = null;
                 try {
                     qqUserinfo = tencentApi.getQqUserinfo(accessToken, openId);
-                    user = apiRegist(qqUserinfo.getOpenId(), qqUserinfo.getNickname(), qqUserinfo.getFigureurl_qq_2());
+                    user = apiRegist(apiType, qqUserinfo.getOpenId(), qqUserinfo.getNickname(),
+                            qqUserinfo.getFigureurl_qq_2());
                 } catch (Exception e) {
                     throw new CampusException(1000002, "登录失败", e);
                 }
@@ -165,7 +166,7 @@ public class SecurityService {
                 WeiboUserInfo weiboUserinfo = null;
                 try {
                     weiboUserinfo = weiboApi.getWeiboUserinfo(accessToken, openId);
-                    user = apiRegist(String.valueOf(weiboUserinfo.getId()), weiboUserinfo.getScreen_name(),
+                    user = apiRegist(apiType, String.valueOf(weiboUserinfo.getId()), weiboUserinfo.getScreen_name(),
                             weiboUserinfo.getProfile_image_url());
                 } catch (Exception e) {
                     throw new CampusException(1000002, "登录失败", e);
@@ -175,7 +176,7 @@ public class SecurityService {
                 SnsapiUserinfo snsapiUserInfo = null;
                 try {
                     snsapiUserInfo = weixinApi.getSnsapiUserinfo(accessToken, openId);
-                    user = apiRegist(snsapiUserInfo.getOpenid(), snsapiUserInfo.getNickname(),
+                    user = apiRegist(apiType, snsapiUserInfo.getOpenid(), snsapiUserInfo.getNickname(),
                             snsapiUserInfo.getHeadimgurl());
                 } catch (Exception e) {
                     throw new CampusException(1000002, "登录失败", e);
@@ -229,7 +230,7 @@ public class SecurityService {
         return versionMapper.findByTypeCode(type);
     }
 
-    private User apiRegist(String apiId, String nickName, String headImgUrl) {
+    private User apiRegist(ApiType apiType, String apiId, String nickName, String headImgUrl) {
         User user = userMapper.findByApiId(apiId);
         if (user == null) {
             SysUser sysUser = new SysUser();
@@ -248,6 +249,7 @@ public class SecurityService {
             appUser.setIsvalidated(0);
             appUser.setIntegral(0L);
             appUser.setLogincount(0);
+            appUser.setApiType(apiType);
             appUser.setApiId(apiId);
             appUser.setHeadpic(headImgUrl);
             registe(sysUser, appUser);

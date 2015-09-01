@@ -407,12 +407,16 @@ public class UserServiceImpl implements UserService {
         if (supportPage != null && !CollectionUtils.isEmpty(supportPage.getContent())) {
             FreshNews fresh = null;
             SupportMsgVO msgVO = null;
+            User user = null;
             for (Support support : supportPage.getContent()) {
                 msgVO = new SupportMsgVO();
+                msgVO.setSupportUserId(support.getSupportuseruid());
+                user = userMapper.selectByPrimaryKey(support.getSupportuseruid());
+                msgVO.setSupportNickName(support.getUsernickname());
+                msgVO.setSupportHeadPic(user.getHeadpic());
+                msgVO.setSupportDate(support.getCreatedate());
                 fresh = freshNewsMapper.selectByPrimaryKey(support.getSourceuid());
                 if (fresh != null) {
-                    msgVO.setSupportUserId(support.getSupportuseruid());
-                    msgVO.setSupportNickName(support.getUsernickname());
                     msgVO.setPostsId(fresh.getUid());
                     msgVO.setBrief(fresh.getNewsbrief());
                     msgVO.setContent(fresh.getNewscontent());
@@ -436,12 +440,16 @@ public class UserServiceImpl implements UserService {
             Comment comment = null;
             FreshNews fresh = null;
             SupportCommentMsgVO msgVO = null;
+            User user = null;
             for (Support support : supportPage.getContent()) {
                 msgVO = new SupportCommentMsgVO();
+                msgVO.setSupportUserId(support.getSupportuseruid());
+                msgVO.setSupportNickName(support.getUsernickname());
+                user = userMapper.selectByPrimaryKey(support.getSupportuseruid());
+                msgVO.setSupportHeadPic(user.getHeadpic());
+                msgVO.setSupportDate(support.getCreatedate());
                 comment = commentMapper.selectByPrimaryKey(support.getSourceuid());
                 if (comment != null) {
-                    msgVO.setSupportUserId(support.getSupportuseruid());
-                    msgVO.setSupportNickName(support.getUsernickname());
                     msgVO.setCommentId(support.getSourceuid());
                     msgVO.setContent(comment.getCommentcontent());
                     fresh = freshNewsMapper.selectByPrimaryKey(support.getSrcPostId());
@@ -469,14 +477,18 @@ public class UserServiceImpl implements UserService {
         if (supportPage != null && !CollectionUtils.isEmpty(supportPage.getContent())) {
             FreshNews fresh = null;
             CommentPostsMsgVO msgVO = null;
+            User user = null;
             for (Comment comment : supportPage.getContent()) {
                 msgVO = new CommentPostsMsgVO();
+                msgVO.setCommentId(fresh.getUid());
+                msgVO.setCommentUserId(comment.getComuseruid());
+                msgVO.setCommentNickName(comment.getUsernickname());
+                msgVO.setCommentContent(comment.getCommentcontent());
+                user = userMapper.selectByPrimaryKey(comment.getComuseruid());
+                msgVO.setCommentDate(comment.getCreatedate());
+                msgVO.setCommentHeadPic(user.getHeadpic());
                 fresh = freshNewsMapper.selectByPrimaryKey(comment.getSourceuid());
                 if (fresh != null) {
-                    msgVO.setCommentId(fresh.getUid());
-                    msgVO.setCommentUserId(comment.getComuseruid());
-                    msgVO.setCommentNickName(comment.getUsernickname());
-                    msgVO.setCommentContent(comment.getCommentcontent());
                     msgVO.setPostId(fresh.getUid());
                     msgVO.setBrief(fresh.getNewsbrief());
                     msgVO.setContent(fresh.getNewscontent());
@@ -500,14 +512,18 @@ public class UserServiceImpl implements UserService {
             Comment myComment = null;
             FreshNews fresh = null;
             CommentMyCommentVO msgVO = null;
+            User user = null;
             for (Comment comment : supportPage.getContent()) {
                 msgVO = new CommentMyCommentVO();
+                msgVO.setCommentId(comment.getUid());
+                msgVO.setCommentUserId(comment.getComuseruid());
+                msgVO.setCommentNickName(comment.getUsernickname());
+                msgVO.setCommentContent(comment.getCommentcontent());
+                msgVO.setCommentDate(comment.getCreatedate());
+                user = userMapper.selectByPrimaryKey(comment.getComuseruid());
+                msgVO.setCommentHeadPic(user.getHeadpic());
                 myComment = commentMapper.selectByPrimaryKey(comment.getSourceuid());
                 if (myComment != null) {
-                    msgVO.setCommentId(comment.getUid());
-                    msgVO.setCommentUserId(comment.getComuseruid());
-                    msgVO.setCommentNickName(comment.getUsernickname());
-                    msgVO.setCommentContent(comment.getCommentcontent());
                     msgVO.setMyCommentId(myComment.getUid());
                     msgVO.setContent(myComment.getCommentcontent());
                     fresh = freshNewsMapper.selectByPrimaryKey(comment.getSrcPostId());

@@ -1,7 +1,9 @@
 package org.campus.vo;
 
+import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -11,6 +13,11 @@ public class SupportCommentMsgVO {
     private String supportUserId;
 
     private String supportNickName;
+
+    private String supportHeadPic;
+
+    @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+    private Date supportDate;
 
     private String commentId;
 
@@ -42,6 +49,26 @@ public class SupportCommentMsgVO {
     @ApiModelProperty(value = "赞我的昵称", required = true)
     public void setSupportNickName(String supportNickName) {
         this.supportNickName = supportNickName;
+    }
+
+    @ApiModelProperty(value = "赞我的用户头像", required = true)
+    public String getSupportHeadPic() {
+        return supportHeadPic;
+    }
+
+    @ApiModelProperty(value = "赞我的用户头像", required = true)
+    public void setSupportHeadPic(String supportHeadPic) {
+        this.supportHeadPic = supportHeadPic;
+    }
+
+    @ApiModelProperty(value = "赞我的时间", required = true)
+    public Date getSupportDate() {
+        return supportDate;
+    }
+
+    @ApiModelProperty(value = "赞我的时间", required = true)
+    public void setSupportDate(Date supportDate) {
+        this.supportDate = supportDate;
     }
 
     @ApiModelProperty(value = "被赞的评论ID", required = true)
