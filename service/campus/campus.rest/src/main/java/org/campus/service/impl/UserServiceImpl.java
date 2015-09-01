@@ -410,12 +410,14 @@ public class UserServiceImpl implements UserService {
             for (Support support : supportPage.getContent()) {
                 msgVO = new SupportMsgVO();
                 fresh = freshNewsMapper.selectByPrimaryKey(support.getSourceuid());
-                msgVO.setSupportUserId(support.getSupportuseruid());
-                msgVO.setSupportNickName(support.getUsernickname());
-                msgVO.setPostsId(fresh.getUid());
-                msgVO.setBrief(fresh.getNewsbrief());
-                msgVO.setContent(fresh.getNewscontent());
-                msgVO.setPicUrls(dealPics(fresh));
+                if (fresh != null) {
+                    msgVO.setSupportUserId(support.getSupportuseruid());
+                    msgVO.setSupportNickName(support.getUsernickname());
+                    msgVO.setPostsId(fresh.getUid());
+                    msgVO.setBrief(fresh.getNewsbrief());
+                    msgVO.setContent(fresh.getNewscontent());
+                    msgVO.setPicUrls(dealPics(fresh));
+                }
                 commentVOs.add(msgVO);
             }
             page = new PageImpl<SupportMsgVO>(commentVOs, pageable, commentVOs.size());
@@ -437,15 +439,19 @@ public class UserServiceImpl implements UserService {
             for (Support support : supportPage.getContent()) {
                 msgVO = new SupportCommentMsgVO();
                 comment = commentMapper.selectByPrimaryKey(support.getSourceuid());
-                msgVO.setSupportUserId(support.getSupportuseruid());
-                msgVO.setSupportNickName(support.getUsernickname());
-                msgVO.setCommentId(support.getSourceuid());
-                msgVO.setContent(comment.getCommentcontent());
-                fresh = freshNewsMapper.selectByPrimaryKey(support.getSrcPostId());
-                msgVO.setPostId(fresh.getUid());
-                msgVO.setBrief(fresh.getNewsbrief());
-                msgVO.setPostContent(fresh.getNewscontent());
-                msgVO.setPicUrls(dealPics(fresh));
+                if (comment != null) {
+                    msgVO.setSupportUserId(support.getSupportuseruid());
+                    msgVO.setSupportNickName(support.getUsernickname());
+                    msgVO.setCommentId(support.getSourceuid());
+                    msgVO.setContent(comment.getCommentcontent());
+                    fresh = freshNewsMapper.selectByPrimaryKey(support.getSrcPostId());
+                    if (fresh != null) {
+                        msgVO.setPostId(fresh.getUid());
+                        msgVO.setBrief(fresh.getNewsbrief());
+                        msgVO.setPostContent(fresh.getNewscontent());
+                        msgVO.setPicUrls(dealPics(fresh));
+                    }
+                }
                 commentMsgVOs.add(msgVO);
             }
             page = new PageImpl<SupportCommentMsgVO>(commentMsgVOs, pageable, commentMsgVOs.size());
@@ -466,14 +472,16 @@ public class UserServiceImpl implements UserService {
             for (Comment comment : supportPage.getContent()) {
                 msgVO = new CommentPostsMsgVO();
                 fresh = freshNewsMapper.selectByPrimaryKey(comment.getSourceuid());
-                msgVO.setCommentId(fresh.getUid());
-                msgVO.setCommentUserId(comment.getComuseruid());
-                msgVO.setCommentNickName(comment.getUsernickname());
-                msgVO.setCommentContent(comment.getCommentcontent());
-                msgVO.setPostId(fresh.getUid());
-                msgVO.setBrief(fresh.getNewsbrief());
-                msgVO.setContent(fresh.getNewscontent());
-                msgVO.setPicUrls(dealPics(fresh));
+                if (fresh != null) {
+                    msgVO.setCommentId(fresh.getUid());
+                    msgVO.setCommentUserId(comment.getComuseruid());
+                    msgVO.setCommentNickName(comment.getUsernickname());
+                    msgVO.setCommentContent(comment.getCommentcontent());
+                    msgVO.setPostId(fresh.getUid());
+                    msgVO.setBrief(fresh.getNewsbrief());
+                    msgVO.setContent(fresh.getNewscontent());
+                    msgVO.setPicUrls(dealPics(fresh));
+                }
                 commentMsgVOs.add(msgVO);
             }
             page = new PageImpl<CommentPostsMsgVO>(commentMsgVOs, pageable, commentMsgVOs.size());
@@ -495,17 +503,21 @@ public class UserServiceImpl implements UserService {
             for (Comment comment : supportPage.getContent()) {
                 msgVO = new CommentMyCommentVO();
                 myComment = commentMapper.selectByPrimaryKey(comment.getSourceuid());
-                msgVO.setCommentId(comment.getUid());
-                msgVO.setCommentUserId(comment.getComuseruid());
-                msgVO.setCommentNickName(comment.getUsernickname());
-                msgVO.setCommentContent(comment.getCommentcontent());
-                msgVO.setMyCommentId(myComment.getUid());
-                msgVO.setContent(myComment.getCommentcontent());
-                fresh = freshNewsMapper.selectByPrimaryKey(comment.getSrcPostId());
-                msgVO.setPostId(fresh.getUid());
-                msgVO.setBrief(fresh.getNewsbrief());
-                msgVO.setPostContent(fresh.getNewscontent());
-                msgVO.setPicUrls(dealPics(fresh));
+                if (myComment != null) {
+                    msgVO.setCommentId(comment.getUid());
+                    msgVO.setCommentUserId(comment.getComuseruid());
+                    msgVO.setCommentNickName(comment.getUsernickname());
+                    msgVO.setCommentContent(comment.getCommentcontent());
+                    msgVO.setMyCommentId(myComment.getUid());
+                    msgVO.setContent(myComment.getCommentcontent());
+                    fresh = freshNewsMapper.selectByPrimaryKey(comment.getSrcPostId());
+                    if (fresh != null) {
+                        msgVO.setPostId(fresh.getUid());
+                        msgVO.setBrief(fresh.getNewsbrief());
+                        msgVO.setPostContent(fresh.getNewscontent());
+                        msgVO.setPicUrls(dealPics(fresh));
+                    }
+                }
                 commentMsgVOs.add(msgVO);
             }
             page = new PageImpl<CommentMyCommentVO>(commentMsgVOs, pageable, commentMsgVOs.size());
