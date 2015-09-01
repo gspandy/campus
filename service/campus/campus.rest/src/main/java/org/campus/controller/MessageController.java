@@ -1,5 +1,6 @@
 package org.campus.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -117,6 +119,8 @@ public class MessageController {
     @NeedRoles
     public Page<ConversationDetailVO> getConversation(
             @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
+            @ApiParam(name = "slide", value = "1:上划;2:下划") @RequestParam(value = "slide", required = false) String slide,
+            @ApiParam(name = "lastMsgDate", value = "上划传最新一条信息的时间,下划传显示最早的时间,格式：yyyy/MM/dd HH/mm/ss") @RequestParam(value = "lastMsgDate", required = false) @DateTimeFormat(pattern = "yyyy/MM/dd HH/mm/ss") Date lastMsgDate,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
