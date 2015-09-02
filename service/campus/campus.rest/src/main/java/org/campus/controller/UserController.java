@@ -412,6 +412,7 @@ public class UserController {
         userVO.setCollegeName(user.getCollegename());
         userVO.setProfessionId(user.getProfessionuid());
         userVO.setProfessionName(user.getProfessionname());
+        userVO.setSignName(user.getSignName());
         return userVO;
     }
 

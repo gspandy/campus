@@ -40,6 +40,8 @@ public class UserVO {
 
     private int inSchollYear;
 
+    private String signName;
+
     @ApiModelProperty(value = "用户Id", required = true)
     public String getUserId() {
         return userId;
@@ -208,6 +210,16 @@ public class UserVO {
     @ApiModelProperty(value = "入学年份")
     public void setInSchollYear(int inSchollYear) {
         this.inSchollYear = inSchollYear;
+    }
+
+    @ApiModelProperty(value = "个人签名")
+    public String getSignName() {
+        return signName;
+    }
+
+    @ApiModelProperty(value = "个人签名")
+    public void setSignName(String signName) {
+        this.signName = signName;
     }
 
 }
