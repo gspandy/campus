@@ -1,5 +1,6 @@
 package org.campus.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -61,5 +62,12 @@ public interface CommentMapper {
     Page<Comment> findCommentPostsMsgVO(@Param("userId") String userId, Pageable pageable);
 
     Page<Comment> findCommentMyCommentMsgVO(@Param("userId") String userId, Pageable pageable);
+
+    void updateComCommentNickName(@Param("userId") String userId, @Param("nickName") String nickName);
+
+    void updateObjCommentNickName(@Param("userId") String userId, @Param("nickName") String nickName);
+
+    int selectNeedIntegralNum(@Param("sourceId") String postId, @Param("checkDate") Date checkDate,
+            @Param("limitDate") Date limitDate);
 
 }

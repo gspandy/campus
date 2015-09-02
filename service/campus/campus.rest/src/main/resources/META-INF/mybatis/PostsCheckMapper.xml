@@ -71,6 +71,6 @@
 		from ts_app_posts_check
 		where UserId =
 		#{userId,jdbcType=VARCHAR} AND DATE_FORMAT(CheckTime,'%Y-%m-%d') =
-		DATE_FORMAT(date,'%Y-%m-%d')
+		DATE_FORMAT(#{date,jdbcType=TIMESTAMP},'%Y-%m-%d')
 	</select>
 </mapper>

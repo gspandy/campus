@@ -18,6 +18,7 @@ import org.campus.model.User;
 import org.campus.model.enums.ActiveType;
 import org.campus.model.enums.AnonymousType;
 import org.campus.model.enums.DisplayModel;
+import org.campus.model.enums.IntegralType;
 import org.campus.model.enums.InteractType;
 import org.campus.model.enums.TypeCode;
 import org.campus.repository.AttentionUserMapper;
@@ -27,6 +28,7 @@ import org.campus.repository.NotSupportMapper;
 import org.campus.repository.ShareMapper;
 import org.campus.repository.SupportMapper;
 import org.campus.repository.UserMapper;
+import org.campus.service.IntegralService;
 import org.campus.service.UserService;
 import org.campus.util.ToolUtil;
 import org.campus.vo.CommentAddVO;
@@ -64,6 +66,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ShareMapper shareMapper;
+
+    @Autowired
+    private IntegralService integralService;
 
     @Override
     public User findByUserId(String userId) {
@@ -169,10 +174,18 @@ public class UserServiceImpl implements UserService {
         comment.setLastupdatedate(new Date());
         comment.setIpaddress(ipaddress);
         comment.setSrcPostId(sourceId);
+        if (DisplayModel.MOON.equals(model)) {
+            comment.setIsAnonymous(AnonymousType.ANONYMOUS);
+        } else {
+            comment.setIsAnonymous(AnonymousType.NOT_ANONYMOUS);
+        }
         commentMapper.insert(comment);
 
         freshNews.setCommentnum(freshNews.getCommentnum() == null ? 1 : freshNews.getCommentnum() + 1);
         freshNewsMapper.updateByPrimaryKey(freshNews);
+        if (freshNews.getCheckDate() != null) {
+            integralService.integral(freshNews.getAdduseruid(), freshNews.getUid(), IntegralType.COMMENT);
+        }
 
         if (commentAddVO.isTrans()) {
             freshNews.setUid(ToolUtil.getUUid());
@@ -198,6 +211,7 @@ public class UserServiceImpl implements UserService {
             share.setLastupdatedate(new Date());
             shareMapper.insert(share);
         }
+
     }
 
     @Override
@@ -387,6 +401,9 @@ public class UserServiceImpl implements UserService {
         if (freshNews != null) {
             freshNews.setCommentnum(freshNews.getCommentnum() == null ? 1 : freshNews.getCommentnum() + 1);
             freshNewsMapper.updateByPrimaryKey(freshNews);
+            if (freshNews.getCheckDate() != null) {
+                integralService.integral(freshNews.getAdduseruid(), freshNews.getUid(), IntegralType.COMMENT);
+            }
         }
     }
 
@@ -559,6 +576,17 @@ public class UserServiceImpl implements UserService {
             }
         }
         return picList;
+    }
+
+    @Override
+    public void setCommentNickName(String userId, String nickName) {
+        commentMapper.updateComCommentNickName(userId, nickName);
+        commentMapper.updateObjCommentNickName(userId, nickName);
+    }
+
+    @Override
+    public void setFreshNickName(String userId, String nickName) {
+        freshNewsMapper.updateNickName(userId, nickName);
     }
 
 }

@@ -4,10 +4,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.campus.config.SystemConfig;
+import org.campus.model.FreshNews;
 import org.campus.model.Integral;
 import org.campus.model.Signin;
 import org.campus.model.User;
 import org.campus.model.enums.IntegralType;
+import org.campus.repository.CommentMapper;
+import org.campus.repository.FreshNewsMapper;
 import org.campus.repository.IntegralMapper;
 import org.campus.repository.PostsCheckMapper;
 import org.campus.repository.SigninMapper;
@@ -32,8 +35,14 @@ public class IntegralServiceImpl implements IntegralService {
     @Autowired
     private PostsCheckMapper postsCheckMapper;
 
+    @Autowired
+    private FreshNewsMapper freshNewsMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
+
     @Override
-    public long integral(String userId, IntegralType integralType) {
+    public long integral(String userId, String postId, IntegralType integralType) {
         long integral = 0;
         switch (integralType) {
             case LOGIN:
@@ -46,7 +55,8 @@ public class IntegralServiceImpl implements IntegralService {
                 integral = checkIntegral(userId);
                 break;
             case COMMENT:
-
+                integral = commentIntegral(userId, postId);
+                break;
             case SHARE:
 
             case TRANSFER:
@@ -140,9 +150,62 @@ public class IntegralServiceImpl implements IntegralService {
         return integral;
     }
 
-    private long commentIntegral(String userId) {
+    private long commentIntegral(String userId, String postId) {
         long integral = 0;
+        FreshNews fresh = freshNewsMapper.selectByPrimaryKey(postId);
+        Date limitDate = getDate(SystemConfig.getInt("COMMENT_DAYS"));
+        int count = commentMapper.selectNeedIntegralNum(postId, fresh.getCheckDate(), limitDate);
+        int nowCount = count + 1;
+        User user = userMapper.selectByPrimaryKey(userId);
+        if (nowCount <= 50) {
+            integral = SystemConfig.getLong("COMMENT_POST_GET_INTEGRAL");
+            Integral record = new Integral();
+            record.setUid(ToolUtil.getUUid());
+            record.setUserid(userId);
+            record.setIntegraltype(IntegralType.CHECk_POSTS);
+            record.setIntegraltime(getDate(0));
+            record.setIntegralincome(integral);
+            record.setIntegralexpend(0L);
+            record.setIntegralbalance((user.getIntegral() + record.getIntegralincome()) - record.getIntegralexpend());
+            record.setRemark("审帖获取积分");
+            integralMapper.insert(record);
 
+            user.setIntegral(user.getIntegral() + integral);
+            userMapper.updateByPrimaryKey(user);
+        }
+        if (nowCount >= SystemConfig.getInt("COMMENT_POST_ONE_OFF_NUM_1")
+                && nowCount < SystemConfig.getInt("COMMENT_POST_ONE_OFF_NUM_2")) {
+            integral = SystemConfig.getLong("COMMENT_POST_ONE_OFF_INTEGRAL_1");
+            Integral record = new Integral();
+            record.setUid(ToolUtil.getUUid());
+            record.setUserid(userId);
+            record.setIntegraltype(IntegralType.CHECk_POSTS);
+            record.setIntegraltime(getDate(0));
+            record.setIntegralincome(integral);
+            record.setIntegralexpend(0L);
+            record.setIntegralbalance((user.getIntegral() + record.getIntegralincome()) - record.getIntegralexpend());
+            record.setRemark("审帖获取积分");
+            integralMapper.insert(record);
+
+            user.setIntegral(user.getIntegral() + integral);
+            userMapper.updateByPrimaryKey(user);
+        }
+        if (nowCount >= SystemConfig.getInt("COMMENT_POST_ONE_OFF_NUM_2")) {
+            integral = SystemConfig.getLong("COMMENT_POST_ONE_OFF_INTEGRAL_2");
+            Integral record = new Integral();
+            record.setUid(ToolUtil.getUUid());
+            record.setUserid(userId);
+            record.setIntegraltype(IntegralType.CHECk_POSTS);
+            record.setIntegraltime(getDate(0));
+            record.setIntegralincome(integral);
+            record.setIntegralexpend(0L);
+            record.setIntegralbalance((user.getIntegral() + record.getIntegralincome()) - record.getIntegralexpend());
+            record.setRemark("审帖获取积分");
+            integralMapper.insert(record);
+
+            user.setIntegral(user.getIntegral() + integral);
+            userMapper.updateByPrimaryKey(user);
+        }
         return integral;
     }
 

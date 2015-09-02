@@ -17,6 +17,8 @@ import org.campus.model.SysUser;
 import org.campus.model.User;
 import org.campus.model.Version;
 import org.campus.model.enums.ApiType;
+import org.campus.repository.CommentMapper;
+import org.campus.repository.FreshNewsMapper;
 import org.campus.repository.InstallMapper;
 import org.campus.repository.SysUserMapper;
 import org.campus.repository.UserMapper;
@@ -59,6 +61,12 @@ public class SecurityService {
 
     @Autowired
     private VersionMapper versionMapper;
+
+    @Autowired
+    private FreshNewsMapper freshNewsMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
 
     /**
      * 用户注册
@@ -147,6 +155,13 @@ public class SecurityService {
      */
     public void updateUser(User user) {
         userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    public void updateUserNickName(User user) {
+        userMapper.updateByPrimaryKeySelective(user);
+        commentMapper.updateComCommentNickName(user.getUseruid(), user.getNickname());
+        commentMapper.updateObjCommentNickName(user.getUseruid(), user.getNickname());
+        freshNewsMapper.updateNickName(user.getUseruid(), user.getNickname());
     }
 
     public User apiLogin(String accessToken, String openId, ApiType apiType) {

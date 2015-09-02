@@ -117,7 +117,7 @@ public class SecurityController {
         udpUser.setLastlogintime(Calendar.getInstance().getTime());
         udpUser.setSignid(sysUser.getSignid());
         securitySvc.updateSysUser(udpUser);
-        integralService.integral(sysUser.getUid(), IntegralType.LOGIN);
+        integralService.integral(sysUser.getUid(), null, IntegralType.LOGIN);
         redisCache.deleteKey(loginVO.getLoginName() + "_login_fail_count");
 
         return responseVO;
@@ -147,7 +147,7 @@ public class SecurityController {
         udpUser.setLastlogintime(Calendar.getInstance().getTime());
         udpUser.setSignid(signId);
         securitySvc.updateSysUser(udpUser);
-        integralService.integral(user.getUseruid(), IntegralType.LOGIN);
+        integralService.integral(user.getUseruid(), null, IntegralType.LOGIN);
         return responseVO;
     }
 
@@ -334,7 +334,7 @@ public class SecurityController {
         vo.setNickName(nickName);
         session.setAttribute(Constant.CAMPUS_SECURITY_SESSION, vo);
         user.setNickFirstLetter(FirstLetterUtil.getPinYinHeadChar(nickName));
-        securitySvc.updateUser(user);
+        securitySvc.updateUserNickName(user);
     }
 
     public void setSignature(

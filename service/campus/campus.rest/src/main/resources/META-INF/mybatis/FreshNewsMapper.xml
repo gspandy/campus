@@ -25,6 +25,7 @@
 		<result column="ishot" property="ishot" jdbcType="CHAR" />
 		<result column="AddNickName" property="addnickname" jdbcType="VARCHAR" />
 		<result column="deleted" property="deleted" jdbcType="VARCHAR" />
+		<result column="CheckDate" property="checkDate" jdbcType="TIMESTAMP" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UID, NewsBrief, NewsContent, Pictures, AddUserUID,
@@ -33,14 +34,15 @@
 		ComplainNum, NotSupportNum,
 		TransNum, IsShield, IsActive,
 		CreateBy, CreateDate, LastUpdateBy,
-		LastUpdateDate,newstype,ishot,AddNickName,deleted
+		LastUpdateDate,newstype,ishot,AddNickName,deleted,CheckDate
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List" />
 		from ts_app_freshnews
-		where UID = #{uid,jdbcType=VARCHAR} and deleted = '0'
+		where UID = #{uid,jdbcType=VARCHAR} and deleted =
+		'0'
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
 		delete from
@@ -56,7 +58,7 @@
 		IsShield,
 		IsActive, CreateBy,
 		CreateDate, LastUpdateBy, LastUpdateDate, newstype,
-		ishot,AddNickName,deleted
+		ishot,AddNickName,deleted,CheckDate
 		)
 		values
 		(#{uid,jdbcType=VARCHAR},
@@ -76,7 +78,9 @@
 		#{lastupdateby,jdbcType=VARCHAR},
 		#{lastupdatedate,jdbcType=TIMESTAMP},
 		#{newstype,jdbcType=CHAR},
-		#{ishot,jdbcType=CHAR}, #{addnickname,jdbcType=VARCHAR}, #{deleted,jdbcType=VARCHAR}
+		#{ishot,jdbcType=CHAR}, #{addnickname,jdbcType=VARCHAR},
+		#{deleted,jdbcType=VARCHAR},
+		#{checkDate,jdbcType=TIMESTAMP}
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.FreshNews">
@@ -146,8 +150,11 @@
 				AddNickName,
 			</if>
 			<if test="deleted != null">
-                deleted,
-            </if>
+				deleted,
+			</if>
+			<if test="checkDate != null">
+				CheckDate,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uid != null">
@@ -211,8 +218,11 @@
 				#{addnickname,jdbcType=VARCHAR},
 			</if>
 			<if test="deleted != null">
-                #{deleted,jdbcType=VARCHAR},
-            </if>
+				#{deleted,jdbcType=VARCHAR},
+			</if>
+			<if test="checkDate != null">
+				#{checkDate,jdbcType=TIMESTAMP},
+			</if>
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="org.campus.model.FreshNews">
@@ -276,8 +286,11 @@
 				AddNickName = #{addnickname,jdbcType=VARCHAR},
 			</if>
 			<if test="deleted != null">
-                deleted = #{deleted,jdbcType=VARCHAR},
-            </if>
+				deleted = #{deleted,jdbcType=VARCHAR},
+			</if>
+			<if test="checkDate != null">
+				CheckDate = #{checkDate,jdbcType=TIMESTAMP},
+			</if>
 		</set>
 		where UID = #{uid,jdbcType=VARCHAR}
 	</update>
@@ -319,7 +332,9 @@
 		ishot =
 		#{ishot,jdbcType=CHAR}, AddNickName =
 		#{addnickname,jdbcType=VARCHAR}, deleted =
-        #{deleted,jdbcType=VARCHAR}
+		#{deleted,jdbcType=VARCHAR},
+		CheckDate =
+		#{checkDate,jdbcType=TIMESTAMP}
 		where UID =
 		#{uid,jdbcType=VARCHAR}
 	</update>
@@ -357,13 +372,15 @@
 	<select id="findMyCommentPosts" resultMap="BaseResultMap">
 		SELECT f.* from
 		ts_app_freshnews as f LEFT JOIN ts_app_comment as c on
-		f.UID=c.SourceUID WHERE c.ComUserUID=#{userId,jdbcType=VARCHAR} and f.deleted='0' GROUP
+		f.UID=c.SourceUID WHERE c.ComUserUID=#{userId,jdbcType=VARCHAR} and
+		f.deleted='0' GROUP
 		BY f.UID order by f.CreateDate desc
 	</select>
 	<select id="findMySupportPosts" resultMap="BaseResultMap">
 		SELECT f.* from
 		ts_app_freshnews as f LEFT JOIN ts_app_support as s on
-		f.UID=s.SourceUID WHERE s.SupportUserUID=#{userId,jdbcType=VARCHAR} and f.deleted='0'
+		f.UID=s.SourceUID WHERE s.SupportUserUID=#{userId,jdbcType=VARCHAR}
+		and f.deleted='0'
 		GROUP BY f.UID order by f.CreateDate desc
 	</select>
 	<select id="selectByNewTypeAndShield" resultMap="BaseResultMap">
@@ -382,7 +399,8 @@
 		<include refid="Base_Column_List" />
 		from ts_app_freshnews
 		where ishot='1' and isShield=0 AND IsActive=1
-		and deleted='0'
+		and
+		deleted='0'
 		order by CreateDate desc
 	</select>
 	<select id="selectAttentionPosts" resultMap="BaseResultMap">
@@ -394,7 +412,8 @@
 		(SELECT AttenionUserUID from TS_APP_AttentionUser where
 		MyUserUID=#{userId,jdbcType=VARCHAR})
 		and deleted='0'
-		order by CreateDate desc
+		order by
+		CreateDate desc
 	</select>
 	<select id="getAuditPosts" resultMap="BaseResultMap">
 		select
@@ -405,17 +424,24 @@
 		(SELECT PostId from ts_app_freshnews_audit where
 		UserId=#{userId,jdbcType=VARCHAR})
 		and deleted='0'
-		order by CreateDate desc
+		order by CreateDate
+		desc
 	</select>
 	<select id="search" resultMap="BaseResultMap">
 		SELECT * from ts_app_freshnews as f WHERE 1=1
 		<if test="keyword != null and keyword != ''">
 			AND NewsBrief like
 			CONCAT('%','${keyword}','%' )
-			OR NewsContent like
+			OR
+			NewsContent like
 			CONCAT('%','${keyword}','%' )
 		</if>
-		and f.deleted='0' and f.UID not in(select t.UID from ts_app_transfer as t where t.deleted='1')
+		and f.deleted='0' and f.UID not in(select t.UID from ts_app_transfer
+		as t where t.deleted='1')
 		ORDER BY f.CreateDate desc
 	</select>
+	<update id="updateNickName" parameterType="java.lang.String">
+		update ts_app_freshnews set AddNickName=#{nickName,jdbcType=VARCHAR}
+		where AddUserUID=#{userId,jdbcType=VARCHAR} and IsAnonymous=0
+	</update>
 </mapper>

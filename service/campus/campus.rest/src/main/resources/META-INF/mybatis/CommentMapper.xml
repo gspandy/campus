@@ -21,13 +21,15 @@
 		<result column="IpAddress" property="ipaddress" jdbcType="VARCHAR" />
 		<result column="ObjComment" property="objComment" jdbcType="VARCHAR" />
 		<result column="SrcPostId" property="srcPostId" jdbcType="VARCHAR" />
+		<result column="IsAnonymous" property="isAnonymous" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UID, SourceUID, ComUserUID, UserNickName, ObjUserUID,
 		ObjUserNickName,
 		CommentContent,
 		TypeCode, isActive, CreateBy,
-		CreateDate, LastUpdateBy, LastUpdateDate,IpAddress,ObjComment,SrcPostId
+		CreateDate, LastUpdateBy,
+		LastUpdateDate,IpAddress,ObjComment,SrcPostId,IsAnonymous
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -47,18 +49,21 @@
 		UserNickName, ObjUserUID, ObjUserNickName,
 		CommentContent, TypeCode, isActive,
 		CreateBy, CreateDate, LastUpdateBy,
-		LastUpdateDate,IpAddress, ObjComment,SrcPostId)
-		values (#{uid,jdbcType=VARCHAR},
+		LastUpdateDate,IpAddress, ObjComment,SrcPostId,IsAnonymous)
+		values
+		(#{uid,jdbcType=VARCHAR},
 		#{sourceuid,jdbcType=VARCHAR},
 		#{comuseruid,jdbcType=VARCHAR},
-		#{usernickname,jdbcType=VARCHAR}, #{objuseruid,jdbcType=VARCHAR},
+		#{usernickname,jdbcType=VARCHAR},
+		#{objuseruid,jdbcType=VARCHAR},
 		#{objusernickname,jdbcType=VARCHAR},
 		#{commentcontent,jdbcType=VARCHAR}, #{typecode,jdbcType=INTEGER},
 		#{isactive,jdbcType=INTEGER},
 		#{createby,jdbcType=VARCHAR},
 		#{createdate,jdbcType=TIMESTAMP}, #{lastupdateby,jdbcType=VARCHAR},
 		#{lastupdatedate,jdbcType=TIMESTAMP},
-		#{ipaddress,jdbcType=VARCHAR},#{objComment,jdbcType=VARCHAR},#{srcPostId,jdbcType=VARCHAR})
+		#{ipaddress,jdbcType=VARCHAR},#{objComment,jdbcType=VARCHAR},#{srcPostId,jdbcType=VARCHAR},
+		#{isAnonymous,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.Comment">
 		insert into ts_app_comment
@@ -106,11 +111,14 @@
 				IpAddress,
 			</if>
 			<if test="objComment != null">
-                ObjComment,
-            </if>
-            <if test="srcPostId != null">
-                SrcPostId,
-            </if>
+				ObjComment,
+			</if>
+			<if test="srcPostId != null">
+				SrcPostId,
+			</if>
+			<if test="isAnonymous != null">
+				IsAnonymous,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uid != null">
@@ -156,11 +164,14 @@
 				#{ipaddress,jdbcType=VARCHAR},
 			</if>
 			<if test="objComment != null">
-                #{objComment,jdbcType=VARCHAR},
-            </if>
-            <if test="srcPostId != null">
-                #{srcPostId,jdbcType=VARCHAR},
-            </if>
+				#{objComment,jdbcType=VARCHAR},
+			</if>
+			<if test="srcPostId != null">
+				#{srcPostId,jdbcType=VARCHAR},
+			</if>
+			<if test="isAnonymous != null">
+				#{isAnonymous,jdbcType=INTEGER},
+			</if>
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="org.campus.model.Comment">
@@ -206,11 +217,14 @@
 				IpAddress = #{ipaddress,jdbcType=VARCHAR},
 			</if>
 			<if test="objComment != null">
-                ObjComment = #{objComment,jdbcType=VARCHAR},
-            </if>
-            <if test="srcPostId != null">
-                SrcPostId = #{objComment,jdbcType=VARCHAR},
-            </if>
+				ObjComment = #{objComment,jdbcType=VARCHAR},
+			</if>
+			<if test="srcPostId != null">
+				SrcPostId = #{objComment,jdbcType=VARCHAR},
+			</if>
+			<if test="isAnonymous != null">
+				IsAnonymous = #{isAnonymous,jdbcType=INTEGER},
+			</if>
 		</set>
 		where UID = #{uid,jdbcType=VARCHAR}
 	</update>
@@ -240,19 +254,28 @@
 		IpAddress =
 		#{ipaddress,jdbcType=VARCHAR},
 		ObjComment =
-        #{objComment,jdbcType=VARCHAR},
-        SrcPostId =
-        #{srcPostId,jdbcType=VARCHAR}
+		#{objComment,jdbcType=VARCHAR},
+		SrcPostId =
+		#{srcPostId,jdbcType=VARCHAR},
+		IsAnonymous =
+		#{isAnonymous,jdbcType=INTEGER}
 		where UID =
 		#{uid,jdbcType=VARCHAR}
 	</update>
 	<select id="findBySourceId" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
-		select
+		select *
+		from (select
 		<include refid="Base_Column_List" />
 		from ts_app_comment
 		where SourceUID = #{sourceId,jdbcType=VARCHAR} AND
-		isActive=1 order by CreateDate desc
+		isActive=1
+		UNION
+		select
+		<include refid="Base_Column_List" />
+		from ts_app_comment
+		where srcPostId = #{sourceId,jdbcType=VARCHAR} AND
+		isActive=1) t order by t.CreateDate desc
 	</select>
 	<delete id="deleteAll">
 		delete from ts_app_comment
@@ -263,20 +286,44 @@
 		from ts_app_comment
 		where SourceUID = #{sourceId,jdbcType=VARCHAR} AND
 		ComUserUID=#{userId,jdbcType=VARCHAR} AND
-		isActive=1 order by CreateDate desc
+		isActive=1 order by
+		CreateDate desc
 	</select>
 	<select id="findCommentPostsMsgVO" resultMap="BaseResultMap">
 		select c.*
 		from
 		ts_app_comment as c LEFT JOIN ts_app_freshnews as f ON c.SourceUID =
 		f.UID
-		where f.AddUserUID = #{userId,jdbcType=VARCHAR} and c.isActive=1 order by c.CreateDate desc
+		where f.AddUserUID = #{userId,jdbcType=VARCHAR} and c.isActive=1
+		order by c.CreateDate desc
 	</select>
 	<select id="findCommentMyCommentMsgVO" resultMap="BaseResultMap">
 		select * from
 		ts_app_comment
 		where ObjUserUID =
 		#{userId,jdbcType=VARCHAR} AND
-        isActive=1 order by CreateDate desc
+		isActive=1 order by CreateDate desc
 	</select>
+	<update id="updateComCommentNickName" parameterType="java.lang.String">
+	   update ts_app_comment set UserNickName=#{nickName,jdbcType=VARCHAR} 
+	   where ComUserUID=#{userId,jdbcType=VARCHAR} and IsAnonymous=0
+	</update>
+	<update id="updateObjCommentNickName" parameterType="java.lang.String">
+       update ts_app_comment set ObjUserNickName=#{nickName,jdbcType=VARCHAR} 
+       where ObjUserUID=#{userId,jdbcType=VARCHAR} and IsAnonymous=0
+    </update>
+    <select id="selectNeedIntegralNum" resultType="int">
+        select count(DISTINCT t.IpAddress) from 
+        (
+            select * from ts_app_comment 
+            where SourceUID=#{sourceId,jdbcType=VARCHAR} 
+            and CreateDate&gt;=#{checkDate,jdbcType=TIMESTAMP}
+            and CreateDate&lt;=#{limitDate,jdbcType=TIMESTAMP}
+            UNION
+            select * from ts_app_comment 
+            where SrcPostId=#{sourceId,jdbcType=VARCHAR} 
+            and CreateDate&gt;=#{checkDate,jdbcType=TIMESTAMP}
+            and CreateDate&lt;=#{limitDate,jdbcType=TIMESTAMP}
+        ) t
+    </select>
 </mapper>

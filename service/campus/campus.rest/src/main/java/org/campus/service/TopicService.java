@@ -15,6 +15,7 @@ import org.campus.model.Transfer;
 import org.campus.model.UserFavorite;
 import org.campus.model.enums.ActiveType;
 import org.campus.model.enums.CheckType;
+import org.campus.model.enums.IntegralType;
 import org.campus.model.enums.TopicType;
 import org.campus.model.enums.TypeCode;
 import org.campus.repository.CommentMapper;
@@ -58,6 +59,9 @@ public class TopicService {
 
     @Autowired
     private NotSupportMapper notSupportMapper;
+
+    @Autowired
+    private IntegralService integralService;
 
     /**
      * 查询帖子列表
@@ -261,6 +265,8 @@ public class TopicService {
         if (freshNews.getSupportnum() - freshNews.getNotsupportnum() - freshNews.getComplainnum() >= SystemConfig
                 .getInt("PASS_AUDIT")) {
             freshNews.setIsshield(0);
+            freshNews.setCheckDate(new Date());
+            integralService.integral(freshNews.getAdduseruid(), null, IntegralType.POSTS);
         }
 
         freshMapper.updateByPrimaryKeySelective(freshNews);
@@ -271,6 +277,7 @@ public class TopicService {
         record.setAuditreust(type);
         record.setAudittime(new Date());
         freshNewsAuditMapper.insert(record);
+        integralService.integral(userId, null, IntegralType.CHECk_POSTS);
     }
 
     public Page<FreshNews> search(String keyword, Pageable pageable) {

@@ -281,4 +281,8 @@ public interface UserService {
 
     void delete(String commentId, String userId);
 
+    void setCommentNickName(String userId, String nickName);
+
+    void setFreshNickName(String userId, String nickName);
+
 }

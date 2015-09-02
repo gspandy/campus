@@ -14,6 +14,6 @@ public interface IntegralService {
      * @return
      *
      */
-    long integral(String userId, IntegralType integralType);
+    long integral(String userId, String postId, IntegralType integralType);
 
 }

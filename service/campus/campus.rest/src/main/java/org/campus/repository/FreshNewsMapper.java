@@ -94,4 +94,6 @@ public interface FreshNewsMapper {
 
     Page<FreshNews> search(@Param("keyword") String keyword, Pageable pageable);
 
+    void updateNickName(@Param("userId") String userId, @Param("nickName") String nickName);
+
 }
