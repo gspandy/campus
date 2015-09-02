@@ -166,4 +166,122 @@
 		     ) AS b ON a.SendMessageUID = b.UID
          )) as c ORDER BY c.SendTime ASC
 	</select>
+	<select id="selectMessageDetailSingleUp" resultType="org.campus.model.ConversationDetail"
+        parameterType="java.lang.String">
+        SELECT * from ((
+            SELECT
+                b.*, TRUE AS holdFlag
+            FROM
+            (
+                SELECT
+                    SendMessageUID
+                FROM
+                    ts_app_receivemessage
+                WHERE
+                    ReceiveUserUID = #{objUserId}
+                ) AS a
+                INNER JOIN (
+                SELECT
+                    UID, 
+                    SendUserUID, 
+                    MsgContent,
+                    PicturePath,
+                    SoundPath,
+                    SendTime
+                FROM
+                    ts_app_sendmessage
+                WHERE
+                    SendUserUID = #{sessionUserId}
+                    AND (GroupUID = '' OR GroupUID is NULL)
+                ) AS b 
+                ON a.SendMessageUID = b.UID WHERE SendTime &gt;= #{date,jdbcType=TIMESTAMP}
+            )
+            UNION ALL
+            (
+            SELECT 
+                 b.*, FALSE AS holdFlag
+            FROM
+            (
+                SELECT
+                    SendMessageUID
+                FROM
+                    ts_app_receivemessage
+                WHERE
+                    ReceiveUserUID = #{sessionUserId}
+            ) AS a
+            INNER JOIN (
+                SELECT
+                    UID,
+                    SendUserUID,
+                    MsgContent,
+                    PicturePath,
+                    SoundPath,
+                    SendTime
+                FROM
+                    ts_app_sendmessage
+                WHERE
+                    SendUserUID = #{objUserId}
+                    AND (GroupUID = '' OR GroupUID is NULL)
+             ) AS b ON a.SendMessageUID = b.UID WHERE SendTime &gt;= #{date,jdbcType=TIMESTAMP}
+         )) as c ORDER BY c.SendTime ASC
+    </select>
+    <select id="selectMessageDetailSingleDown" resultType="org.campus.model.ConversationDetail"
+        parameterType="java.lang.String">
+        SELECT * from ((
+            SELECT
+                b.*, TRUE AS holdFlag
+            FROM
+            (
+                SELECT
+                    SendMessageUID
+                FROM
+                    ts_app_receivemessage
+                WHERE
+                    ReceiveUserUID = #{objUserId}
+                ) AS a
+                INNER JOIN (
+                SELECT
+                    UID, 
+                    SendUserUID, 
+                    MsgContent,
+                    PicturePath,
+                    SoundPath,
+                    SendTime
+                FROM
+                    ts_app_sendmessage
+                WHERE
+                    SendUserUID = #{sessionUserId}
+                    AND (GroupUID = '' OR GroupUID is NULL)
+                ) AS b 
+                ON a.SendMessageUID = b.UID WHERE SendTime &lt;= #{date,jdbcType=TIMESTAMP}
+            )
+            UNION ALL
+            (
+            SELECT 
+                 b.*, FALSE AS holdFlag
+            FROM
+            (
+                SELECT
+                    SendMessageUID
+                FROM
+                    ts_app_receivemessage
+                WHERE
+                    ReceiveUserUID = #{sessionUserId}
+            ) AS a
+            INNER JOIN (
+                SELECT
+                    UID,
+                    SendUserUID,
+                    MsgContent,
+                    PicturePath,
+                    SoundPath,
+                    SendTime
+                FROM
+                    ts_app_sendmessage
+                WHERE
+                    SendUserUID = #{objUserId}
+                    AND (GroupUID = '' OR GroupUID is NULL)
+             ) AS b ON a.SendMessageUID = b.UID WHERE SendTime &lt;= #{date,jdbcType=TIMESTAMP}
+         )) as c ORDER BY c.SendTime ASC
+    </select>
 </mapper>

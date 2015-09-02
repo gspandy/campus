@@ -191,7 +191,8 @@ public class MessageService {
         sendMessageMapper.insert(sendMessage);
     }
 
-    public List<ConversationDetailVO> queryConversationList(String holdUserId, String conversationId) {
+    public List<ConversationDetailVO> queryConversationList(String holdUserId, String conversationId, String slide,
+            Date lastMsgDate) {
 
         Session session = sessionMapper.selectByPrimaryKey(conversationId);
         if (null == session) {
@@ -205,7 +206,7 @@ public class MessageService {
             if (objUserId.equals(holdUserId)) {
                 objUserId = session.getUseruid();
             }
-            setSingleMessages(resultList, objUserId, holdUserId);
+            setSingleMessages(resultList, objUserId, holdUserId, slide, lastMsgDate);
         } else {
             // 群聊
             setGroupMessages(resultList, session.getObjuseruid(), holdUserId);
@@ -213,9 +214,23 @@ public class MessageService {
         return resultList;
     }
 
-    private void setSingleMessages(List<ConversationDetailVO> resultList, String objuseruid, String holdUserId) {
+    private void setSingleMessages(List<ConversationDetailVO> resultList, String objuseruid, String holdUserId,
+            String slide, Date lastMsgDate) {
         // 单聊
-        List<ConversationDetail> list = receiveMessageMapper.selectMessageDetailSingle(holdUserId, objuseruid);
+        List<ConversationDetail> list = null;
+        if (slide != null && slide.length() != 0) {
+            if (lastMsgDate == null){
+                throw new CampusException("当滑动传入slide参数时，lastMsgDate不可以为空");
+            }
+            if ("1".equals(slide)) {
+                list = receiveMessageMapper.selectMessageDetailSingleUp(holdUserId, objuseruid, lastMsgDate);
+            } else {
+                list = receiveMessageMapper.selectMessageDetailSingleDown(holdUserId, objuseruid, lastMsgDate);
+            }
+        } else {
+            list = receiveMessageMapper.selectMessageDetailSingle(holdUserId, objuseruid);
+        }
+
         for (ConversationDetail conversationDetail : list) {
             ConversationDetailVO detail = new ConversationDetailVO();
             detail.setHoldFlag(conversationDetail.isHoldFlag());

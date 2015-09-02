@@ -127,7 +127,8 @@ public class MessageController {
         // 1.校验用户session信息
         LoginResponseVO vo = checkLogin(session);
         // 查询会话详细信息
-        List<ConversationDetailVO> detailList = messageService.queryConversationList(vo.getUserId(), conversationId);
+        List<ConversationDetailVO> detailList = messageService.queryConversationList(vo.getUserId(), conversationId,
+                slide, lastMsgDate);
         // 需建立一张聊天会话表，关联两个用户之间的聊天记录
         Page<ConversationDetailVO> page = new PageImpl<ConversationDetailVO>(detailList, pageable, detailList.size());
         return page;
