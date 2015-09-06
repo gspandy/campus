@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.campus.annotation.NeedRoles;
+import org.campus.config.SystemConfig;
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.fastdfs.FastdfsClient;
@@ -26,9 +27,7 @@ import org.campus.model.UserFavorite;
 import org.campus.model.enums.AnonymousType;
 import org.campus.model.enums.CheckType;
 import org.campus.model.enums.DisplayModel;
-import org.campus.model.enums.IntegralType;
 import org.campus.model.enums.TopicType;
-import org.campus.service.IntegralService;
 import org.campus.service.NickNameService;
 import org.campus.service.TopicService;
 import org.campus.service.UserService;
@@ -337,7 +336,14 @@ public class BoardController {
         posts.setCreateby(vo.getUserId());
         posts.setCreatedate(Calendar.getInstance().getTime());
         posts.setIsactive(1);
-        posts.setIsshield(1);
+        String specialUsers = SystemConfig.getString("SPECIAL_USERS");
+        String[] userArray = specialUsers.split(",");
+        List<String> users = Arrays.asList(userArray);
+        if (users.contains(vo.getUserAccount())) {
+            posts.setIsshield(0);
+        } else {
+            posts.setIsshield(1);
+        }
         posts.setIsanonymous(model == DisplayModel.MOON ? AnonymousType.ANONYMOUS : AnonymousType.NOT_ANONYMOUS);
         posts.setIshot("0");
         posts.setDeleted("0");
