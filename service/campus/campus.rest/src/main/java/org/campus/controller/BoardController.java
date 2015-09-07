@@ -226,7 +226,7 @@ public class BoardController {
             boardVo.setPublishDate(topic.getCreatedate());
             boardVo.setSupportNum(topic.getSupportnum());
             boardVo.setTransNum(topic.getTransnum());
-            boardVo.setUserId(topic.getCreateby());
+            boardVo.setUserId(topic.getAdduseruid());
             boardVo.setSupported(topicSvc.isSupported(postsId, user.getUserId()));
             boardVo.setCollected(topicSvc.isFavorited(postsId, user.getUserId()));
             Transfer tranfer = topicSvc.findTransfer(topic.getUid());
