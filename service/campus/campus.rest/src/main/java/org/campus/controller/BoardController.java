@@ -339,15 +339,14 @@ public class BoardController {
         String specialUsers = SystemConfig.getString("SPECIAL_USERS");
         String[] userArray = specialUsers.split(",");
         List<String> users = Arrays.asList(userArray);
-        if (users.contains(vo.getUserAccount())) {
-            posts.setIsshield(0);
-        } else {
-            posts.setIsshield(1);
-        }
         posts.setIsanonymous(model == DisplayModel.MOON ? AnonymousType.ANONYMOUS : AnonymousType.NOT_ANONYMOUS);
         posts.setIshot("0");
         posts.setDeleted("0");
-        posts.setIsshield(FreshNews.VIEW_REGISTER);// 新帖必须屏蔽
+        if (users.contains(vo.getUserAccount())) {
+            posts.setIsshield(FreshNews.VIEW_ANONYMOUSE);// 新帖必须屏蔽
+        } else {
+            posts.setIsshield(FreshNews.VIEW_REGISTER);// 新帖必须屏蔽
+        }
         posts.setNewsbrief(boardPublishVO.getTitle());
         posts.setNewscontent(boardPublishVO.getContent());
 
