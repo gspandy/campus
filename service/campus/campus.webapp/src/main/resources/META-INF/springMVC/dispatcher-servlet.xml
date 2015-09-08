@@ -16,6 +16,14 @@
 			<bean
 				class="org.springframework.data.web.PageableHandlerMethodArgumentResolver" />
 		</mvc:argument-resolvers>
+		<mvc:message-converters>
+			<bean
+				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper">
+					<bean class="org.campus.core.converter.json.ExtObjectMapper" />
+				</property>
+			</bean>
+		</mvc:message-converters>
 	</mvc:annotation-driven>
 
 	<bean id="stringConverter"
