@@ -208,6 +208,7 @@ public class BoardController {
         LoginResponseVO user = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         BoardDetailVO boardVo = null;
         FreshNews topic = this.topicSvc.getPostsDetail(postsId);
+        User postUser = null;
         if (topic != null) {
             boardVo = new BoardDetailVO();
             boardVo.setCommentNum(topic.getCommentnum());
@@ -227,6 +228,10 @@ public class BoardController {
             boardVo.setSupportNum(topic.getSupportnum());
             boardVo.setTransNum(topic.getTransnum());
             boardVo.setUserId(topic.getAdduseruid());
+            postUser = userService.findByUserId(topic.getAdduseruid());
+            if (postUser != null) {
+                boardVo.setHeadPic(postUser.getHeadpic());
+            }
             boardVo.setSupported(topicSvc.isSupported(postsId, user.getUserId()));
             boardVo.setCollected(topicSvc.isFavorited(postsId, user.getUserId()));
             Transfer tranfer = topicSvc.findTransfer(topic.getUid());
@@ -337,7 +342,7 @@ public class BoardController {
         posts.setCreatedate(Calendar.getInstance().getTime());
         posts.setIsactive(1);
         String[] specialUsers = SystemConfig.getStringArray("SPECIAL_USERS");
-//        String[] userArray = specialUsers.split(",");
+        // String[] userArray = specialUsers.split(",");
         List<String> users = Arrays.asList(specialUsers);
         posts.setIsanonymous(model == DisplayModel.MOON ? AnonymousType.ANONYMOUS : AnonymousType.NOT_ANONYMOUS);
         posts.setIshot("0");

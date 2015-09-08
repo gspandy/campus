@@ -497,7 +497,7 @@ public class UserServiceImpl implements UserService {
             User user = null;
             for (Comment comment : supportPage.getContent()) {
                 msgVO = new CommentPostsMsgVO();
-                msgVO.setCommentId(fresh.getUid());
+                msgVO.setCommentId(comment.getUid());
                 msgVO.setCommentUserId(comment.getComuseruid());
                 msgVO.setCommentNickName(comment.getUsernickname());
                 msgVO.setCommentContent(comment.getCommentcontent());

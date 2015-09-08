@@ -140,8 +140,16 @@ public class UserController {
             commentVO.setCommentId(comment.getUid());
             commentVO.setUserId(comment.getComuseruid());
             commentVO.setNickName(comment.getUsernickname());
+            User user = userService.findByUserId(comment.getComuseruid());
+            if (user != null) {
+                commentVO.setHeadPic(user.getHeadpic());
+            }
             commentVO.setObjUserId(comment.getObjuseruid());
             commentVO.setObjNickName(comment.getObjusernickname());
+            User objUser = userService.findByUserId(comment.getObjuseruid());
+            if (objUser != null) {
+                commentVO.setHeadPic(objUser.getHeadpic());
+            }
             commentVO.setObjComment(comment.getObjComment());
             commentVO.setCommentDate(comment.getCreatedate());
             commentVO.setCommentContent(comment.getCommentcontent());

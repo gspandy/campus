@@ -15,9 +15,13 @@ public class CommentVO {
 
     private String nickName;
 
+    private String headPic;
+
     private String objUserId;
 
     private String objNickName;
+
+    private String objHeadPic;
 
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date commentDate;
@@ -60,6 +64,16 @@ public class CommentVO {
         this.nickName = nickName;
     }
 
+    @ApiModelProperty(value = "评论人头像", required = false)
+    public String getHeadPic() {
+        return headPic;
+    }
+
+    @ApiModelProperty(value = "评论人头像", required = false)
+    public void setHeadPic(String headPic) {
+        this.headPic = headPic;
+    }
+
     @ApiModelProperty(value = "回复人ID", required = false)
     public String getObjUserId() {
         return objUserId;
@@ -78,6 +92,16 @@ public class CommentVO {
     @ApiModelProperty(value = "回复人昵称", required = false)
     public void setObjNickName(String objNickName) {
         this.objNickName = objNickName;
+    }
+
+    @ApiModelProperty(value = "回复人头像", required = false)
+    public String getObjHeadPic() {
+        return objHeadPic;
+    }
+
+    @ApiModelProperty(value = "回复人头像", required = false)
+    public void setObjHeadPic(String objHeadPic) {
+        this.objHeadPic = objHeadPic;
     }
 
     @ApiModelProperty(value = "评论时间", required = true)
