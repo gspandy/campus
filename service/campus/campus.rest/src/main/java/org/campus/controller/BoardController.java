@@ -336,9 +336,9 @@ public class BoardController {
         posts.setCreateby(vo.getUserId());
         posts.setCreatedate(Calendar.getInstance().getTime());
         posts.setIsactive(1);
-        String specialUsers = SystemConfig.getString("SPECIAL_USERS");
-        String[] userArray = specialUsers.split(",");
-        List<String> users = Arrays.asList(userArray);
+        String[] specialUsers = SystemConfig.getStringArray("SPECIAL_USERS");
+//        String[] userArray = specialUsers.split(",");
+        List<String> users = Arrays.asList(specialUsers);
         posts.setIsanonymous(model == DisplayModel.MOON ? AnonymousType.ANONYMOUS : AnonymousType.NOT_ANONYMOUS);
         posts.setIshot("0");
         posts.setDeleted("0");
