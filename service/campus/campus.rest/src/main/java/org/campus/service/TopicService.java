@@ -340,7 +340,7 @@ public class TopicService {
 
     public boolean isDelete(String postId) {
         FreshNews fresh = freshMapper.selectByPrimaryKey(postId);
-        if ("1".equals(fresh.getDeleted())) {
+        if (fresh != null && "1".equals(fresh.getDeleted())) {
             return true;
         }
         return false;
