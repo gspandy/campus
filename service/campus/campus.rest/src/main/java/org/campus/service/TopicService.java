@@ -14,6 +14,7 @@ import org.campus.model.Support;
 import org.campus.model.Transfer;
 import org.campus.model.UserFavorite;
 import org.campus.model.enums.ActiveType;
+import org.campus.model.enums.AnonymousType;
 import org.campus.model.enums.CheckType;
 import org.campus.model.enums.IntegralType;
 import org.campus.model.enums.TopicType;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class TopicService {
@@ -280,8 +282,16 @@ public class TopicService {
         integralService.integral(userId, null, IntegralType.CHECk_POSTS);
     }
 
-    public Page<FreshNews> search(String keyword, Pageable pageable) {
-        return freshMapper.search(keyword, pageable);
+    public Page<FreshNews> search(String keyword, String environment, Pageable pageable) {
+        AnonymousType type = null;
+        if (!StringUtils.isEmpty(environment)) {
+            if ("0".equals(environment)) {
+                type = AnonymousType.ANONYMOUS;
+            } else {
+                type = AnonymousType.NOT_ANONYMOUS;
+            }
+        }
+        return freshMapper.search(keyword, type, pageable);
     }
 
     public void transfer(String postsId, String userId, String nickName, TransferVO transferVO, String ipAddr) {

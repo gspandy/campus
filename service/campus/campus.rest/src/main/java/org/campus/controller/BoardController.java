@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.campus.annotation.NeedRoles;
 import org.campus.config.SystemConfig;
 import org.campus.constant.Constant;
@@ -157,9 +158,10 @@ public class BoardController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public Page<BoardVO> search(
             @ApiParam(name = "keyword", value = "关键字") @RequestParam(value = "keyword", required = true) String keyword,
+            @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = false) String environment,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             HttpSession session) {
-        Page<FreshNews> freshNews = topicSvc.search(keyword, pageable);
+        Page<FreshNews> freshNews = topicSvc.search(keyword, environment, pageable);
         LoginResponseVO user = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         List<FreshNews> listTopic = freshNews.getContent();
         List<BoardVO> boardVOs = new ArrayList<BoardVO>();
@@ -200,7 +202,6 @@ public class BoardController {
     @ApiOperation(value = "*帖子详情查询:1.0", notes = "帖子详情查询[API-Version=1.0]")
     @RequestMapping(value = "/posts/detail", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    @NeedRoles
     public BoardDetailVO findBoardDetail(
             @ApiParam(name = "postsId", value = "帖子的ID") @RequestParam(value = "postsId", required = true) String postsId,
             HttpSession session) {
@@ -231,8 +232,10 @@ public class BoardController {
             if (postUser != null) {
                 boardVo.setHeadPic(postUser.getHeadpic());
             }
-            boardVo.setSupported(topicSvc.isSupported(postsId, user.getUserId()));
-            boardVo.setCollected(topicSvc.isFavorited(postsId, user.getUserId()));
+            if (user != null && !StringUtils.isEmpty(user.getUserId())) {
+                boardVo.setSupported(topicSvc.isSupported(postsId, user.getUserId()));
+                boardVo.setCollected(topicSvc.isFavorited(postsId, user.getUserId()));
+            }
             Transfer tranfer = topicSvc.findTransfer(topic.getUid());
             if (tranfer != null) {
                 boardVo.setTransferComment(tranfer.getTransferComment());

@@ -2,6 +2,7 @@ package org.campus.repository;
 
 import org.apache.ibatis.annotations.Param;
 import org.campus.model.FreshNews;
+import org.campus.model.enums.AnonymousType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -92,7 +93,7 @@ public interface FreshNewsMapper {
      */
     Page<FreshNews> getAuditPosts(@Param("userId") String userId, @Param("isShield") int isShield, Pageable pageable);
 
-    Page<FreshNews> search(@Param("keyword") String keyword, Pageable pageable);
+    Page<FreshNews> search(@Param("keyword") String keyword, @Param("type") AnonymousType type, Pageable pageable);
 
     void updateNickName(@Param("userId") String userId, @Param("nickName") String nickName);
 

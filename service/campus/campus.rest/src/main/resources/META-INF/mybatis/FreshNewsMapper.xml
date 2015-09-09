@@ -430,13 +430,18 @@
 	<select id="search" resultMap="BaseResultMap">
 		SELECT * from ts_app_freshnews as f WHERE 1=1
 		<if test="keyword != null and keyword != ''">
-			AND NewsBrief like
+			AND (NewsBrief like
 			CONCAT('%','${keyword}','%' )
 			OR
 			NewsContent like
-			CONCAT('%','${keyword}','%' )
+			CONCAT('%','${keyword}','%' ))
 		</if>
-		and f.deleted='0' and f.UID not in(select t.UID from ts_app_transfer
+		and f.deleted='0'
+		<if test="type != null">
+		and f.IsAnonymous=#{type,jdbcType=INTEGER}
+		</if>
+		and f.isShield=0
+		and f.UID not in(select t.UID from ts_app_transfer
 		as t where t.deleted='1')
 		ORDER BY f.CreateDate desc
 	</select>
