@@ -241,6 +241,15 @@ public class BoardController {
             Transfer tranfer = topicSvc.findTransfer(topic.getUid());
             if (tranfer != null) {
                 boardVo.setTransferComment(tranfer.getTransferComment());
+                FreshNews freshNews = topicSvc.getPostsDetail(tranfer.getPostid());
+                if (freshNews != null) {
+                    boardVo.setSourceUserId(freshNews.getAdduseruid());
+                    boardVo.setSourceNickName(freshNews.getAddnickname());
+                    User sourceUser = userService.findByUserId(freshNews.getAdduseruid());
+                    if (sourceUser != null) {
+                        boardVo.setSourceHeadPic(sourceUser.getHeadpic());
+                    }
+                }
             }
         }
 

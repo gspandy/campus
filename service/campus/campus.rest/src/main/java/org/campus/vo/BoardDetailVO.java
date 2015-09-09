@@ -18,6 +18,12 @@ public class BoardDetailVO {
 
     private String headPic;
 
+    private String sourceUserId;
+
+    private String sourceNickName;
+
+    private String sourceHeadPic;
+
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date publishDate;
 
@@ -77,6 +83,36 @@ public class BoardDetailVO {
     @ApiModelProperty(value = "发帖用户头像", required = false)
     public void setHeadPic(String headPic) {
         this.headPic = headPic;
+    }
+
+    @ApiModelProperty(value = "原发帖人用户ID", required = false)
+    public String getSourceUserId() {
+        return sourceUserId;
+    }
+
+    @ApiModelProperty(value = "原发帖人用户ID", required = false)
+    public void setSourceUserId(String sourceUserId) {
+        this.sourceUserId = sourceUserId;
+    }
+
+    @ApiModelProperty(value = "原发帖人用户昵称", required = false)
+    public String getSourceNickName() {
+        return sourceNickName;
+    }
+
+    @ApiModelProperty(value = "原发帖人用户昵称", required = false)
+    public void setSourceNickName(String sourceNickName) {
+        this.sourceNickName = sourceNickName;
+    }
+
+    @ApiModelProperty(value = "原发帖人用户头像", required = false)
+    public String getSourceHeadPic() {
+        return sourceHeadPic;
+    }
+
+    @ApiModelProperty(value = "原发帖人用户头像", required = false)
+    public void setSourceHeadPic(String sourceHeadPic) {
+        this.sourceHeadPic = sourceHeadPic;
     }
 
     @ApiModelProperty(value = "发帖时间", required = true)
