@@ -75,7 +75,6 @@ public class UserController {
     @ApiOperation(value = "*其他用户的信息查询:1.0", notes = "其他用户的信息查询[API-Version=1.0]")
     @RequestMapping(value = "/{userId}/info", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    @NeedRoles
     public UserVO getUserInfo(
             @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
@@ -85,7 +84,9 @@ public class UserController {
             throw new CampusException(1000003, "用户不存在");
         }
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        user.setAttention(userService.isAttention(responseVO.getUserId(), userId));
+        if (responseVO != null && !StringUtils.isEmpty(responseVO.getUserId())) {
+            user.setAttention(userService.isAttention(responseVO.getUserId(), userId));
+        }
         return user;
     }
 
@@ -122,7 +123,6 @@ public class UserController {
     @ApiOperation(value = "*查询相册评论:1.0", notes = "查询相册评论[API-Version=1.0]")
     @RequestMapping(value = "/{photoId}/comments", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    @NeedRoles
     public Page<CommentVO> getPhotoComments(
             @ApiParam(name = "photoId", value = "相册ID") @PathVariable String photoId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
@@ -155,7 +155,9 @@ public class UserController {
             commentVO.setCommentContent(comment.getCommentcontent());
             int supportNum = userService.getUserCommentSupport(comment.getUid());
             commentVO.setSupportNum(supportNum);
-            commentVO.setSupport(userService.isSupport(commentVO.getCommentId(), responseVO.getUserId()));
+            if (responseVO != null && !StringUtils.isEmpty(responseVO.getUserId())) {
+                commentVO.setSupport(userService.isSupport(commentVO.getCommentId(), responseVO.getUserId()));
+            }
             commentVOs.add(commentVO);
         }
         Page<CommentVO> page = new PageImpl<CommentVO>(commentVOs, pageable, commentVOs.size());
@@ -347,14 +349,13 @@ public class UserController {
     @ApiOperation(value = "*用户搜索:1.0", notes = "用户搜索[API-Version=1.0]")
     @RequestMapping(value = "/user/search", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    @NeedRoles
     public Page<UserVO> searchUser(
             @ApiParam(name = "nickName", value = "昵称，可模糊查询") @RequestParam(value = "nickName", required = false) String nickName,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        Page<UserVO> user = findUserInfoByNickName(responseVO.getUserId(), nickName, pageable);
+        Page<UserVO> user = findUserInfoByNickName(responseVO, nickName, pageable);
         return user;
     }
 
@@ -424,7 +425,7 @@ public class UserController {
         return userVO;
     }
 
-    private Page<UserVO> findUserInfoByNickName(String userId, String nickName, Pageable pageable) {
+    private Page<UserVO> findUserInfoByNickName(LoginResponseVO responseVO, String nickName, Pageable pageable) {
         Page<User> users = userService.findByNickName(nickName, pageable);
         List<UserVO> userVOs = new ArrayList<UserVO>();
         if (users == null || CollectionUtils.isEmpty(users.getContent())) {
@@ -439,7 +440,9 @@ public class UserController {
             userVO.setFansCount(userService.countFans(user.getUseruid()));
             userVO.setAttentionCount(userService.countAttention(user.getUseruid()));
             userVO.setHeadPic(user.getHeadpic());
-            userVO.setAttention(userService.isAttention(userId, user.getUseruid()));
+            if (responseVO != null && !StringUtils.isEmpty(responseVO.getUserId())) {
+                userVO.setAttention(userService.isAttention(responseVO.getUserId(), user.getUseruid()));
+            }
             userVOs.add(userVO);
         }
 

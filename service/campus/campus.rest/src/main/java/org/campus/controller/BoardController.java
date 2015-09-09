@@ -155,7 +155,6 @@ public class BoardController {
     @ApiOperation(value = "*帖子搜索:1.0", notes = "*帖子搜索[API-Version=1.0]")
     @RequestMapping(value = "/posts/search", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    @NeedRoles
     public Page<BoardVO> search(
             @ApiParam(name = "keyword", value = "关键字") @RequestParam(value = "keyword", required = true) String keyword,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,

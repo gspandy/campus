@@ -562,6 +562,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(String commentId, String userId) {
+        Comment comment = commentMapper.selectByPrimaryKey(commentId);
+        FreshNews fresh = null;
+        if (!StringUtils.isEmpty(comment.getSrcPostId())) {
+            fresh = freshNewsMapper.selectByPrimaryKey(comment.getSrcPostId());
+        } else {
+            fresh = freshNewsMapper.selectByPrimaryKey(comment.getSourceuid());
+        }
+        if (fresh != null) {
+            fresh.setCommentnum(fresh.getCommentnum() - 1);
+            freshNewsMapper.updateByPrimaryKeySelective(fresh);
+        }
         commentMapper.deleteByPrimaryKey(commentId);
     }
 
