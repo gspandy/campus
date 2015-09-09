@@ -181,7 +181,9 @@ public class BoardController {
             vo.setPublishDate(topic.getCreatedate());
             String[] picUrls = topic.getPictures().split(",");
             vo.setPicUrls(Arrays.asList(picUrls));
-            vo.setSupported(topicSvc.isSupported(topic.getUid(), user.getUserId()));
+            if (user != null && !StringUtils.isEmpty(user.getUserId())) {
+                vo.setSupported(topicSvc.isSupported(topic.getUid(), user.getUserId()));
+            }
             vo.setTransNum(topic.getTransnum());
             vo.setCommentNum(topic.getCommentnum());
             vo.setSupportNum(topic.getSupportnum());
