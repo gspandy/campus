@@ -95,52 +95,52 @@ public class CommentMyCommentVO {
         this.commentContent = commentContent;
     }
 
-    @ApiModelProperty(value = "我的评论ID", required = true)
+    @ApiModelProperty(value = "我的评论ID", required = false)
     public String getMyCommentId() {
         return myCommentId;
     }
 
-    @ApiModelProperty(value = "我的评论ID", required = true)
+    @ApiModelProperty(value = "我的评论ID", required = false)
     public void setMyCommentId(String myCommentId) {
         this.myCommentId = myCommentId;
     }
 
-    @ApiModelProperty(value = "我的评论", required = true)
+    @ApiModelProperty(value = "我的评论", required = false)
     public String getContent() {
         return content;
     }
 
-    @ApiModelProperty(value = "我的评论", required = true)
+    @ApiModelProperty(value = "我的评论", required = false)
     public void setContent(String content) {
         this.content = content;
     }
 
-    @ApiModelProperty(value = "原帖子ID", required = true)
+    @ApiModelProperty(value = "原帖子ID", required = false)
     public String getPostId() {
         return postId;
     }
 
-    @ApiModelProperty(value = "原帖子ID", required = true)
+    @ApiModelProperty(value = "原帖子ID", required = false)
     public void setPostId(String postId) {
         this.postId = postId;
     }
 
-    @ApiModelProperty(value = "原帖子简介", required = true)
+    @ApiModelProperty(value = "原帖子简介", required = false)
     public String getBrief() {
         return brief;
     }
 
-    @ApiModelProperty(value = "原帖子简介", required = true)
+    @ApiModelProperty(value = "原帖子简介", required = false)
     public void setBrief(String brief) {
         this.brief = brief;
     }
 
-    @ApiModelProperty(value = "原帖子内容", required = true)
+    @ApiModelProperty(value = "原帖子内容", required = false)
     public String getPostContent() {
         return postContent;
     }
 
-    @ApiModelProperty(value = "原帖子内容", required = true)
+    @ApiModelProperty(value = "原帖子内容", required = false)
     public void setPostContent(String postContent) {
         this.postContent = postContent;
     }
