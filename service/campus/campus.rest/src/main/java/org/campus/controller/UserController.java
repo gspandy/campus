@@ -107,7 +107,6 @@ public class UserController {
     @ApiOperation(value = "*查询其他用户的相册:1.0", notes = "查询其他用户的相册[API-Version=1.0]")
     @RequestMapping(value = "/{userId}/photos", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
-    @NeedRoles
     public Page<BoardVO> getUserPhotos(
             @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
