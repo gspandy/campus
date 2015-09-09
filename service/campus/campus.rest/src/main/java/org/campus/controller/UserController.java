@@ -77,11 +77,15 @@ public class UserController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     public UserVO getUserInfo(
             @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
+            @ApiParam(name = "nickName", value = "用户昵称") @RequestParam(value = "nickName", required = false) String nickName,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         UserVO user = findUserInfo(userId);
         if (user == null) {
             throw new CampusException(1000003, "用户不存在");
+        }
+        if (!StringUtils.isEmpty(nickName)) {
+            user.setNickName(nickName);
         }
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         if (responseVO != null && !StringUtils.isEmpty(responseVO.getUserId())) {
