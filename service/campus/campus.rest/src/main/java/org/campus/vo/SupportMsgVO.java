@@ -10,6 +10,8 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "SupportMsgVO", description = "赞我的信息提示")
 public class SupportMsgVO {
 
+    private String supportId;
+
     private String supportUserId;
 
     private String supportHeadPic;
@@ -28,6 +30,16 @@ public class SupportMsgVO {
     private List<String> picUrls;
 
     private String status;
+
+    @ApiModelProperty(value = "赞Id", required = true)
+    public String getSupportId() {
+        return supportId;
+    }
+
+    @ApiModelProperty(value = "赞Id", required = true)
+    public void setSupportId(String supportId) {
+        this.supportId = supportId;
+    }
 
     @ApiModelProperty(value = "赞我的UserId", required = true)
     public String getSupportUserId() {

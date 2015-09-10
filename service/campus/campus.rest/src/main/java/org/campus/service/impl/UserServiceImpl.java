@@ -430,6 +430,7 @@ public class UserServiceImpl implements UserService {
             User user = null;
             for (Support support : supportPage.getContent()) {
                 msgVO = new SupportMsgVO();
+                msgVO.setSupportId(support.getUid());
                 msgVO.setSupportUserId(support.getSupportuseruid());
                 user = userMapper.selectByPrimaryKey(support.getSupportuseruid());
                 msgVO.setSupportNickName(support.getUsernickname());
@@ -469,6 +470,7 @@ public class UserServiceImpl implements UserService {
             User user = null;
             for (Support support : supportPage.getContent()) {
                 msgVO = new SupportCommentMsgVO();
+                msgVO.setSupportId(support.getUid());
                 msgVO.setSupportUserId(support.getSupportuseruid());
                 msgVO.setSupportNickName(support.getUsernickname());
                 user = userMapper.selectByPrimaryKey(support.getSupportuseruid());
