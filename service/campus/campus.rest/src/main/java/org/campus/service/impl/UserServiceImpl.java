@@ -634,8 +634,10 @@ public class UserServiceImpl implements UserService {
         Support support = null;
         for (String id : sourceIds) {
             support = supportMapper.selectByPrimaryKey(id);
-            support.setStatus("1");
-            supportMapper.updateByPrimaryKeySelective(support);
+            if (support != null) {
+                support.setStatus("1");
+                supportMapper.updateByPrimaryKeySelective(support);
+            }
         }
     }
 
