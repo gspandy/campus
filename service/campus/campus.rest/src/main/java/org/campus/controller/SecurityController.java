@@ -255,7 +255,7 @@ public class SecurityController {
 
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         if (vo == null)
-            throw new CampusException(100007, "请登录.");
+            throw new CampusException(100007, "未登录.");
 
         if (!checkCode.equals(redisCache.getValue(newPhone + "_checkCode_" + SMSType.SMS_MODIFY_PHONE.getCode())))
             throw new CampusException(100007, "短信验证码错误.");
@@ -298,7 +298,7 @@ public class SecurityController {
 
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         if (vo == null)
-            throw new CampusException(100005, "请登录.");
+            throw new CampusException(100005, "未登录.");
 
         // 验证旧密码的正确性
         SysUser sysUser = securitySvc.checkUserAndPassword(vo.getUserAccount(), oldPassword);
@@ -321,7 +321,7 @@ public class SecurityController {
         Assert.notNull(nickName, "请输入正确的密码.");
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         if (vo == null)
-            throw new CampusException(100006, "请登录.");
+            throw new CampusException(100006, "未登录.");
 
         // 昵称唯一验证
         if (securitySvc.nickNameExsit(nickName)) {

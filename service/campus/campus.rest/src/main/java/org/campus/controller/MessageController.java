@@ -202,7 +202,7 @@ public class MessageController {
     private LoginResponseVO checkLogin(HttpSession session) {
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         if (vo == null) {
-            throw new CampusException(100007, "请登录.");
+            throw new CampusException(100007, "未登录.");
         }
         if (!StringUtils.hasText(vo.getUserId())) {
             throw new CampusException(190001, "系统异常，用户id丢失");

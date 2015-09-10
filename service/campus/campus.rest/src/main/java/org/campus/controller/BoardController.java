@@ -265,7 +265,7 @@ public class BoardController {
         // 验证用户有无登录
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         if (vo == null)
-            throw new CampusException(100204, "请登录.");
+            throw new CampusException(100204, "未登录.");
         UserFavorite favorite = new UserFavorite();
         favorite.setUid(ToolUtil.getUUid());
         favorite.setPostsid(postsId);
@@ -281,7 +281,7 @@ public class BoardController {
     public void cancelCollect(@ApiParam(name = "postsId", value = "收藏列表编号") @PathVariable String postsId,
             HttpSession session) {
         if (session.getAttribute(Constant.CAMPUS_SECURITY_SESSION) == null)
-            throw new CampusException(100204, "请登录.");
+            throw new CampusException(100204, "未登录.");
         topicSvc.deleteFavorite(postsId);
     }
 
@@ -296,7 +296,7 @@ public class BoardController {
         // 验证用户有无登录
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         if (vo == null)
-            throw new CampusException(100204, "请登录.");
+            throw new CampusException(100204, "未登录.");
 
         Page<FavoriteFreshNews> srcData = topicSvc.getUserFavorite(vo.getUserId(), pageable);
         List<FavoriteFreshNews> lstData = srcData.getContent();
@@ -340,7 +340,7 @@ public class BoardController {
         // 验证用户有无登录
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         if (vo == null)
-            throw new CampusException(100204, "请登录.");
+            throw new CampusException(100204, "未登录.");
         DisplayModel model = (DisplayModel) session.getAttribute(Constant.CAMPUS_DISPLAYMODEL);
 
         String nickName = nickNameSvc.findRandomNickName(model, session.getId());
@@ -421,7 +421,7 @@ public class BoardController {
             @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
             HttpSession session) {
         if (session.getAttribute(Constant.CAMPUS_SECURITY_SESSION) == null)
-            throw new CampusException(100204, "请登录.");
+            throw new CampusException(100204, "未登录.");
         DisplayModel model = DisplayModel.getDisplayModelByCode(environment);
         if (model == null) {
             throw new CampusException(100203, "显示模式错误.");
