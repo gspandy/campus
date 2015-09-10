@@ -10,6 +10,7 @@ import org.campus.model.Signin;
 import org.campus.model.User;
 import org.campus.model.enums.IntegralType;
 import org.campus.repository.CommentMapper;
+import org.campus.repository.FreshNewsAuditMapper;
 import org.campus.repository.FreshNewsMapper;
 import org.campus.repository.IntegralMapper;
 import org.campus.repository.PostsCheckMapper;
@@ -33,7 +34,7 @@ public class IntegralServiceImpl implements IntegralService {
     private IntegralMapper integralMapper;
 
     @Autowired
-    private PostsCheckMapper postsCheckMapper;
+    private FreshNewsAuditMapper freshNewsAuditMapper;
 
     @Autowired
     private FreshNewsMapper freshNewsMapper;
@@ -129,7 +130,7 @@ public class IntegralServiceImpl implements IntegralService {
 
     private long checkIntegral(String userId) {
         long integral = 0;
-        int count = postsCheckMapper.findIntradayCountByUserId(userId, getDate(0));
+        int count = freshNewsAuditMapper.findIntradayCountByUserId(userId, getDate(0));
         if (count <= SystemConfig.getInt("CHECK_POSTS_UPPER_LIMIT")) {
             integral = SystemConfig.getLong("CHECK_POST_GET_INTEGRAL");
             User user = userMapper.selectByPrimaryKey(userId);
