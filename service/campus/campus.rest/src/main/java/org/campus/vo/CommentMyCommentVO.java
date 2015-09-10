@@ -35,6 +35,8 @@ public class CommentMyCommentVO {
 
     private List<String> picUrls;
 
+    private String status;
+
     @ApiModelProperty(value = "评论Id", required = true)
     public String getCommentId() {
         return commentId;
@@ -153,6 +155,16 @@ public class CommentMyCommentVO {
     @ApiModelProperty(value = "原帖子图片列表", required = false)
     public void setPicUrls(List<String> picUrls) {
         this.picUrls = picUrls;
+    }
+
+    @ApiModelProperty(value = "阅读状态，0未读；1已读", required = true)
+    public String getStatus() {
+        return status;
+    }
+
+    @ApiModelProperty(value = "阅读状态，0未读；1已读", required = true)
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }

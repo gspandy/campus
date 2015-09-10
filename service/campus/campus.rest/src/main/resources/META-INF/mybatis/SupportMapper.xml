@@ -15,12 +15,13 @@
 		<result column="LastUpdateDate" property="lastupdatedate"
 			jdbcType="TIMESTAMP" />
 		<result column="SrcPostId" property="srcPostId" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UID, SourceUID, SupportUserUID, UserNickName, TypeCode,
 		isActive,
 		CreateBy, CreateDate,
-		LastUpdateBy, LastUpdateDate, SrcPostId
+		LastUpdateBy, LastUpdateDate, SrcPostId,status
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -39,7 +40,7 @@
 		(UID, SourceUID, SupportUserUID,
 		UserNickName, TypeCode, isActive,
 		CreateBy, CreateDate, LastUpdateBy,
-		LastUpdateDate, SrcPostId)
+		LastUpdateDate, SrcPostId,status)
 		values
 		(#{uid,jdbcType=VARCHAR}, #{sourceuid,jdbcType=VARCHAR},
 		#{supportuseruid,jdbcType=VARCHAR},
@@ -47,7 +48,7 @@
 		#{typecode,jdbcType=INTEGER}, #{isactive,jdbcType=INTEGER},
 		#{createby,jdbcType=VARCHAR}, #{createdate,jdbcType=TIMESTAMP},
 		#{lastupdateby,jdbcType=VARCHAR},
-		#{lastupdatedate,jdbcType=TIMESTAMP},#{srcPostId,jdbcType=VARCHAR})
+		#{lastupdatedate,jdbcType=TIMESTAMP},#{srcPostId,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.Support">
 		insert into ts_app_support
@@ -85,6 +86,9 @@
 			<if test="srcPostId != null">
                 SrcPostId,
             </if>
+            <if test="status != null">
+                status,
+            </if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uid != null">
@@ -119,6 +123,9 @@
 			</if>
 			<if test="srcPostId != null">
                 #{srcPostId,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
             </if>
 		</trim>
 	</insert>
@@ -155,6 +162,9 @@
 			<if test="srcPostId != null">
                 SrcPostId = #{srcPostId,jdbcType=VARCHAR},
             </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
 		</set>
 		where UID = #{uid,jdbcType=VARCHAR}
 	</update>
@@ -176,7 +186,9 @@
 		LastUpdateDate =
 		#{lastupdatedate,jdbcType=TIMESTAMP},
 		SrcPostId =
-        #{srcPostId,jdbcType=VARCHAR}
+        #{srcPostId,jdbcType=VARCHAR},
+        status =
+        #{status,jdbcType=VARCHAR}
 		where UID =
 		#{uid,jdbcType=VARCHAR}
 	</update>
@@ -232,4 +244,22 @@
 		ORDER BY
 		s.CreateDate desc
 	</select>
+	<select id="countSupportPostMsgVO" parameterType="java.lang.String" resultType="int">
+        SELECT count(1) FROM
+        ts_app_support as s
+        LEFT JOIN ts_app_freshnews as f ON s.SourceUID =
+        f.UID
+        WHERE f.AddUserUID=#{userId,jdbcType=VARCHAR} and s.status='0'
+        ORDER BY
+        s.CreateDate desc
+    </select>
+    <select id="countSupportCommentMsgVO" parameterType="java.lang.String" resultType="int">
+        SELECT count(1) FROM
+        ts_app_support as s
+        LEFT JOIN ts_app_comment as c ON s.SourceUID =
+        c.UID
+        WHERE c.ComUserUID=#{userId,jdbcType=VARCHAR} and s.status='0'
+        ORDER BY
+        s.CreateDate desc
+    </select>
 </mapper>

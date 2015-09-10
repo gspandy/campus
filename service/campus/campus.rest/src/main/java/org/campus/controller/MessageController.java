@@ -23,6 +23,7 @@ import org.campus.vo.MessageRequestVo;
 import org.campus.vo.MessageVO;
 import org.campus.vo.SupportCommentMsgVO;
 import org.campus.vo.SupportMsgVO;
+import org.campus.vo.TipVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -197,6 +198,49 @@ public class MessageController {
             HttpSession session) {
         LoginResponseVO vo = checkLogin(session);
         return userService.findCommentMyCommentMsgVO(vo.getUserId(), pageable);
+    }
+
+    @ApiOperation(value = "*查询是否有新的提示:1.0", notes = "查询是否有新的提示[API-Version=1.0]")
+    @RequestMapping(value = "/tips", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public TipVO tips(
+            @ApiParam(name = "type", value = "1:查询我的帖子是否有新的赞；2:查询我的评论是否有新的赞；3:查询我的帖子是否有新的评论；4:查询我的评论是否有新评论") @RequestParam(value = "type", required = true) String type,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO vo = checkLogin(session);
+        TipVO tipVO = new TipVO();
+        tipVO.setType(type);
+        if ("1".equals(type)) {
+            tipVO.setNum(userService.countSupportPostMsgVO(vo.getUserId()));
+        } else if ("2".equals(type)) {
+            tipVO.setNum(userService.countSupportCommentMsgVO(vo.getUserId()));
+        } else if ("3".equals(type)) {
+            tipVO.setNum(userService.countCommentPostsMsgVO(vo.getUserId()));
+        } else if ("4".equals(type)) {
+            tipVO.setNum(userService.countCommentMyCommentMsgVO(vo.getUserId()));
+        } else {
+            throw new CampusException("参数有误");
+        }
+        return tipVO;
+    }
+
+    @ApiOperation(value = "*更新提示为已读:1.0", notes = "更新提示为已读[API-Version=1.0]")
+    @RequestMapping(value = "/update/tips", headers = { "API-Version=1.0" }, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void updateTips(
+            @ApiParam(name = "type", value = "1:查询我的帖子是否有新的赞；2:查询我的评论是否有新的赞；3:查询我的帖子是否有新的评论；4:查询我的评论是否有新评论") @RequestParam(value = "type", required = true) String type,
+            @ApiParam(name = "sourceId", value = "评论、赞ID列表") @RequestBody List<String> sourceIds,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        if ("1".equals(type) || "2".equals(type)) {
+            userService.updateSupportPostMsg(sourceIds);
+        } else if ("3".equals(type) || "4".equals(type)) {
+            userService.updateCommentPostsMsg(sourceIds);
+        } else {
+            throw new CampusException("参数有误");
+        }
     }
 
     private LoginResponseVO checkLogin(HttpSession session) {

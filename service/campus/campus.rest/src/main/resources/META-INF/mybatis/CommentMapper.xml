@@ -22,6 +22,7 @@
 		<result column="ObjComment" property="objComment" jdbcType="VARCHAR" />
 		<result column="SrcPostId" property="srcPostId" jdbcType="VARCHAR" />
 		<result column="IsAnonymous" property="isAnonymous" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		UID, SourceUID, ComUserUID, UserNickName, ObjUserUID,
@@ -29,7 +30,7 @@
 		CommentContent,
 		TypeCode, isActive, CreateBy,
 		CreateDate, LastUpdateBy,
-		LastUpdateDate,IpAddress,ObjComment,SrcPostId,IsAnonymous
+		LastUpdateDate,IpAddress,ObjComment,SrcPostId,IsAnonymous,status
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.String">
@@ -49,7 +50,7 @@
 		UserNickName, ObjUserUID, ObjUserNickName,
 		CommentContent, TypeCode, isActive,
 		CreateBy, CreateDate, LastUpdateBy,
-		LastUpdateDate,IpAddress, ObjComment,SrcPostId,IsAnonymous)
+		LastUpdateDate,IpAddress, ObjComment,SrcPostId,IsAnonymous,status)
 		values
 		(#{uid,jdbcType=VARCHAR},
 		#{sourceuid,jdbcType=VARCHAR},
@@ -63,7 +64,7 @@
 		#{createdate,jdbcType=TIMESTAMP}, #{lastupdateby,jdbcType=VARCHAR},
 		#{lastupdatedate,jdbcType=TIMESTAMP},
 		#{ipaddress,jdbcType=VARCHAR},#{objComment,jdbcType=VARCHAR},#{srcPostId,jdbcType=VARCHAR},
-		#{isAnonymous,jdbcType=INTEGER})
+		#{isAnonymous,jdbcType=INTEGER},#{status,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="org.campus.model.Comment">
 		insert into ts_app_comment
@@ -119,6 +120,9 @@
 			<if test="isAnonymous != null">
 				IsAnonymous,
 			</if>
+			<if test="status != null">
+                status,
+            </if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uid != null">
@@ -172,6 +176,9 @@
 			<if test="isAnonymous != null">
 				#{isAnonymous,jdbcType=INTEGER},
 			</if>
+			<if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="org.campus.model.Comment">
@@ -225,6 +232,9 @@
 			<if test="isAnonymous != null">
 				IsAnonymous = #{isAnonymous,jdbcType=INTEGER},
 			</if>
+			<if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
 		</set>
 		where UID = #{uid,jdbcType=VARCHAR}
 	</update>
@@ -258,7 +268,9 @@
 		SrcPostId =
 		#{srcPostId,jdbcType=VARCHAR},
 		IsAnonymous =
-		#{isAnonymous,jdbcType=INTEGER}
+		#{isAnonymous,jdbcType=INTEGER},
+		status =
+        #{status,jdbcType=VARCHAR}
 		where UID =
 		#{uid,jdbcType=VARCHAR}
 	</update>
@@ -325,5 +337,21 @@
             and CreateDate&gt;=#{checkDate,jdbcType=TIMESTAMP}
             and CreateDate&lt;=#{limitDate,jdbcType=TIMESTAMP}
         ) t
+    </select>
+    <select id="countCommentPostsMsgVO" parameterType="java.lang.String" resultType="int">
+        select count(1)
+        from
+        ts_app_comment as c LEFT JOIN ts_app_freshnews as f ON c.SourceUID =
+        f.UID
+        where f.AddUserUID = #{userId,jdbcType=VARCHAR} and c.isActive=1
+        and status='0'
+        order by c.CreateDate desc
+    </select>
+    <select id="countCommentMyCommentMsgVO" parameterType="java.lang.String" resultType="int">
+        select count(1) from
+        ts_app_comment
+        where ObjUserUID =
+        #{userId,jdbcType=VARCHAR} AND
+        isActive=1 and status='0' order by CreateDate desc
     </select>
 </mapper>

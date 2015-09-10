@@ -242,6 +242,7 @@ public class TopicService {
                 support.setCreatedate(new Date());
                 support.setLastupdateby(userId);
                 support.setLastupdatedate(new Date());
+                support.setStatus("0");
                 supportMapper.insert(support);
                 freshNews.setSupportnum(freshNews.getSupportnum() + 1);
                 break;
@@ -308,6 +309,7 @@ public class TopicService {
             comment.setLastupdateby(Constant.CREATE_BY);
             comment.setLastupdatedate(new Date());
             comment.setIpaddress(ipAddr);
+            comment.setStatus("0");
             commentMapper.insert(comment);
         }
         FreshNews freshNews = freshMapper.selectByPrimaryKey(postsId);

@@ -27,6 +27,8 @@ public class SupportMsgVO {
 
     private List<String> picUrls;
 
+    private String status;
+
     @ApiModelProperty(value = "赞我的UserId", required = true)
     public String getSupportUserId() {
         return supportUserId;
@@ -105,6 +107,16 @@ public class SupportMsgVO {
     @ApiModelProperty(value = "被赞的帖子图片列表", required = false)
     public void setPicUrls(List<String> picUrls) {
         this.picUrls = picUrls;
+    }
+
+    @ApiModelProperty(value = "阅读状态，0未读；1已读", required = true)
+    public String getStatus() {
+        return status;
+    }
+
+    @ApiModelProperty(value = "阅读状态，0未读；1已读", required = true)
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }

@@ -70,4 +70,8 @@ public interface CommentMapper {
     int selectNeedIntegralNum(@Param("sourceId") String postId, @Param("checkDate") Date checkDate,
             @Param("limitDate") Date limitDate);
 
+    int countCommentPostsMsgVO(String userId);
+
+    int countCommentMyCommentMsgVO(String userId);
+
 }

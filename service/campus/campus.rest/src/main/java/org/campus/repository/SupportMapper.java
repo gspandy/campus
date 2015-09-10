@@ -64,4 +64,8 @@ public interface SupportMapper {
 
     Page<Support> findSupportCommentMsgVO(@Param("userId") String userId, Pageable pageable);
 
+    int countSupportPostMsgVO(String userId);
+
+    int countSupportCommentMsgVO(String userId);
+
 }

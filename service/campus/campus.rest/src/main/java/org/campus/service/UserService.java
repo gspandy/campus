@@ -285,4 +285,16 @@ public interface UserService {
 
     void setFreshNickName(String userId, String nickName);
 
+    int countSupportPostMsgVO(String userId);
+
+    int countSupportCommentMsgVO(String userId);
+
+    int countCommentPostsMsgVO(String userId);
+
+    int countCommentMyCommentMsgVO(String userId);
+
+    void updateSupportPostMsg(List<String> sourceIds);
+
+    void updateCommentPostsMsg(List<String> sourceIds);
+
 }

@@ -174,6 +174,7 @@ public class UserServiceImpl implements UserService {
         comment.setLastupdatedate(new Date());
         comment.setIpaddress(ipaddress);
         comment.setSrcPostId(sourceId);
+        comment.setStatus("0");
         if (DisplayModel.MOON.equals(model)) {
             comment.setIsAnonymous(AnonymousType.ANONYMOUS);
         } else {
@@ -347,6 +348,7 @@ public class UserServiceImpl implements UserService {
         support.setLastupdateby(Constant.CREATE_BY);
         support.setLastupdatedate(new Date());
         support.setSrcPostId(postId);
+        support.setStatus("0");
         supportMapper.insert(support);
     }
 
@@ -374,6 +376,7 @@ public class UserServiceImpl implements UserService {
         comment.setLastupdatedate(new Date());
         comment.setIpaddress(ipaddress);
         comment.setSrcPostId(postId);
+        comment.setStatus("0");
         commentMapper.insert(comment);
 
         if (!StringUtils.isEmpty(postId)) {
@@ -439,6 +442,7 @@ public class UserServiceImpl implements UserService {
                     msgVO.setContent(fresh.getNewscontent());
                     msgVO.setPicUrls(dealPics(fresh));
                 }
+                msgVO.setStatus(support.getStatus());
                 commentVOs.add(msgVO);
             }
             page = new PageImpl<SupportMsgVO>(commentVOs, pageable, commentVOs.size());
@@ -446,6 +450,11 @@ public class UserServiceImpl implements UserService {
             page = new PageImpl<SupportMsgVO>(commentVOs, pageable, commentVOs.size());
         }
         return page;
+    }
+
+    @Override
+    public int countSupportPostMsgVO(String userId) {
+        return supportMapper.countSupportPostMsgVO(userId);
     }
 
     @Override
@@ -477,6 +486,7 @@ public class UserServiceImpl implements UserService {
                         msgVO.setPicUrls(dealPics(fresh));
                     }
                 }
+                msgVO.setStatus(support.getStatus());
                 commentMsgVOs.add(msgVO);
             }
             page = new PageImpl<SupportCommentMsgVO>(commentMsgVOs, pageable, commentMsgVOs.size());
@@ -484,6 +494,11 @@ public class UserServiceImpl implements UserService {
             page = new PageImpl<SupportCommentMsgVO>(commentMsgVOs, pageable, commentMsgVOs.size());
         }
         return page;
+    }
+
+    @Override
+    public int countSupportCommentMsgVO(String userId) {
+        return supportMapper.countSupportCommentMsgVO(userId);
     }
 
     @Override
@@ -511,6 +526,7 @@ public class UserServiceImpl implements UserService {
                     msgVO.setContent(fresh.getNewscontent());
                     msgVO.setPicUrls(dealPics(fresh));
                 }
+                msgVO.setStatus(comment.getStatus());
                 commentMsgVOs.add(msgVO);
             }
             page = new PageImpl<CommentPostsMsgVO>(commentMsgVOs, pageable, commentMsgVOs.size());
@@ -518,6 +534,11 @@ public class UserServiceImpl implements UserService {
             page = new PageImpl<CommentPostsMsgVO>(commentMsgVOs, pageable, commentMsgVOs.size());
         }
         return page;
+    }
+
+    @Override
+    public int countCommentPostsMsgVO(String userId) {
+        return commentMapper.countCommentPostsMsgVO(userId);
     }
 
     @Override
@@ -551,6 +572,7 @@ public class UserServiceImpl implements UserService {
                         msgVO.setPicUrls(dealPics(fresh));
                     }
                 }
+                msgVO.setStatus(comment.getStatus());
                 commentMsgVOs.add(msgVO);
             }
             page = new PageImpl<CommentMyCommentVO>(commentMsgVOs, pageable, commentMsgVOs.size());
@@ -558,6 +580,11 @@ public class UserServiceImpl implements UserService {
             page = new PageImpl<CommentMyCommentVO>(commentMsgVOs, pageable, commentMsgVOs.size());
         }
         return page;
+    }
+
+    @Override
+    public int countCommentMyCommentMsgVO(String userId) {
+        return commentMapper.countCommentMyCommentMsgVO(userId);
     }
 
     @Override
@@ -598,6 +625,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setFreshNickName(String userId, String nickName) {
         freshNewsMapper.updateNickName(userId, nickName);
+    }
+
+    @Override
+    public void updateSupportPostMsg(List<String> sourceIds) {
+        Support support = null;
+        for (String id : sourceIds) {
+            support = supportMapper.selectByPrimaryKey(id);
+            support.setStatus("1");
+            supportMapper.updateByPrimaryKeySelective(support);
+        }
+    }
+
+    @Override
+    public void updateCommentPostsMsg(List<String> sourceIds) {
+        Comment comment = null;
+        for (String id : sourceIds) {
+            comment = commentMapper.selectByPrimaryKey(id);
+            comment.setStatus("1");
+            commentMapper.updateByPrimaryKeySelective(comment);
+        }
     }
 
 }
