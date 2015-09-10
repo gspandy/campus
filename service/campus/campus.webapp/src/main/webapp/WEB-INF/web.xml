@@ -64,7 +64,7 @@
 
 	<!-- session超时设置，单位为分钟，-1为不超时 -->
 	<session-config>
-		<session-timeout>30</session-timeout>
+		<session-timeout>240</session-timeout>
 	</session-config>
 
 </web-app>
