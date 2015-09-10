@@ -1,5 +1,6 @@
 package org.campus.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -204,25 +205,28 @@ public class MessageController {
     @RequestMapping(value = "/tips", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
-    public TipVO tips(
-            @ApiParam(name = "type", value = "1:查询我的帖子是否有新的赞；2:查询我的评论是否有新的赞；3:查询我的帖子是否有新的评论；4:查询我的评论是否有新评论") @RequestParam(value = "type", required = true) String type,
+    public List<TipVO> tips(
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO vo = checkLogin(session);
-        TipVO tipVO = new TipVO();
-        tipVO.setType(type);
-        if ("1".equals(type)) {
-            tipVO.setNum(userService.countSupportPostMsgVO(vo.getUserId()));
-        } else if ("2".equals(type)) {
-            tipVO.setNum(userService.countSupportCommentMsgVO(vo.getUserId()));
-        } else if ("3".equals(type)) {
-            tipVO.setNum(userService.countCommentPostsMsgVO(vo.getUserId()));
-        } else if ("4".equals(type)) {
-            tipVO.setNum(userService.countCommentMyCommentMsgVO(vo.getUserId()));
-        } else {
-            throw new CampusException("参数有误");
-        }
-        return tipVO;
+        List<TipVO> tipVOs = new ArrayList<TipVO>(4);
+        TipVO tipVO1 = new TipVO();
+        tipVO1.setType("1");
+        tipVO1.setNum(userService.countSupportPostMsgVO(vo.getUserId()));
+        tipVOs.add(tipVO1);
+        TipVO tipVO2 = new TipVO();
+        tipVO2.setType("2");
+        tipVO2.setNum(userService.countSupportCommentMsgVO(vo.getUserId()));
+        tipVOs.add(tipVO2);
+        TipVO tipVO3 = new TipVO();
+        tipVO3.setType("3");
+        tipVO3.setNum(userService.countCommentPostsMsgVO(vo.getUserId()));
+        tipVOs.add(tipVO3);
+        TipVO tipVO4 = new TipVO();
+        tipVO4.setType("4");
+        tipVO4.setNum(userService.countCommentMyCommentMsgVO(vo.getUserId()));
+        tipVOs.add(tipVO4);
+        return tipVOs;
     }
 
     @ApiOperation(value = "*更新提示为已读:1.0", notes = "更新提示为已读[API-Version=1.0]")

@@ -8,12 +8,12 @@ public class TipVO {
 
     private int num;
 
-    @ApiModelProperty(value = "提示分类", required = true)
+    @ApiModelProperty(value = "提示分类,1:查询我的帖子是否有新的赞；2:查询我的评论是否有新的赞；3:查询我的帖子是否有新的评论；4:查询我的评论是否有新评论", required = true)
     public String getType() {
         return type;
     }
 
-    @ApiModelProperty(value = "提示分类", required = true)
+    @ApiModelProperty(value = "提示分类,1:查询我的帖子是否有新的赞；2:查询我的评论是否有新的赞；3:查询我的帖子是否有新的评论；4:查询我的评论是否有新评论", required = true)
     public void setType(String type) {
         this.type = type;
     }
