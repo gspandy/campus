@@ -33,8 +33,10 @@ public class LoginResponseVO {
     private long integral;
 
     private String auditFlag;
-    
+
     private String signName;
+
+    private Long addIntegral;
 
     @ApiModelProperty(value = "调用业务接口所需唯一标识", required = true)
     public String getSignId() {
@@ -177,13 +179,23 @@ public class LoginResponseVO {
     }
 
     @ApiModelProperty(value = "签名")
-	public String getSignName() {
-		return signName;
-	}
+    public String getSignName() {
+        return signName;
+    }
 
     @ApiModelProperty(value = "签名")
-	public void setSignName(String signName) {
-		this.signName = signName;
-	}
+    public void setSignName(String signName) {
+        this.signName = signName;
+    }
+
+    @ApiModelProperty(value = "增加积分")
+    public Long getAddIntegral() {
+        return addIntegral;
+    }
+
+    @ApiModelProperty(value = "增加积分")
+    public void setAddIntegral(Long addIntegral) {
+        this.addIntegral = addIntegral;
+    }
 
 }

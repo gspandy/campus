@@ -513,6 +513,20 @@ public class BoardController {
         topicSvc.audit(postsId, vo.getUserId(), vo.getNickName(), type);
     }
 
+    @ApiOperation(value = "*审核:2.0", notes = "审核[API-Version=2.0]")
+    @RequestMapping(value = "/audit/{postsId}", headers = { "API-Version=2.0" }, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "审核成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Long audit2(
+            @ApiParam(name = "postsId", value = "帖子ID") @PathVariable String postsId,
+            @ApiParam(name = "type", value = "审核结果") @RequestParam(value = "type", required = true) CheckType type,
+            @ApiParam(name = "environment", value = "显示模式(0:月亮;1:太阳;)") @RequestParam(value = "environment", required = true) String environment,
+            HttpSession session) {
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        Long integral = topicSvc.audit(postsId, vo.getUserId(), vo.getNickName(), type);
+        return integral;
+    }
+
     @ApiOperation(value = "*删帖:1.0", notes = "删帖[API-Version=1.0]")
     @RequestMapping(value = "/{postsId}/delete", headers = { "API-Version=1.0" }, method = RequestMethod.DELETE)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "审核成功"), @ApiResponse(code = 500, message = "内部处理错误") })

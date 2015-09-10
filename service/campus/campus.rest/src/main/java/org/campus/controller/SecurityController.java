@@ -117,7 +117,10 @@ public class SecurityController {
         udpUser.setLastlogintime(Calendar.getInstance().getTime());
         udpUser.setSignid(sysUser.getSignid());
         securitySvc.updateSysUser(udpUser);
-        integralService.integral(sysUser.getUid(), null, IntegralType.LOGIN);
+        long integral = integralService.integral(sysUser.getUid(), null, IntegralType.LOGIN);
+        if (integral != 0) {
+            responseVO.setAddIntegral(integral);
+        }
         redisCache.deleteKey(loginVO.getLoginName() + "_login_fail_count");
 
         return responseVO;

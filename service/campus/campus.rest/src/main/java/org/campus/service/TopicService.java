@@ -212,7 +212,7 @@ public class TopicService {
         return false;
     }
 
-    public void audit(String postsId, String userId, String nickName, CheckType type) {
+    public Long audit(String postsId, String userId, String nickName, CheckType type) {
         FreshNews freshNews = freshMapper.selectByPrimaryKey(postsId);
         switch (type) {
             case COMPLAIN:
@@ -279,7 +279,7 @@ public class TopicService {
         record.setAuditreust(type);
         record.setAudittime(new Date());
         freshNewsAuditMapper.insert(record);
-        integralService.integral(userId, null, IntegralType.CHECk_POSTS);
+        return integralService.integral(userId, null, IntegralType.CHECk_POSTS);
     }
 
     public Page<FreshNews> search(String keyword, String environment, Pageable pageable) {
