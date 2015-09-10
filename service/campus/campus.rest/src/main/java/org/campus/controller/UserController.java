@@ -151,7 +151,7 @@ public class UserController {
             commentVO.setObjNickName(comment.getObjusernickname());
             User objUser = userService.findByUserId(comment.getObjuseruid());
             if (objUser != null) {
-                commentVO.setHeadPic(objUser.getHeadpic());
+                commentVO.setObjHeadPic(objUser.getHeadpic());
             }
             commentVO.setObjComment(comment.getObjComment());
             commentVO.setCommentDate(comment.getCreatedate());
