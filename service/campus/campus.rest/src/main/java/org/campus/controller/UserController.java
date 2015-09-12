@@ -410,21 +410,24 @@ public class UserController {
 
     private UserVO findUserInfo(String userId) {
         User user = userService.findByUserId(userId);
-        UserVO userVO = new UserVO();
-        userVO.setUserId(user.getUseruid());
-        userVO.setNickName(user.getNickname());
-        userVO.setPostCount(userService.countPost(userId));
-        userVO.setFansCount(userService.countFans(userId));
-        userVO.setAttentionCount(userService.countAttention(userId));
-        userVO.setHeadPic(user.getHeadpic());
-        userVO.setIntegral(user.getIntegral());
-        userVO.setSchoolId(user.getSchooluid());
-        userVO.setSchoolName(user.getSchoolname());
-        userVO.setCollegeId(user.getCollegeuid());
-        userVO.setCollegeName(user.getCollegename());
-        userVO.setProfessionId(user.getProfessionuid());
-        userVO.setProfessionName(user.getProfessionname());
-        userVO.setSignName(user.getSignName());
+        UserVO userVO = null;
+        if (user != null) {
+            userVO = new UserVO();
+            userVO.setUserId(user.getUseruid());
+            userVO.setNickName(user.getNickname());
+            userVO.setPostCount(userService.countPost(userId));
+            userVO.setFansCount(userService.countFans(userId));
+            userVO.setAttentionCount(userService.countAttention(userId));
+            userVO.setHeadPic(user.getHeadpic());
+            userVO.setIntegral(user.getIntegral());
+            userVO.setSchoolId(user.getSchooluid());
+            userVO.setSchoolName(user.getSchoolname());
+            userVO.setCollegeId(user.getCollegeuid());
+            userVO.setCollegeName(user.getCollegename());
+            userVO.setProfessionId(user.getProfessionuid());
+            userVO.setProfessionName(user.getProfessionname());
+            userVO.setSignName(user.getSignName());
+        }
         return userVO;
     }
 

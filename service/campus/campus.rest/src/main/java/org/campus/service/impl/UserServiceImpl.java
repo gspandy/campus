@@ -221,7 +221,10 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new CampusException(1100002, "查询不到数据");
         }
-
+        AttentionUser attention = attentionUserMapper.findAttention(comUserId, objUserId);
+        if (attention != null) {
+            throw new CampusException(1100009, "已关注");
+        }
         AttentionUser attentionUser = new AttentionUser();
         attentionUser.setUid(ToolUtil.getUUid());
         attentionUser.setMyuseruid(comUserId);
