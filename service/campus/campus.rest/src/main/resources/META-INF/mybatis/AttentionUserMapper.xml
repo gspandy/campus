@@ -119,20 +119,16 @@
 	</update>
 	<select id="countAttention" parameterType="java.lang.String"
 		resultType="int">
-		select
-		count(1)
-		from ts_app_attentionuser
-		where MyUserUID =
-		#{userId,jdbcType=VARCHAR}
+		SELECT count(u.UserUID) from ts_app_user as u LEFT JOIN
+        ts_app_attentionuser as a on
+        u.UserUID=a.AttenionUserUID where
+        a.MyUserUID=#{userId,jdbcType=VARCHAR}
 	</select>
 	<select id="countFans" parameterType="java.lang.String"
 		resultType="int">
-		select
-		count(1)
-		from ts_app_attentionuser
-		where
-		AttenionUserUID =
-		#{userId,jdbcType=VARCHAR}
+		SELECT count(u.UserUID) from ts_app_user as u LEFT JOIN ts_app_attentionuser as a
+        on u.UserUID=a.MyUserUID WHERE
+        a.AttenionUserUID=#{userId,jdbcType=VARCHAR}
 	</select>
 	<delete id="removeAttention">
 		delete from ts_app_attentionuser where
