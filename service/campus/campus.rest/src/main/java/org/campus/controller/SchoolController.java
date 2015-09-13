@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.campus.annotation.NeedRoles;
+import org.campus.config.WordFilterUtil;
 import org.campus.constant.Constant;
 import org.campus.model.College;
 import org.campus.model.Profession;
@@ -42,7 +43,7 @@ public class SchoolController {
 
     @Autowired
     private SchoolService schoolSvc;
-    
+
     @Autowired
     private SecurityService securitySvc;
 
@@ -53,15 +54,16 @@ public class SchoolController {
     public LoginResponseVO getUserSchool(
             @ApiParam(name = "schoolName", value = "学校名称") @RequestParam(value = "schoolName", required = true) String schoolName,
             HttpSession session) {
-    	LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+
         User user = new User();
         user.setUseruid(vo.getUserId());
+        schoolName = WordFilterUtil.filterText(schoolName, '*').getFilteredContent();
         user.setSchoolname(schoolName);
         securitySvc.updateUser(user);
-        
+
         vo.setSchoolName(schoolName);
-    	return vo;
+        return vo;
     }
 
     @ApiOperation(value = "*学校信息:1.0", notes = "学校信息 [API-Version=1.0]")

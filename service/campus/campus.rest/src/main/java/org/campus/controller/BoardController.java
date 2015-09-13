@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.campus.annotation.NeedRoles;
 import org.campus.config.SystemConfig;
+import org.campus.config.WordFilterUtil;
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.fastdfs.FastdfsClient;
@@ -365,8 +366,8 @@ public class BoardController {
         } else {
             posts.setIsshield(FreshNews.VIEW_REGISTER);// 新帖必须屏蔽
         }
-        posts.setNewsbrief(boardPublishVO.getTitle());
-        posts.setNewscontent(boardPublishVO.getContent());
+        posts.setNewsbrief(WordFilterUtil.filterText(boardPublishVO.getTitle(), '*').getFilteredContent());
+        posts.setNewscontent(WordFilterUtil.filterText(boardPublishVO.getContent(), '*').getFilteredContent());
 
         // newsType in (1,2,3,4)
         List<String> lst = Arrays.asList("1", "2", "3", "4");

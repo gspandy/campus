@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.campus.annotation.NeedRoles;
 import org.campus.cache.RedisCache;
 import org.campus.config.SystemConfig;
+import org.campus.config.WordFilterUtil;
 import org.campus.constant.Constant;
 import org.campus.constant.ErrorCode;
 import org.campus.core.exception.CampusException;
@@ -322,6 +323,7 @@ public class SecurityController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         Assert.notNull(nickName, "请输入正确的密码.");
+        nickName = WordFilterUtil.filterText(nickName, '*').getFilteredContent();
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         if (vo == null)
             throw new CampusException(100006, "未登录.");
@@ -431,6 +433,7 @@ public class SecurityController {
             @ApiParam(name = "signName", value = "签名") @RequestParam(value = "signName", required = true) String signName,
             HttpSession session) {
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        signName = WordFilterUtil.filterText(signName, '*').getFilteredContent();
         User user = new User();
         user.setUseruid(vo.getUserId());
         user.setSignName(signName);

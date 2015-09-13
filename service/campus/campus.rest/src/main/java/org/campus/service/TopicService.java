@@ -3,6 +3,7 @@ package org.campus.service;
 import java.util.Date;
 
 import org.campus.config.SystemConfig;
+import org.campus.config.WordFilterUtil;
 import org.campus.constant.Constant;
 import org.campus.model.Comment;
 import org.campus.model.Complain;
@@ -302,7 +303,7 @@ public class TopicService {
             comment.setSourceuid(postsId);
             comment.setComuseruid(userId);
             comment.setUsernickname(nickName);
-            comment.setCommentcontent(transferVO.getContent());
+            comment.setCommentcontent(WordFilterUtil.filterText(transferVO.getContent(), '*').getFilteredContent());
             comment.setIsactive(ActiveType.ACTIVE);
             comment.setCreateby(Constant.CREATE_BY);
             comment.setCreatedate(new Date());
@@ -335,7 +336,7 @@ public class TopicService {
         record.setObjpostid(freshNews.getUid());
         record.setTransdate(new Date());
         record.setDeleted("0");
-        record.setTransferComment(transferVO.getContent());
+        record.setTransferComment(WordFilterUtil.filterText(transferVO.getContent(), '*').getFilteredContent());
         transferMapper.insert(record);
     }
 

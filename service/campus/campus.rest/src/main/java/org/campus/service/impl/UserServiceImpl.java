@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.campus.config.SystemConfig;
+import org.campus.config.WordFilterUtil;
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.model.AttentionUser;
@@ -166,7 +167,7 @@ public class UserServiceImpl implements UserService {
         comment.setSourceuid(sourceId);
         comment.setComuseruid(userId);
         comment.setUsernickname(userName);
-        comment.setCommentcontent(commentAddVO.getContent());
+        comment.setCommentcontent(WordFilterUtil.filterText(commentAddVO.getContent(), '*').getFilteredContent());
         comment.setIsactive(ActiveType.ACTIVE);
         comment.setCreateby(Constant.CREATE_BY);
         comment.setCreatedate(new Date());
@@ -371,7 +372,7 @@ public class UserServiceImpl implements UserService {
         comment.setObjuseruid(commentAddVO.getObjUserId());
         comment.setObjusernickname(commentAddVO.getObjNickName());
         comment.setObjComment(commentAddVO.getObjComment());
-        comment.setCommentcontent(commentAddVO.getContent());
+        comment.setCommentcontent(WordFilterUtil.filterText(commentAddVO.getContent(), '*').getFilteredContent());
         comment.setIsactive(ActiveType.ACTIVE);
         comment.setCreateby(Constant.CREATE_BY);
         comment.setCreatedate(new Date());
@@ -391,7 +392,8 @@ public class UserServiceImpl implements UserService {
             postComment.setObjuseruid(commentAddVO.getObjUserId());
             postComment.setObjusernickname(commentAddVO.getObjNickName());
             postComment.setObjComment(commentAddVO.getObjComment());
-            postComment.setCommentcontent(commentAddVO.getContent());
+            postComment.setCommentcontent(WordFilterUtil.filterText(commentAddVO.getContent(), '*')
+                    .getFilteredContent());
             postComment.setIsactive(ActiveType.ACTIVE);
             postComment.setCreateby(Constant.CREATE_BY);
             postComment.setCreatedate(new Date());

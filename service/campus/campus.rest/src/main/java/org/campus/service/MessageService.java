@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.campus.config.WordFilterUtil;
 import org.campus.constant.Constant;
 import org.campus.core.exception.CampusException;
 import org.campus.model.ConversationDetail;
@@ -168,7 +169,7 @@ public class MessageService {
             MessageAddVO messageAddVO, String sessionType) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setUid(ToolUtil.getUUid());
-        sendMessage.setMsgcontent(messageAddVO.getMessage());
+        sendMessage.setMsgcontent(WordFilterUtil.filterText(messageAddVO.getMessage(), '*').getFilteredContent());
         sendMessage.setSendtime(new Date());
         sendMessage.setSenduseruid(sendUserId);
         sendMessage.setSoundpath(messageAddVO.getSoundUrl());
@@ -219,7 +220,7 @@ public class MessageService {
         // 单聊
         List<ConversationDetail> list = null;
         if (slide != null && slide.length() != 0) {
-            if (lastMsgDate == null){
+            if (lastMsgDate == null) {
                 throw new CampusException("当滑动传入slide参数时，lastMsgDate不可以为空");
             }
             if ("1".equals(slide)) {

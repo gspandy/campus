@@ -13,7 +13,6 @@ import org.campus.repository.CommentMapper;
 import org.campus.repository.FreshNewsAuditMapper;
 import org.campus.repository.FreshNewsMapper;
 import org.campus.repository.IntegralMapper;
-import org.campus.repository.PostsCheckMapper;
 import org.campus.repository.SigninMapper;
 import org.campus.repository.UserMapper;
 import org.campus.service.IntegralService;
