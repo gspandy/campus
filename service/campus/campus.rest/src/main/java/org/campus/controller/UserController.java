@@ -103,8 +103,8 @@ public class UserController {
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
-        Page<BoardVO> page = findUserPhotos(pageable, responseVO.getUserId(), responseVO.getNickName(),
-                responseVO.getHeadPic());
+        Page<BoardVO> page = findUserPhotos(pageable, responseVO.getUserId(), responseVO.getUserId(),
+                responseVO.getNickName(), responseVO.getHeadPic());
         return page;
     }
 
@@ -114,12 +114,15 @@ public class UserController {
     public Page<BoardVO> getUserPhotos(
             @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
             @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
-            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId) {
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         User user = userService.findByUserId(userId);
         if (user == null) {
             throw new CampusException(1000003, "用户不存在");
         }
-        Page<BoardVO> page = findUserPhotos(pageable, userId, user.getNickname(), user.getHeadpic());
+        Page<BoardVO> page = findUserPhotos(pageable, userId, responseVO.getUserId(), user.getNickname(),
+                user.getHeadpic());
         return page;
     }
 
@@ -455,7 +458,8 @@ public class UserController {
         return new PageImpl<UserVO>(userVOs, pageable, userVOs.size());
     }
 
-    private Page<BoardVO> findUserPhotos(Pageable pageable, String userId, String nickName, String headPic) {
+    private Page<BoardVO> findUserPhotos(Pageable pageable, String userId, String loginUserId, String nickName,
+            String headPic) {
         Page<FreshNews> photos = userService.findUserPhotos(userId, pageable);
         List<BoardVO> photosVOs = new ArrayList<BoardVO>();
         if (photos == null || photos.getContent().size() == 0) {
@@ -482,7 +486,7 @@ public class UserController {
             }
             userPhotosVO.setDeleted(delete);
             userPhotosVO.setPublishDate(freshNews.getCreatedate());
-            userPhotosVO.setSupported(topicSvc.isSupported(freshNews.getUid(), userId));
+            userPhotosVO.setSupported(topicSvc.isSupported(freshNews.getUid(), loginUserId));
             userPhotosVO.setTransNum(freshNews.getTransnum());
             userPhotosVO.setCommentNum(freshNews.getCommentnum());
             userPhotosVO.setSupportNum(freshNews.getSupportnum());
