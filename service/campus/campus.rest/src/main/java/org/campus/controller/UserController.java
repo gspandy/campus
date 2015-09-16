@@ -121,8 +121,11 @@ public class UserController {
         if (user == null) {
             throw new CampusException(1000003, "用户不存在");
         }
-        Page<BoardVO> page = findUserPhotos(pageable, userId, responseVO.getUserId(), user.getNickname(),
-                user.getHeadpic());
+        String loginUserId = userId;
+        if (responseVO != null) {
+            loginUserId = responseVO.getUserId();
+        }
+        Page<BoardVO> page = findUserPhotos(pageable, userId, loginUserId, user.getNickname(), user.getHeadpic());
         return page;
     }
 
