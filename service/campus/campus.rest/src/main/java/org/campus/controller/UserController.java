@@ -121,7 +121,7 @@ public class UserController {
         if (user == null) {
             throw new CampusException(1000003, "用户不存在");
         }
-        String loginUserId = userId;
+        String loginUserId = null;
         if (responseVO != null) {
             loginUserId = responseVO.getUserId();
         }
@@ -489,7 +489,9 @@ public class UserController {
             }
             userPhotosVO.setDeleted(delete);
             userPhotosVO.setPublishDate(freshNews.getCreatedate());
-            userPhotosVO.setSupported(topicSvc.isSupported(freshNews.getUid(), loginUserId));
+            if (!StringUtils.isEmpty(loginUserId)) {
+                userPhotosVO.setSupported(topicSvc.isSupported(freshNews.getUid(), loginUserId));
+            }
             userPhotosVO.setTransNum(freshNews.getTransnum());
             userPhotosVO.setCommentNum(freshNews.getCommentnum());
             userPhotosVO.setSupportNum(freshNews.getSupportnum());
