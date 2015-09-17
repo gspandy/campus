@@ -74,4 +74,8 @@ public interface CommentMapper {
 
     int countCommentMyCommentMsgVO(String userId);
 
+    List<Comment> findCommentPostsMsgVOList(@Param("userId") String userId);
+
+    List<Comment> findCommentMyCommentMsgVOList(@Param("userId") String userId);
+
 }

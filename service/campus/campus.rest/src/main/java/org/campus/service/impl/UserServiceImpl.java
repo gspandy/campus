@@ -656,4 +656,40 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void updateSupportPostMsg(String userId) {
+        List<Support> supports = supportMapper.findSupportPostsMsgList(userId);
+        for (Support support : supports) {
+            support.setStatus("1");
+            supportMapper.updateByPrimaryKeySelective(support);
+        }
+    }
+
+    @Override
+    public void updateSupportCommentMsg(String userId) {
+        List<Support> supports = supportMapper.findSupportCommentMsgVOList(userId);
+        for (Support support : supports) {
+            support.setStatus("1");
+            supportMapper.updateByPrimaryKeySelective(support);
+        }
+    }
+
+    @Override
+    public void updateCommentPostsMsg(String userId) {
+        List<Comment> comments = commentMapper.findCommentPostsMsgVOList(userId);
+        for (Comment comment : comments) {
+            comment.setStatus("1");
+            commentMapper.updateByPrimaryKeySelective(comment);
+        }
+    }
+
+    @Override
+    public void updateCommentMyCommentMsg(String userId) {
+        List<Comment> comments = commentMapper.findCommentMyCommentMsgVOList(userId);
+        for (Comment comment : comments) {
+            comment.setStatus("1");
+            commentMapper.updateByPrimaryKeySelective(comment);
+        }
+    }
+
 }

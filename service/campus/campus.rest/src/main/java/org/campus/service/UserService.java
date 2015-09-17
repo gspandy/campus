@@ -297,4 +297,12 @@ public interface UserService {
 
     void updateCommentPostsMsg(List<String> sourceIds);
 
+    void updateSupportPostMsg(String userId);
+
+    void updateCommentPostsMsg(String userId);
+    
+    void updateSupportCommentMsg(String userId);
+    
+    void updateCommentMyCommentMsg(String userId);
+
 }

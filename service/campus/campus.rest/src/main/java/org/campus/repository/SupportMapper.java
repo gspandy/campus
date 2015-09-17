@@ -1,5 +1,7 @@
 package org.campus.repository;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.campus.model.Support;
 import org.springframework.data.domain.Page;
@@ -67,5 +69,9 @@ public interface SupportMapper {
     int countSupportPostMsgVO(String userId);
 
     int countSupportCommentMsgVO(String userId);
+
+    List<Support> findSupportPostsMsgList(@Param("userId") String userId);
+
+    List<Support> findSupportCommentMsgVOList(@Param("userId") String userId);
 
 }

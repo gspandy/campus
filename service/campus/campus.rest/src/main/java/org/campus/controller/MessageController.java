@@ -247,6 +247,20 @@ public class MessageController {
         }
     }
 
+    @ApiOperation(value = "*更新提示为已读:2.0", notes = "更新提示为已读[API-Version=2.0]")
+    @RequestMapping(value = "/update/tips", headers = { "API-Version=2.0" }, method = RequestMethod.POST)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public void updateTips2(
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO vo = checkLogin(session);
+        userService.updateSupportPostMsg(vo.getUserId());
+        userService.updateSupportCommentMsg(vo.getUserId());
+        userService.updateCommentPostsMsg(vo.getUserId());
+        userService.updateCommentMyCommentMsg(vo.getUserId());
+    }
+
     private LoginResponseVO checkLogin(HttpSession session) {
         LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         if (vo == null) {

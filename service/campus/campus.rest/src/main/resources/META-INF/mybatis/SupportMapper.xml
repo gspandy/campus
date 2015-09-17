@@ -262,4 +262,22 @@
         ORDER BY
         s.CreateDate desc
     </select>
+    <select id="findSupportPostsMsgList" resultMap="BaseResultMap">
+        SELECT s.* FROM
+        ts_app_support as s
+        LEFT JOIN ts_app_freshnews as f ON s.SourceUID =
+        f.UID
+        WHERE f.AddUserUID=#{userId,jdbcType=VARCHAR}
+        ORDER BY
+        s.CreateDate desc
+    </select>
+    <select id="findSupportCommentMsgVOList" resultMap="BaseResultMap">
+        SELECT s.* FROM
+        ts_app_support as s
+        LEFT JOIN ts_app_comment as c ON s.SourceUID =
+        c.UID
+        WHERE c.ComUserUID=#{userId,jdbcType=VARCHAR}
+        ORDER BY
+        s.CreateDate desc
+    </select>
 </mapper>
