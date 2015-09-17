@@ -307,14 +307,14 @@
 		ts_app_comment as c LEFT JOIN ts_app_freshnews as f ON c.SourceUID =
 		f.UID
 		where f.AddUserUID = #{userId,jdbcType=VARCHAR} and c.isActive=1
-		order by c.CreateDate desc
+		order by c.CreateDate desc, c.`status` ASC
 	</select>
 	<select id="findCommentMyCommentMsgVO" resultMap="BaseResultMap">
 		select * from
 		ts_app_comment
 		where ObjUserUID =
 		#{userId,jdbcType=VARCHAR} AND
-		isActive=1 order by CreateDate desc
+		isActive=1 order by CreateDate desc, `status` ASC
 	</select>
 	<update id="updateComCommentNickName" parameterType="java.lang.String">
 	   update ts_app_comment set UserNickName=#{nickName,jdbcType=VARCHAR} 
@@ -359,7 +359,7 @@
         from
         ts_app_comment as c LEFT JOIN ts_app_freshnews as f ON c.SourceUID =
         f.UID
-        where f.AddUserUID = #{userId,jdbcType=VARCHAR} and c.isActive=1
+        where f.AddUserUID = #{userId,jdbcType=VARCHAR} and c.isActive=1 and c.`status`=0
         order by c.CreateDate desc
     </select>
     <select id="findCommentMyCommentMsgVOList" resultMap="BaseResultMap">
@@ -367,6 +367,6 @@
         ts_app_comment
         where ObjUserUID =
         #{userId,jdbcType=VARCHAR} AND
-        isActive=1 order by CreateDate desc
+        isActive=1 and `status`=0 order by CreateDate desc
     </select>
 </mapper>

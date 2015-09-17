@@ -233,7 +233,7 @@
 		f.UID
 		WHERE f.AddUserUID=#{userId,jdbcType=VARCHAR}
 		ORDER BY
-		s.CreateDate desc
+		s.CreateDate desc, s.`status` ASC
 	</select>
 	<select id="findSupportCommentMsgVO" resultMap="BaseResultMap">
 		SELECT s.* FROM
@@ -242,7 +242,7 @@
 		c.UID
 		WHERE c.ComUserUID=#{userId,jdbcType=VARCHAR}
 		ORDER BY
-		s.CreateDate desc
+		s.CreateDate desc,s.`status` ASC
 	</select>
 	<select id="countSupportPostMsgVO" parameterType="java.lang.String" resultType="int">
         SELECT count(1) FROM
@@ -267,7 +267,7 @@
         ts_app_support as s
         LEFT JOIN ts_app_freshnews as f ON s.SourceUID =
         f.UID
-        WHERE f.AddUserUID=#{userId,jdbcType=VARCHAR}
+        WHERE f.AddUserUID=#{userId,jdbcType=VARCHAR} and s.status='0'
         ORDER BY
         s.CreateDate desc
     </select>
@@ -276,8 +276,7 @@
         ts_app_support as s
         LEFT JOIN ts_app_comment as c ON s.SourceUID =
         c.UID
-        WHERE c.ComUserUID=#{userId,jdbcType=VARCHAR}
-        ORDER BY
-        s.CreateDate desc
+        WHERE c.ComUserUID=#{userId,jdbcType=VARCHAR} AND
+        s.status='0' ORDER BY s.CreateDate desc
     </select>
 </mapper>
