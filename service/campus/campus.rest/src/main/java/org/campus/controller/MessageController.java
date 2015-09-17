@@ -18,6 +18,7 @@ import org.campus.service.UserService;
 import org.campus.vo.CommentMyCommentVO;
 import org.campus.vo.CommentPostsMsgVO;
 import org.campus.vo.ConversationDetailVO;
+import org.campus.vo.ConversationDetailVO2;
 import org.campus.vo.LoginResponseVO;
 import org.campus.vo.MessageAddVO;
 import org.campus.vo.MessageRequestVo;
@@ -133,6 +134,27 @@ public class MessageController {
                 slide, lastMsgDate);
         // 需建立一张聊天会话表，关联两个用户之间的聊天记录
         Page<ConversationDetailVO> page = new PageImpl<ConversationDetailVO>(detailList, pageable, detailList.size());
+        return page;
+    }
+
+    @ApiOperation(value = "*查询会话列表:2.0", notes = "查询会话列表[API-Version=2.0]")
+    @RequestMapping(value = "/conversation/{conversationId}", headers = { "API-Version=2.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "读取成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Page<ConversationDetailVO2> getConversation2(
+            @ApiParam(name = "conversationId", value = "聊天会话ID") @PathVariable String conversationId,
+            @ApiParam(name = "slide", value = "1:上划;2:下划") @RequestParam(value = "slide", required = false) String slide,
+            @ApiParam(name = "lastMsgDate", value = "上划传最新一条信息的时间,下划传显示最早的时间,格式：yyyy/MM/dd HH/mm/ss") @RequestParam(value = "lastMsgDate", required = false) @DateTimeFormat(pattern = "yyyy/MM/dd HH/mm/ss") Date lastMsgDate,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        // 1.校验用户session信息
+        LoginResponseVO vo = checkLogin(session);
+        // 查询会话详细信息
+        List<ConversationDetailVO2> detailList = messageService.queryConversationList2(vo.getUserId(), conversationId,
+                slide, lastMsgDate);
+        // 需建立一张聊天会话表，关联两个用户之间的聊天记录
+        Page<ConversationDetailVO2> page = new PageImpl<ConversationDetailVO2>(detailList, pageable, detailList.size());
         return page;
     }
 

@@ -25,6 +25,7 @@ import org.campus.repository.SessionMapper;
 import org.campus.repository.UserMapper;
 import org.campus.util.ToolUtil;
 import org.campus.vo.ConversationDetailVO;
+import org.campus.vo.ConversationDetailVO2;
 import org.campus.vo.MessageAddVO;
 import org.campus.vo.MessageListVO;
 import org.campus.vo.MessageRequestVo;
@@ -215,6 +216,29 @@ public class MessageService {
         return resultList;
     }
 
+    public List<ConversationDetailVO2> queryConversationList2(String holdUserId, String conversationId, String slide,
+            Date lastMsgDate) {
+
+        Session session = sessionMapper.selectByPrimaryKey(conversationId);
+        if (null == session) {
+            throw new CampusException(1900005, "没有该会话");
+        }
+
+        List<ConversationDetailVO2> resultList = new LinkedList<>();
+        if (SessionType.SINGLE_CHANNEL.getCode().equals(String.valueOf(session.getTypecode()))) {
+            // 单聊
+            String objUserId = session.getObjuseruid();
+            if (objUserId.equals(holdUserId)) {
+                objUserId = session.getUseruid();
+            }
+            setSingleMessages2(resultList, objUserId, holdUserId, slide, lastMsgDate);
+        } else {
+            // 群聊
+            setGroupMessages2(resultList, session.getObjuseruid(), holdUserId);
+        }
+        return resultList;
+    }
+
     private void setSingleMessages(List<ConversationDetailVO> resultList, String objuseruid, String holdUserId,
             String slide, Date lastMsgDate) {
         // 单聊
@@ -247,12 +271,69 @@ public class MessageService {
         }
     }
 
+    private void setSingleMessages2(List<ConversationDetailVO2> resultList, String objuseruid, String holdUserId,
+            String slide, Date lastMsgDate) {
+        // 单聊
+        List<ConversationDetail> list = null;
+        if (slide != null && slide.length() != 0) {
+            if (lastMsgDate == null) {
+                throw new CampusException("当滑动传入slide参数时，lastMsgDate不可以为空");
+            }
+            if ("1".equals(slide)) {
+                list = receiveMessageMapper.selectMessageDetailSingleUp(holdUserId, objuseruid, lastMsgDate);
+            } else {
+                list = receiveMessageMapper.selectMessageDetailSingleDown(holdUserId, objuseruid, lastMsgDate);
+            }
+        } else {
+            list = receiveMessageMapper.selectMessageDetailSingle(holdUserId, objuseruid);
+        }
+
+        for (ConversationDetail conversationDetail : list) {
+            ConversationDetailVO2 detail = new ConversationDetailVO2();
+            detail.setHoldFlag(conversationDetail.isHoldFlag());
+            detail.setMessage(conversationDetail.getMsgcontent());
+            detail.setPicUrl(conversationDetail.getPicturepath());
+            detail.setSendDate(conversationDetail.getSendtime());
+            detail.setSoundUrl(conversationDetail.getSoundpath());
+            User user = userMapper.selectByPrimaryKey(conversationDetail.getSenduseruid());
+            String nickName = StringUtils.isEmpty(user.getNickname()) ? "未知用户" : user.getNickname();
+            detail.setNickName(nickName);
+            detail.setHeadPic(user.getHeadpic());
+            resultList.add(detail);
+        }
+    }
+
     private void setGroupMessages(List<ConversationDetailVO> resultList, String objuseruid, String holdUserId) {
         // 群聊
         List<SendMessage> list = sendMessageMapper.selectByGroupUID(objuseruid);
 
         for (SendMessage sendMessage : list) {
             ConversationDetailVO detail = new ConversationDetailVO();
+            detail.setMessage(sendMessage.getMsgcontent());
+            detail.setPicUrl(sendMessage.getPicturepath());
+            detail.setSendDate(sendMessage.getSendtime());
+            detail.setSoundUrl(sendMessage.getSoundpath());
+
+            // 设置消息持有者标识
+            if (holdUserId.equals(sendMessage.getSenduseruid())) {
+                detail.setHoldFlag(true);
+            } else {
+                detail.setHoldFlag(false);
+            }
+
+            String nickName = userMapper.selectNickNameByPrimaryKey(sendMessage.getSenduseruid());
+            nickName = StringUtils.isEmpty(nickName) ? "未知用户" : nickName;
+            detail.setNickName(nickName);
+            resultList.add(detail);
+        }
+    }
+
+    private void setGroupMessages2(List<ConversationDetailVO2> resultList, String objuseruid, String holdUserId) {
+        // 群聊
+        List<SendMessage> list = sendMessageMapper.selectByGroupUID(objuseruid);
+
+        for (SendMessage sendMessage : list) {
+            ConversationDetailVO2 detail = new ConversationDetailVO2();
             detail.setMessage(sendMessage.getMsgcontent());
             detail.setPicUrl(sendMessage.getPicturepath());
             detail.setSendDate(sendMessage.getSendtime());
