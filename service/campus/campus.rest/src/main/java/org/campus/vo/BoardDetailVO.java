@@ -45,6 +45,8 @@ public class BoardDetailVO {
 
     private String transferComment;
 
+    private String transferNickName;
+
     @ApiModelProperty(value = "发帖ID", required = true)
     public String getPostsId() {
         return postsId;
@@ -213,6 +215,16 @@ public class BoardDetailVO {
     @ApiModelProperty(value = "转发评论", required = true)
     public void setTransferComment(String transferComment) {
         this.transferComment = transferComment;
+    }
+
+    @ApiModelProperty(value = "转发昵称", required = false)
+    public String getTransferNickName() {
+        return transferNickName;
+    }
+
+    @ApiModelProperty(value = "转发昵称", required = false)
+    public void setTransferNickName(String transferNickName) {
+        this.transferNickName = transferNickName;
     }
 
 }

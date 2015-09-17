@@ -145,6 +145,10 @@ public class BoardController {
             vo.setSourceUserId(topic.getCreateby());
             tranfer = topicSvc.findTransfer(topic.getUid());
             if (tranfer != null) {
+                User transferUser = userService.findByUserId(tranfer.getUserid());
+                if (transferUser != null) {
+                    vo.setTransferNickName(transferUser.getNickname());
+                }
                 vo.setTransferComment(tranfer.getTransferComment());
             }
             boardVOs.add(vo);
@@ -193,6 +197,10 @@ public class BoardController {
             vo.setSourceUserId(topic.getCreateby());
             tranfer = topicSvc.findTransfer(topic.getUid());
             if (tranfer != null) {
+                User transferUser = userService.findByUserId(tranfer.getUserid());
+                if (transferUser != null) {
+                    vo.setTransferNickName(transferUser.getNickname());
+                }
                 vo.setTransferComment(tranfer.getTransferComment());
             }
             boardVOs.add(vo);
@@ -241,6 +249,10 @@ public class BoardController {
             }
             Transfer tranfer = topicSvc.findTransfer(topic.getUid());
             if (tranfer != null) {
+                User transferUser = userService.findByUserId(tranfer.getUserid());
+                if (transferUser != null) {
+                    boardVo.setTransferNickName(transferUser.getNickname());
+                }
                 boardVo.setTransferComment(tranfer.getTransferComment());
                 FreshNews freshNews = topicSvc.getPostsDetail(tranfer.getPostid());
                 if (freshNews != null) {
