@@ -252,13 +252,21 @@ public class MessageController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
     @NeedRoles
     public void updateTips2(
+            @ApiParam(name = "type", value = "1:查询我的帖子是否有新的赞；2:查询我的评论是否有新的赞；3:查询我的帖子是否有新的评论；4:查询我的评论是否有新评论") @RequestParam(value = "type", required = true) String type,
             @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
             HttpSession session) {
         LoginResponseVO vo = checkLogin(session);
-        userService.updateSupportPostMsg(vo.getUserId());
-        userService.updateSupportCommentMsg(vo.getUserId());
-        userService.updateCommentPostsMsg(vo.getUserId());
-        userService.updateCommentMyCommentMsg(vo.getUserId());
+        if ("1".equals(type)) {
+            userService.updateSupportPostMsg(vo.getUserId());
+        } else if ("2".equals(type)) {
+            userService.updateSupportCommentMsg(vo.getUserId());
+        } else if ("3".equals(type)) {
+            userService.updateCommentPostsMsg(vo.getUserId());
+        } else if ("4".equals(type)) {
+            userService.updateCommentMyCommentMsg(vo.getUserId());
+        } else {
+            throw new CampusException("参数有误");
+        }
     }
 
     private LoginResponseVO checkLogin(HttpSession session) {
