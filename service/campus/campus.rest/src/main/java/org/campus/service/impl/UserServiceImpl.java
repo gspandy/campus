@@ -383,27 +383,6 @@ public class UserServiceImpl implements UserService {
         comment.setStatus("0");
         commentMapper.insert(comment);
 
-        if (!StringUtils.isEmpty(postId)) {
-            Comment postComment = new Comment();
-            postComment.setUid(ToolUtil.getUUid());
-            postComment.setSourceuid(postId);
-            postComment.setComuseruid(userId);
-            postComment.setUsernickname(userName);
-            postComment.setObjuseruid(commentAddVO.getObjUserId());
-            postComment.setObjusernickname(commentAddVO.getObjNickName());
-            postComment.setObjComment(commentAddVO.getObjComment());
-            postComment.setCommentcontent(WordFilterUtil.filterText(commentAddVO.getContent(), '*')
-                    .getFilteredContent());
-            postComment.setIsactive(ActiveType.ACTIVE);
-            postComment.setCreateby(Constant.CREATE_BY);
-            postComment.setCreatedate(new Date());
-            postComment.setLastupdateby(Constant.CREATE_BY);
-            postComment.setLastupdatedate(new Date());
-            postComment.setIpaddress(ipaddress);
-            postComment.setSrcPostId(postId);
-            commentMapper.insert(postComment);
-        }
-
         Comment commentData = commentMapper.selectByPrimaryKey(sourceId);
         FreshNews freshNews = freshNewsMapper.selectByPrimaryKey(commentData.getSourceuid());
         if (freshNews != null) {
