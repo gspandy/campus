@@ -23,6 +23,7 @@ import org.campus.service.UserService;
 import org.campus.util.CollectionUtils;
 import org.campus.util.ToolUtil;
 import org.campus.vo.BoardVO;
+import org.campus.vo.BoardVO2;
 import org.campus.vo.CommentAddVO;
 import org.campus.vo.CommentVO;
 import org.campus.vo.FriendVO;
@@ -108,6 +109,20 @@ public class UserController {
         return page;
     }
 
+    @ApiOperation(value = "*查询登录用户相册:2.0", notes = "查询登录用户相册[API-Version=2.0]")
+    @RequestMapping(value = "/photos", headers = { "API-Version=2.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    @NeedRoles
+    public Page<BoardVO2> getUserPhotos2(
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        Page<BoardVO2> page = findUserPhotos2(pageable, responseVO.getUserId(), responseVO.getUserId(),
+                responseVO.getNickName(), responseVO.getHeadPic());
+        return page;
+    }
+
     @ApiOperation(value = "*查询其他用户的相册:1.0", notes = "查询其他用户的相册[API-Version=1.0]")
     @RequestMapping(value = "/{userId}/photos", headers = { "API-Version=1.0" }, method = RequestMethod.GET)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
@@ -126,6 +141,27 @@ public class UserController {
             loginUserId = responseVO.getUserId();
         }
         Page<BoardVO> page = findUserPhotos(pageable, userId, loginUserId, user.getNickname(), user.getHeadpic());
+        return page;
+    }
+
+    @ApiOperation(value = "*查询其他用户的相册:2.0", notes = "查询其他用户的相册[API-Version=2.0]")
+    @RequestMapping(value = "/{userId}/photos", headers = { "API-Version=2.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public Page<BoardVO2> getUserPhotos2(
+            @ApiParam(name = "userId", value = "用户Id") @PathVariable String userId,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @ApiParam(name = "signId", value = "登录返回的唯一signId") @RequestParam(value = "signId", required = true) String signId,
+            HttpSession session) {
+        LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        User user = userService.findByUserId(userId);
+        if (user == null) {
+            throw new CampusException(1000003, "用户不存在");
+        }
+        String loginUserId = null;
+        if (responseVO != null) {
+            loginUserId = responseVO.getUserId();
+        }
+        Page<BoardVO2> page = findUserPhotos2(pageable, userId, loginUserId, user.getNickname(), user.getHeadpic());
         return page;
     }
 
@@ -505,6 +541,63 @@ public class UserController {
             photosVOs.add(userPhotosVO);
         }
         Page<BoardVO> page = new PageImpl<BoardVO>(photosVOs, pageable, photosVOs.size());
+        return page;
+    }
+
+    private Page<BoardVO2> findUserPhotos2(Pageable pageable, String userId, String loginUserId, String nickName,
+            String headPic) {
+        Page<FreshNews> photos = userService.findUserPhotos(userId, pageable);
+        List<BoardVO2> photosVOs = new ArrayList<BoardVO2>();
+        if (photos == null || photos.getContent().size() == 0) {
+            return new PageImpl<BoardVO2>(photosVOs, pageable, photosVOs.size());
+        }
+        BoardVO2 userPhotosVO = null;
+        Transfer tranfer = null;
+        for (FreshNews freshNews : photos.getContent()) {
+            userPhotosVO = new BoardVO2();
+            userPhotosVO.setPostsId(freshNews.getUid());
+            userPhotosVO.setUserId(freshNews.getAdduseruid());
+            userPhotosVO.setNickName(freshNews.getAddnickname());
+            userPhotosVO.setHeadPic(headPic);
+            boolean delete = topicSvc.isDelete(freshNews.getUid());
+            if (delete) {
+                userPhotosVO.setBrief("");
+                userPhotosVO.setContent("");
+                userPhotosVO.setPicUrls(new ArrayList<String>());
+            } else {
+                userPhotosVO.setBrief(freshNews.getNewsbrief());
+                userPhotosVO.setContent(freshNews.getNewscontent());
+                String[] picUrls = freshNews.getPictures().split(",");
+                userPhotosVO.setPicUrls(Arrays.asList(picUrls));
+            }
+            userPhotosVO.setDeleted(delete);
+            userPhotosVO.setPublishDate(freshNews.getCreatedate());
+            if (!StringUtils.isEmpty(loginUserId)) {
+                userPhotosVO.setSupported(topicSvc.isSupported(freshNews.getUid(), loginUserId));
+            }
+            userPhotosVO.setTransNum(freshNews.getTransnum());
+            userPhotosVO.setCommentNum(freshNews.getCommentnum());
+            userPhotosVO.setSupportNum(freshNews.getSupportnum());
+            userPhotosVO.setNotSupportNum(freshNews.getNotsupportnum());
+            userPhotosVO.setComplainNum(freshNews.getComplainnum());
+            userPhotosVO.setSourceUserId(freshNews.getCreateby());
+            User sourceUser = userService.findByUserId(userPhotosVO.getSourceUserId());
+            if (sourceUser != null) {
+                userPhotosVO.setSourceNickName(sourceUser.getNickname());
+            }
+            tranfer = topicSvc.findTransfer(freshNews.getUid());
+            if (tranfer != null) {
+                userPhotosVO.setTransferComment(tranfer.getTransferComment());
+                User transferUser = userService.findByUserId(tranfer.getUserid());
+                if (tranfer != null) {
+                    userPhotosVO.setTransferNickName(transferUser.getNickname());
+                }
+                userPhotosVO.setTransferComment(tranfer.getTransferComment());
+                userPhotosVO.setTransfer(true);
+            }
+            photosVOs.add(userPhotosVO);
+        }
+        Page<BoardVO2> page = new PageImpl<BoardVO2>(photosVOs, pageable, photosVOs.size());
         return page;
     }
 
