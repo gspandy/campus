@@ -143,9 +143,11 @@ public class BoardController {
             vo.setNotSupportNum(topic.getNotsupportnum());
             vo.setComplainNum(topic.getComplainnum());
             vo.setSourceUserId(topic.getCreateby());
+            User sourceUser = userService.findByUserId(topic.getCreateby());
+            vo.setSourceNickName(sourceUser.getNickname());
             tranfer = topicSvc.findTransfer(topic.getUid());
             if (tranfer != null) {
-                User transferUser = userService.findByUserId(tranfer.getUserid());
+                User transferUser = sourceUser;
                 if (transferUser != null) {
                     vo.setTransferNickName(transferUser.getNickname());
                 }

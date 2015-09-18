@@ -41,6 +41,8 @@ public class BoardVO {
 
     private String sourceUserId;
 
+    private String sourceNickName;
+
     private boolean isDeleted;
 
     private String transferComment;
@@ -195,6 +197,16 @@ public class BoardVO {
     @ApiModelProperty(value = "原发帖人", required = true)
     public void setSourceUserId(String sourceUserId) {
         this.sourceUserId = sourceUserId;
+    }
+
+    @ApiModelProperty(value = "原发帖人昵称", required = false)
+    public String getSourceNickName() {
+        return sourceNickName;
+    }
+
+    @ApiModelProperty(value = "原发帖人昵称", required = false)
+    public void setSourceNickName(String sourceNickName) {
+        this.sourceNickName = sourceNickName;
     }
 
     @ApiModelProperty(value = "原帖是否删除,true 已删", required = true)
