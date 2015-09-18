@@ -40,6 +40,7 @@ import org.campus.vo.BoardDetailVO;
 import org.campus.vo.BoardFavoriteVO;
 import org.campus.vo.BoardPublishVO;
 import org.campus.vo.BoardVO;
+import org.campus.vo.BoardVO2;
 import org.campus.vo.LoginResponseVO;
 import org.campus.vo.TransferVO;
 import org.slf4j.Logger;
@@ -143,11 +144,9 @@ public class BoardController {
             vo.setNotSupportNum(topic.getNotsupportnum());
             vo.setComplainNum(topic.getComplainnum());
             vo.setSourceUserId(topic.getCreateby());
-            User sourceUser = userService.findByUserId(topic.getCreateby());
-            vo.setSourceNickName(sourceUser.getNickname());
             tranfer = topicSvc.findTransfer(topic.getUid());
             if (tranfer != null) {
-                User transferUser = sourceUser;
+                User transferUser = userService.findByUserId(tranfer.getUserid());
                 if (transferUser != null) {
                     vo.setTransferNickName(transferUser.getNickname());
                 }
@@ -157,6 +156,87 @@ public class BoardController {
         }
 
         Page<BoardVO> page = new PageImpl<BoardVO>(boardVOs, pageable, boardVOs.size());
+        return page;
+    }
+
+    @ApiOperation(value = "*帖子列表查询:2.0", notes = "*帖子列表查询[API-Version=2.0]")
+    @RequestMapping(value = "/posts", headers = { "API-Version=2.0" }, method = RequestMethod.GET)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "查询成功"), @ApiResponse(code = 500, message = "内部处理错误") })
+    public Page<BoardVO2> findBoard2(
+            @ApiParam(name = "type", value = "1:休闲;2:新鲜;3:秘密;4:言论;5:热门;6:关注") @RequestParam(value = "type", required = true) String type,
+            @ApiParam(name = "pageable", value = "分页信息,传参方式：?page=0&size=10") @PageableDefault(page = 0, size = 10) Pageable pageable,
+            HttpSession session) {
+        Assert.hasLength(type, "帖子类型不能为空.");
+        TopicType topicType = TopicType.getTypeCodeByCode(type);
+        if (topicType == null) {
+            throw new CampusException(100201, "帖子类型不存在:" + type);
+        }
+
+        Page<FreshNews> freshNews;
+        LoginResponseVO user = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        if (user == null) {
+            // 未登录用户查询
+            // 没有关注帖子
+            if (topicType == TopicType.ATTENTION)
+                throw new CampusException(100301, "未登录用户没有关注内容.");
+            freshNews = topicSvc.getPostsForAnonymous(topicType, pageable);
+        } else {
+            // 登录用户查询
+            freshNews = topicSvc.getPostsForRegister(user.getUserId(), topicType, pageable);
+        }
+
+        List<FreshNews> listTopic = freshNews.getContent();
+        List<BoardVO2> boardVOs = new ArrayList<BoardVO2>();
+        User postUser = null;
+        Transfer tranfer = null;
+        for (FreshNews topic : listTopic) {
+            BoardVO2 vo = new BoardVO2();
+            vo.setPostsId(topic.getUid());
+            vo.setUserId(topic.getAdduseruid());
+            vo.setNickName(topic.getAddnickname());
+            postUser = userService.findByUserId(topic.getAdduseruid());
+            if (postUser != null) {
+                vo.setHeadPic(postUser.getHeadpic());
+            }
+            boolean delete = topicSvc.isDelete(vo.getPostsId());
+            if (delete) {
+                vo.setBrief("");
+                vo.setContent("");
+                vo.setPicUrls(new ArrayList<String>());
+            } else {
+                vo.setBrief(topic.getNewsbrief());
+                vo.setContent(topic.getNewscontent());
+                String[] picUrls = topic.getPictures().split(",");
+                vo.setPicUrls(Arrays.asList(picUrls));
+            }
+            vo.setDeleted(delete);
+            vo.setPublishDate(topic.getCreatedate());
+            if (user != null) {
+                vo.setSupported(topicSvc.isSupported(topic.getUid(), user.getUserId()));
+            }
+            vo.setTransNum(topic.getTransnum());
+            vo.setCommentNum(topic.getCommentnum());
+            vo.setSupportNum(topic.getSupportnum());
+            vo.setNotSupportNum(topic.getNotsupportnum());
+            vo.setComplainNum(topic.getComplainnum());
+            vo.setSourceUserId(topic.getCreateby());
+            User sourceUser = userService.findByUserId(topic.getCreateby());
+            if (sourceUser != null) {
+                vo.setSourceNickName(sourceUser.getNickname());
+            }
+            tranfer = topicSvc.findTransfer(topic.getUid());
+            if (tranfer != null) {
+                User transferUser = userService.findByUserId(tranfer.getUserid());
+                if (transferUser != null) {
+                    vo.setTransferNickName(transferUser.getNickname());
+                }
+                vo.setTransferComment(tranfer.getTransferComment());
+                vo.setTransfer(true);
+            }
+            boardVOs.add(vo);
+        }
+
+        Page<BoardVO2> page = new PageImpl<BoardVO2>(boardVOs, pageable, boardVOs.size());
         return page;
     }
 

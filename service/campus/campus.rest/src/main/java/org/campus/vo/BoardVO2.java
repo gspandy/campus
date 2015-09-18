@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "BoardVO", description = "板块内容信息")
-public class BoardVO {
+@ApiModel(value = "BoardVO2", description = "板块内容信息")
+public class BoardVO2 {
 
     private String postsId;
 
@@ -41,7 +41,11 @@ public class BoardVO {
 
     private String sourceUserId;
 
+    private String sourceNickName;
+
     private boolean isDeleted;
+
+    private boolean isTransfer;
 
     private String transferComment;
 
@@ -197,6 +201,16 @@ public class BoardVO {
         this.sourceUserId = sourceUserId;
     }
 
+    @ApiModelProperty(value = "原发帖人昵称", required = false)
+    public String getSourceNickName() {
+        return sourceNickName;
+    }
+
+    @ApiModelProperty(value = "原发帖人昵称", required = false)
+    public void setSourceNickName(String sourceNickName) {
+        this.sourceNickName = sourceNickName;
+    }
+
     @ApiModelProperty(value = "原帖是否删除,true 已删", required = true)
     public boolean isDeleted() {
         return isDeleted;
@@ -225,6 +239,16 @@ public class BoardVO {
     @ApiModelProperty(value = "转发昵称", required = false)
     public void setTransferNickName(String transferNickName) {
         this.transferNickName = transferNickName;
+    }
+
+    @ApiModelProperty(value = "是否转发", required = true)
+    public boolean isTransfer() {
+        return isTransfer;
+    }
+
+    @ApiModelProperty(value = "是否转发", required = true)
+    public void setTransfer(boolean isTransfer) {
+        this.isTransfer = isTransfer;
     }
 
 }
