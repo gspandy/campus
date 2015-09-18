@@ -521,6 +521,7 @@ public class UserController {
             friendVO.setNickName(user.getNickname());
             friendVO.setInitial(user.getNickFirstLetter());
             friendVO.setHeadUrl(user.getHeadpic());
+            friendVO.setSignature(user.getSignName());
             friendVOs.add(friendVO);
         }
         return friendVOs;
