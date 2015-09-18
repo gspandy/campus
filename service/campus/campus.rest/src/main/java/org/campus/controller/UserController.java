@@ -581,12 +581,12 @@ public class UserController {
             userPhotosVO.setNotSupportNum(freshNews.getNotsupportnum());
             userPhotosVO.setComplainNum(freshNews.getComplainnum());
             userPhotosVO.setSourceUserId(freshNews.getCreateby());
-            User sourceUser = userService.findByUserId(userPhotosVO.getSourceUserId());
-            if (sourceUser != null) {
-                userPhotosVO.setSourceNickName(sourceUser.getNickname());
-            }
             tranfer = topicSvc.findTransfer(freshNews.getUid());
             if (tranfer != null) {
+                FreshNews fresh = topicSvc.findFreshNewsByPostId(tranfer.getPostid());
+                if (fresh != null) {
+                    userPhotosVO.setTransferNickName(fresh.getAddnickname());
+                }
                 userPhotosVO.setTransferComment(tranfer.getTransferComment());
                 User transferUser = userService.findByUserId(tranfer.getUserid());
                 if (tranfer != null) {

@@ -363,4 +363,8 @@ public class TopicService {
         return transferMapper.findTransferByObjPostId(objPostId);
     }
 
+    public FreshNews findFreshNewsByPostId(String postId) {
+        return freshMapper.selectByPrimaryKey(postId);
+    }
+
 }

@@ -220,15 +220,11 @@ public class BoardController {
             vo.setNotSupportNum(topic.getNotsupportnum());
             vo.setComplainNum(topic.getComplainnum());
             vo.setSourceUserId(topic.getCreateby());
-            User sourceUser = userService.findByUserId(topic.getCreateby());
-            if (sourceUser != null) {
-                vo.setSourceNickName(sourceUser.getNickname());
-            }
             tranfer = topicSvc.findTransfer(topic.getUid());
             if (tranfer != null) {
-                User transferUser = userService.findByUserId(tranfer.getUserid());
-                if (transferUser != null) {
-                    vo.setTransferNickName(transferUser.getNickname());
+                FreshNews fresh = topicSvc.findFreshNewsByPostId(tranfer.getPostid());
+                if (fresh != null) {
+                    vo.setTransferNickName(fresh.getAddnickname());
                 }
                 vo.setTransferComment(tranfer.getTransferComment());
                 vo.setTransfer(true);
