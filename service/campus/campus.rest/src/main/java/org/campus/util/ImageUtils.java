@@ -32,7 +32,7 @@ public class ImageUtils {
         Rectangle rectangle = null;
         if (division(width, height) < 0.5) {
             newWidth = width;
-            newHeight = (int) (height * (370.0 / 640.0));
+            newHeight = (int) (newWidth * (370.0 / 640.0));
             rectangle = new Rectangle(0, height - newHeight, newWidth, newHeight);
         } else if ((0.5 <= division(width, height)) && (division(width, height) <= 0.8)) {
             double y = height * 0.618;
@@ -55,6 +55,10 @@ public class ImageUtils {
             rectangle = new Rectangle(0, 0, newWidth, newHeight);
         }
         return rectangle;
+    }
+
+    public static void main(String[] args) {
+        getRectangle(736, 1104);
     }
 
     private static File saveSubImage(BufferedImage image, String format, Rectangle subImageBounds) throws IOException {
