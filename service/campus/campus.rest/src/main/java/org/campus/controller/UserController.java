@@ -588,11 +588,6 @@ public class UserController {
                     userPhotosVO.setTransferNickName(fresh.getAddnickname());
                 }
                 userPhotosVO.setTransferComment(tranfer.getTransferComment());
-                User transferUser = userService.findByUserId(tranfer.getUserid());
-                if (tranfer != null) {
-                    userPhotosVO.setTransferNickName(transferUser.getNickname());
-                }
-                userPhotosVO.setTransferComment(tranfer.getTransferComment());
                 userPhotosVO.setTransfer(true);
             }
             photosVOs.add(userPhotosVO);
