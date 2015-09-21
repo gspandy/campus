@@ -589,6 +589,7 @@ public class UserController {
                 }
                 userPhotosVO.setTransferComment(tranfer.getTransferComment());
                 userPhotosVO.setTransfer(true);
+                userPhotosVO.setSourcePostId(tranfer.getPostid());
             }
             photosVOs.add(userPhotosVO);
         }
