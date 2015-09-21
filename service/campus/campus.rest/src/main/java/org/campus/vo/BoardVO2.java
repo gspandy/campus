@@ -51,6 +51,8 @@ public class BoardVO2 {
 
     private String transferNickName;
 
+    private String sourcePostId;
+
     @ApiModelProperty(value = "发帖ID", required = true)
     public String getPostsId() {
         return postsId;
@@ -249,6 +251,16 @@ public class BoardVO2 {
     @ApiModelProperty(value = "是否转发", required = true)
     public void setTransfer(boolean isTransfer) {
         this.isTransfer = isTransfer;
+    }
+
+    @ApiModelProperty(value = "原帖Id", required = false)
+    public String getSourcePostId() {
+        return sourcePostId;
+    }
+
+    @ApiModelProperty(value = "原帖Id", required = false)
+    public void setSourcePostId(String sourcePostId) {
+        this.sourcePostId = sourcePostId;
     }
 
 }

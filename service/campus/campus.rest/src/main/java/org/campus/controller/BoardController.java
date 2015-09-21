@@ -228,6 +228,7 @@ public class BoardController {
                 }
                 vo.setTransferComment(tranfer.getTransferComment());
                 vo.setTransfer(true);
+                vo.setSourcePostId(tranfer.getPostid());
             }
             boardVOs.add(vo);
         }
