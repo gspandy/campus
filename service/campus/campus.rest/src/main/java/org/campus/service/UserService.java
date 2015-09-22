@@ -266,7 +266,7 @@ public interface UserService {
 
     void cancelSupport(String sourceId, String postId, InteractType type, String mod, String userId);
 
-    void reply(String sourceId, String postId, String userId, String userName, String ipaddress,
+    void reply(String sourceId, String postId, String userId, String userName, String ipaddress, DisplayModel model,
             CommentAddVO commentAddVO);
 
     boolean isSupport(String commentId, String userId);
@@ -300,9 +300,9 @@ public interface UserService {
     void updateSupportPostMsg(String userId);
 
     void updateCommentPostsMsg(String userId);
-    
+
     void updateSupportCommentMsg(String userId);
-    
+
     void updateCommentMyCommentMsg(String userId);
 
 }

@@ -418,7 +418,7 @@ public class UserController {
         LoginResponseVO responseVO = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
         String userName = nickNameService.findRandomNickName(model, session.getId());
         userName = userName == null ? responseVO.getNickName() : userName;
-        userService.reply(commentId, postId, responseVO.getUserId(), userName, ToolUtil.getIpAddr(request),
+        userService.reply(commentId, postId, responseVO.getUserId(), userName, ToolUtil.getIpAddr(request), model,
                 commentAddVO);
     }
 

@@ -363,7 +363,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void reply(String sourceId, String postId, String userId, String userName, String ipaddress,
-            CommentAddVO commentAddVO) {
+            DisplayModel model, CommentAddVO commentAddVO) {
         Comment comment = new Comment();
         comment.setUid(ToolUtil.getUUid());
         comment.setSourceuid(sourceId);
@@ -380,6 +380,13 @@ public class UserServiceImpl implements UserService {
         comment.setLastupdatedate(new Date());
         comment.setIpaddress(ipaddress);
         comment.setSrcPostId(postId);
+        AnonymousType type = null;
+        if (DisplayModel.MOON.equals(model)) {
+            type = AnonymousType.ANONYMOUS;
+        } else {
+            type = AnonymousType.NOT_ANONYMOUS;
+        }
+        comment.setIsAnonymous(type);
         comment.setStatus("0");
         commentMapper.insert(comment);
 
