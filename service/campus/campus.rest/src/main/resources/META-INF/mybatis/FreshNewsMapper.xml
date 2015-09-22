@@ -449,4 +449,11 @@
 		update ts_app_freshnews set AddNickName=#{nickName,jdbcType=VARCHAR}
 		where AddUserUID=#{userId,jdbcType=VARCHAR} and IsAnonymous=0
 	</update>
+	<select id="findByPostIdWithoutDelete" resultMap="BaseResultMap"
+        parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List" />
+        from ts_app_freshnews
+        where UID = #{uid,jdbcType=VARCHAR}
+    </select>
 </mapper>

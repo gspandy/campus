@@ -96,5 +96,7 @@ public interface FreshNewsMapper {
     Page<FreshNews> search(@Param("keyword") String keyword, @Param("type") AnonymousType type, Pageable pageable);
 
     void updateNickName(@Param("userId") String userId, @Param("nickName") String nickName);
+    
+    FreshNews findByPostIdWithoutDelete(String uid);
 
 }

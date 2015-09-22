@@ -364,7 +364,7 @@ public class TopicService {
     }
 
     public FreshNews findFreshNewsByPostId(String postId) {
-        return freshMapper.selectByPrimaryKey(postId);
+        return freshMapper.findByPostIdWithoutDelete(postId);
     }
 
 }
