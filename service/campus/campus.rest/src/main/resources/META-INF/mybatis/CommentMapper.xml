@@ -227,7 +227,7 @@
 				ObjComment = #{objComment,jdbcType=VARCHAR},
 			</if>
 			<if test="srcPostId != null">
-				SrcPostId = #{objComment,jdbcType=VARCHAR},
+				SrcPostId = #{srcPostId,jdbcType=VARCHAR},
 			</if>
 			<if test="isAnonymous != null">
 				IsAnonymous = #{isAnonymous,jdbcType=INTEGER},
