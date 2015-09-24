@@ -3,7 +3,9 @@ package org.campus.util;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -40,10 +42,11 @@ public class ImageUtils {
             newHeight = (int) (width * (370.0 / 640.0));
             rectangle = new Rectangle(0, (int) ((height - y) - newHeight / 2), newWidth, newHeight);
         } else if ((0.8 < division(width, height)) && (division(width, height) < 1.72973)) {
-            double y = height * 0.5;
-            newWidth = width;
-            newHeight = (int) (width * (370.0 / 640.0));
-            rectangle = new Rectangle(0, (int) ((height - y) - newHeight / 2), newWidth, newHeight);
+            // double y = height * 0.5;
+            // newHeight = (int) (width * (370.0 / 640.0));
+            newHeight = height;
+            newWidth = (int) (newHeight * (640.0 / 370.0));
+            rectangle = new Rectangle(newWidth, newHeight);
         } else if (1.72973 <= division(width, height) && division(width, height) <= 2) {
             double x = width * 0.5;
             newWidth = (int) (height * (640.0 / 370.0));
@@ -57,12 +60,12 @@ public class ImageUtils {
         return rectangle;
     }
 
-    // public static void main(String[] args) throws Exception {
-    // File file = new File("F:\\image\\1.jpg");
-    // BufferedInputStream data = new BufferedInputStream(new FileInputStream(file));
-    // BufferedImage image = ImageIO.read(data);
-    // cut(image, "jpg", image.getWidth(), image.getHeight());
-    // }
+//    public static void main(String[] args) throws Exception {
+//        File file = new File("F:\\image\\12.jpg");
+//        BufferedInputStream data = new BufferedInputStream(new FileInputStream(file));
+//        BufferedImage image = ImageIO.read(data);
+//        cut(image, "jpg", image.getWidth(), image.getHeight());
+//    }
 
     private static File saveSubImage(BufferedImage image, String format, Rectangle subImageBounds) throws IOException {
         BufferedImage subImage = new BufferedImage(subImageBounds.width, subImageBounds.height, 1);
