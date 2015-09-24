@@ -2,8 +2,10 @@ package org.campus.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.campus.config.WordFilterUtil;
@@ -64,6 +66,7 @@ public class MessageService {
         List<ReceiveMessage> recieveMessageList = receiveMessageMapper.selectByreceiveUserId(params.getUserId(),
                 IsReadType.getIsReadTypeByCode(params.getIsRead()));
 
+        Map<String, MessageListVO> map = new HashMap<String, MessageListVO>();
         for (ReceiveMessage receiveMessage : recieveMessageList) {
             MessageListVO messageListVO = new MessageListVO();
             messageListVO.setIsRead(String.valueOf(receiveMessage.getIsread()));
@@ -78,17 +81,26 @@ public class MessageService {
             User user = userMapper.selectByPrimaryKey(sendMessage.getSenduseruid());
             messageListVO.setSendNickName(user.getNickname());
             messageListVO.setHeadPic(user.getHeadpic());
-            String objUseruid = receiveMessage.getReceiveuseruid();
-
+            // String objUseruid = receiveMessage.getReceiveuseruid();
             // 判断是否为群组消息
-            if (StringUtils.isNotEmpty(sendMessage.getGroupuid())) {
-                objUseruid = sendMessage.getGroupuid();
-                String groupName = messageGroupMapper.selectNameByPrimaryKey(objUseruid);
-                messageListVO.setGroupName(groupName);
+            // if (StringUtils.isNotEmpty(sendMessage.getGroupuid())) {
+            // objUseruid = sendMessage.getGroupuid();
+            // String groupName = messageGroupMapper.selectNameByPrimaryKey(objUseruid);
+            // messageListVO.setGroupName(groupName);
+            // }
+            String key = new StringBuffer().append(params.getUserId()).append("_")
+                    .append(messageListVO.getSendUserId()).toString();
+            if (!map.containsKey(key)) {
+                map.put(key, messageListVO);
             }
-            String conversationId = sessionMapper.selectBySessionUserId(sendMessage.getSenduseruid(), objUseruid);
-            processMessage(resultList, conversationId, messageListVO);
             updateReadState(receiveMessage.getUid());
+        }
+
+        for (Map.Entry<String, MessageListVO> entry : map.entrySet()) {
+            MessageListVO sendMessage = entry.getValue();
+            String conversationId = sessionMapper
+                    .selectBySessionUserId(sendMessage.getSendUserId(), params.getUserId());
+            processMessage(resultList, conversationId, sendMessage);
         }
         return resultList;
     }
