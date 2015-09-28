@@ -46,6 +46,10 @@ public class ImageUtils {
             // newHeight = (int) (width * (370.0 / 640.0));
             newHeight = height;
             newWidth = (int) (newHeight * (640.0 / 370.0));
+            if (newWidth > width) {
+                newHeight = (int) (width * (370.0 / 640.0));
+                newWidth = width;
+            }
             rectangle = new Rectangle(newWidth, newHeight);
         } else if (1.72973 <= division(width, height) && division(width, height) <= 2) {
             double x = width * 0.5;
@@ -60,12 +64,12 @@ public class ImageUtils {
         return rectangle;
     }
 
-//    public static void main(String[] args) throws Exception {
-//        File file = new File("F:\\image\\12.jpg");
-//        BufferedInputStream data = new BufferedInputStream(new FileInputStream(file));
-//        BufferedImage image = ImageIO.read(data);
-//        cut(image, "jpg", image.getWidth(), image.getHeight());
-//    }
+    // public static void main(String[] args) throws Exception {
+    // File file = new File("F:\\image\\12.jpg");
+    // BufferedInputStream data = new BufferedInputStream(new FileInputStream(file));
+    // BufferedImage image = ImageIO.read(data);
+    // cut(image, "jpg", image.getWidth(), image.getHeight());
+    // }
 
     private static File saveSubImage(BufferedImage image, String format, Rectangle subImageBounds) throws IOException {
         BufferedImage subImage = new BufferedImage(subImageBounds.width, subImageBounds.height, 1);
