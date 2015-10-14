@@ -162,8 +162,8 @@ public class TopicService {
      * 
      * @param favoriteId 收藏编号
      */
-    public void deleteFavorite(String favoriteId) {
-        this.favoriteMapper.deleteByPrimaryKey(favoriteId);
+    public void deleteFavorite(String favoriteId, String userId) {
+        this.favoriteMapper.deleteFavorite(favoriteId, userId);
     }
 
     /**

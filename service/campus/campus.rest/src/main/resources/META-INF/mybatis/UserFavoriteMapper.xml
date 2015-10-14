@@ -140,4 +140,9 @@
 		#{postsId,jdbcType=VARCHAR} AND
 		userid=#{userId,jdbcType=VARCHAR}
 	</select>
+	<delete id="deleteFavorite">
+	    delete from ts_app_user_favorite
+	    where postsid = #{postsId,jdbcType=VARCHAR} 
+	    AND userid=#{userId,jdbcType=VARCHAR}
+	</delete>
 </mapper>

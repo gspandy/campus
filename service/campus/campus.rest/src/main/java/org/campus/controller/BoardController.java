@@ -372,9 +372,10 @@ public class BoardController {
     @NeedRoles
     public void cancelCollect(@ApiParam(name = "postsId", value = "收藏列表编号") @PathVariable String postsId,
             HttpSession session) {
-        if (session.getAttribute(Constant.CAMPUS_SECURITY_SESSION) == null)
+        LoginResponseVO vo = (LoginResponseVO) session.getAttribute(Constant.CAMPUS_SECURITY_SESSION);
+        if (vo == null)
             throw new CampusException(100204, "未登录.");
-        topicSvc.deleteFavorite(postsId);
+        topicSvc.deleteFavorite(postsId, vo.getUserId());
     }
 
     @ApiOperation(value = "*收藏列表查询:1.0", notes = "收藏列表查询[API-Version=1.0]")

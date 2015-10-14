@@ -25,5 +25,7 @@ public interface UserFavoriteMapper {
     Page<FavoriteFreshNews> selectByUserId(@Param("userId") String userId, Pageable pageable);
 
     int isFavorited(@Param("postsId") String postsId, @Param("userId") String userId);
+    
+    void deleteFavorite(@Param("postsId") String postsId, @Param("userId") String userId);
 
 }
