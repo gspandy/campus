@@ -16,7 +16,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from ts_app_receivemessage
-		where ReceiveUserUID = #{receiveUserId} and IsRead = #{isRead}
+		where ReceiveUserUID = #{receiveUserId} AND DATE_SUB(CURDATE(), INTERVAL 30 DAY) <= DATE(CreateDate)
 		ORDER BY CreateDate DESC
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">

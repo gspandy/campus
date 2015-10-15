@@ -63,8 +63,7 @@ public class MessageService {
         // 校验参数
         checkParams(params);
         List<MessageVO> resultList = new LinkedList<MessageVO>();
-        List<ReceiveMessage> recieveMessageList = receiveMessageMapper.selectByreceiveUserId(params.getUserId(),
-                IsReadType.getIsReadTypeByCode(params.getIsRead()));
+        List<ReceiveMessage> recieveMessageList = receiveMessageMapper.selectByreceiveUserId(params.getUserId());
 
         Map<String, MessageListVO> map = new HashMap<String, MessageListVO>();
         for (ReceiveMessage receiveMessage : recieveMessageList) {
